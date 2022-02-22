@@ -1,0 +1,19 @@
+﻿@model IEnumerable<ApplicationUser>
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+
+
+<html>
+    <head></head>
+
+    <body>
+        @foreach(var test in @Model)
+    {
+        @test.FirstName
+        @test.Email
+        @test.UserName
+    }
+</body>
+</html>
