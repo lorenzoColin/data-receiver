@@ -1,0 +1,34 @@
+﻿@model IEnumerable<customer>
+
+
+<h1>list with customers</h1>
+@*create a new customer*@
+<a asp-controller ="Customer" asp-action="Create">create new customer</a>
+
+    <table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">firstname</th>
+      <th scope="col">lastname</th>
+      <th scope="col">adress</th>
+      <th scope="col">phonenumber</th>
+      <th scope="col">edit</th>
+    </tr>
+  </thead>
+  <tbody>
+      @foreach(var customers in @Model)
+{
+    <tr>
+      <th scope="row">@customers.Id</th>
+      <td>@customers.firstname</td>
+      <td>@customers.lastname</td>
+      <td>@customers.adress</td>
+      <td>@customers.phonenumber</td>
+      <td><a asp-controller= "customer" asp-action="edit" asp-route-id = "@customers.Id">edit</a></td>
+    </tr>
+
+}
+  </tbody>
+</table>
+

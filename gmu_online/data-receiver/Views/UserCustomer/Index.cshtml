@@ -1,0 +1,10 @@
+﻿@model IEnumerable<UserCustomer>
+
+
+@foreach(var myUsers in @Model)
+{
+    <p> @myUsers</p>
+   <p> @myUsers.User.Email</p>
+   <p> @myUsers.customer.firstname</p>
+
+}

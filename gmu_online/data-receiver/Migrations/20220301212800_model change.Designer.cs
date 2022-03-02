@@ -9,11 +9,11 @@ using data_receiver.Data;
 
 #nullable disable
 
-namespace data_receiver.Data.Migrations
+namespace data_receiver.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220301134920_identity3")]
-    partial class identity3
+    [Migration("20220301212800_model change")]
+    partial class modelchange
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,6 +24,20 @@ namespace data_receiver.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("data_receiver.Models.Action", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("action", "Identity");
+                });
 
             modelBuilder.Entity("data_receiver.Models.ApplicationUser", b =>
                 {
@@ -98,7 +112,7 @@ namespace data_receiver.Data.Migrations
                     b.ToTable("User", "Identity");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.Team", b =>
+            modelBuilder.Entity("data_receiver.Models.customer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -106,28 +120,54 @@ namespace data_receiver.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("actionid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("adress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("city")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("company")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("firstname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("lastname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("phonenumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Teams", "Identity");
+                    b.HasIndex("actionid");
+
+                    b.ToTable("customer", "Identity");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.TeamUser", b =>
+            modelBuilder.Entity("data_receiver.Models.UserCustomer", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("TeamId")
+                    b.Property<int>("customerId")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "TeamId");
+                    b.HasKey("UserId", "customerId");
 
-                    b.HasIndex("TeamId");
+                    b.HasIndex("customerId");
 
-                    b.ToTable("TeamUsers", "Identity");
+                    b.ToTable("UserCustomer", "Identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -263,23 +303,34 @@ namespace data_receiver.Data.Migrations
                     b.ToTable("UserTokens", "Identity");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.TeamUser", b =>
+            modelBuilder.Entity("data_receiver.Models.customer", b =>
                 {
-                    b.HasOne("data_receiver.Models.Team", "Team")
-                        .WithMany("teamUser")
-                        .HasForeignKey("TeamId")
+                    b.HasOne("data_receiver.Models.Action", "action")
+                        .WithMany()
+                        .HasForeignKey("actionid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("action");
+                });
+
+            modelBuilder.Entity("data_receiver.Models.UserCustomer", b =>
+                {
                     b.HasOne("data_receiver.Models.ApplicationUser", "User")
-                        .WithMany("teamUsers")
+                        .WithMany("UserCustomer")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Team");
+                    b.HasOne("data_receiver.Models.customer", "customer")
+                        .WithMany("UserCustomer")
+                        .HasForeignKey("customerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
+
+                    b.Navigation("customer");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -335,12 +386,12 @@ namespace data_receiver.Data.Migrations
 
             modelBuilder.Entity("data_receiver.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("teamUsers");
+                    b.Navigation("UserCustomer");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.Team", b =>
+            modelBuilder.Entity("data_receiver.Models.customer", b =>
                 {
-                    b.Navigation("teamUser");
+                    b.Navigation("UserCustomer");
                 });
 #pragma warning restore 612, 618
         }

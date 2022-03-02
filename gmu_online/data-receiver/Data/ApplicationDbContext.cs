@@ -12,8 +12,9 @@ namespace data_receiver.Data
             : base(options)
         {
         }
-        public DbSet<Team> Teams { get; set; }
-        public DbSet<TeamUser> TeamUsers { get; set; }
+        public DbSet<customer> Customer { get; set; }
+        public DbSet<UserCustomer> UserCustomer { get; set; }
+        public DbSet<Models.Action> Action { get; set; }
 
 
         //this function gonne rename the names of the tables in my database
@@ -22,17 +23,17 @@ namespace data_receiver.Data
             base.OnModelCreating(builder);
 
 
-            builder.Entity<TeamUser>()
-        .HasKey(bc => new { bc.UserId, bc.TeamId });
-            builder.Entity<TeamUser>()
+            builder.Entity<UserCustomer>()
+        .HasKey(bc => new { bc.UserId, bc.customerId });
+            builder.Entity<UserCustomer>()
                 .HasOne(bc => bc.User)
-                .WithMany(b => b.teamUsers)
+                .WithMany(b => b.UserCustomer)
                 .HasForeignKey(bc => bc.UserId);
 
-            builder.Entity<TeamUser>()
-                .HasOne(bc => bc.Team)
-                .WithMany(c => c.teamUser)
-                .HasForeignKey(bc => bc.TeamId);
+            builder.Entity<UserCustomer>()
+                .HasOne(bc => bc.customer)
+                .WithMany(c => c.UserCustomer)
+                .HasForeignKey(bc => bc.customerId);
 
 
             builder.HasDefaultSchema("Identity");

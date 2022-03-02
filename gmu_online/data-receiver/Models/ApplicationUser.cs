@@ -8,6 +8,6 @@ namespace data_receiver.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public ICollection<TeamUser> teamUsers { get; set;}
+        public ICollection<UserCustomer> UserCustomer { get; set;}
     }
 }

@@ -3,17 +3,19 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using data_receiver.Data;
 
 #nullable disable
 
-namespace data_receiver.Data.Migrations
+namespace data_receiver.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220302113403_new migration with device type2")]
+    partial class newmigrationwithdevicetype2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,6 +24,19 @@ namespace data_receiver.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("data_receiver.Models.Action", b =>
+                {
+                    b.Property<string>("id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("type")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Action", "Identity");
+                });
 
             modelBuilder.Entity("data_receiver.Models.ApplicationUser", b =>
                 {
@@ -96,7 +111,7 @@ namespace data_receiver.Data.Migrations
                     b.ToTable("User", "Identity");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.Team", b =>
+            modelBuilder.Entity("data_receiver.Models.customer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -104,33 +119,54 @@ namespace data_receiver.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Name")
+                    b.Property<string>("actionid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("adress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("city")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("company")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("firstname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("lastname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("phonenumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("actionid");
 
-                    b.ToTable("Teams", "Identity");
+                    b.ToTable("Customer", "Identity");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.TeamUser", b =>
+            modelBuilder.Entity("data_receiver.Models.UserCustomer", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("TeamId")
+                    b.Property<int>("customerId")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "TeamId");
+                    b.HasKey("UserId", "customerId");
 
-                    b.HasIndex("TeamId");
+                    b.HasIndex("customerId");
 
-                    b.ToTable("TeamUsers", "Identity");
+                    b.ToTable("UserCustomer", "Identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -266,32 +302,34 @@ namespace data_receiver.Data.Migrations
                     b.ToTable("UserTokens", "Identity");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.Team", b =>
+            modelBuilder.Entity("data_receiver.Models.customer", b =>
                 {
-                    b.HasOne("data_receiver.Models.ApplicationUser", "User")
+                    b.HasOne("data_receiver.Models.Action", "action")
                         .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("data_receiver.Models.TeamUser", b =>
-                {
-                    b.HasOne("data_receiver.Models.Team", "Team")
-                        .WithMany("teamUser")
-                        .HasForeignKey("TeamId")
+                        .HasForeignKey("actionid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("action");
+                });
+
+            modelBuilder.Entity("data_receiver.Models.UserCustomer", b =>
+                {
                     b.HasOne("data_receiver.Models.ApplicationUser", "User")
-                        .WithMany("teamUsers")
+                        .WithMany("UserCustomer")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Team");
+                    b.HasOne("data_receiver.Models.customer", "customer")
+                        .WithMany("UserCustomer")
+                        .HasForeignKey("customerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
+
+                    b.Navigation("customer");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -347,12 +385,12 @@ namespace data_receiver.Data.Migrations
 
             modelBuilder.Entity("data_receiver.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("teamUsers");
+                    b.Navigation("UserCustomer");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.Team", b =>
+            modelBuilder.Entity("data_receiver.Models.customer", b =>
                 {
-                    b.Navigation("teamUser");
+                    b.Navigation("UserCustomer");
                 });
 #pragma warning restore 612, 618
         }
