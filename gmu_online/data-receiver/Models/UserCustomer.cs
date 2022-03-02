@@ -1,9 +1,9 @@
 ﻿namespace data_receiver.Models
 {
-    public class TeamUser
+    public class UserCustomer
     {
-        public int TeamId { get; set; }
-        public Team Team { get; set; }
+        public int customerId { get; set; }
+        public customer customer { get; set; }
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
     }
