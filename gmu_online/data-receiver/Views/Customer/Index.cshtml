@@ -14,6 +14,7 @@
       <th scope="col">adress</th>
       <th scope="col">phonenumber</th>
       <th scope="col">edit</th>
+      <th scope="col">claim this user</th>
     </tr>
   </thead>
   <tbody>
@@ -26,6 +27,7 @@
       <td>@customers.adress</td>
       <td>@customers.phonenumber</td>
       <td><a asp-controller= "customer" asp-action="edit" asp-route-id = "@customers.Id">edit</a></td>
+      <td><a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.Id">claim User</a></td>
     </tr>
 
 }

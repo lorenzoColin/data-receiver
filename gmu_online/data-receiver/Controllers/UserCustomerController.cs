@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace data_receiver.Controllers
 {
@@ -19,7 +21,7 @@ namespace data_receiver.Controllers
         }
         // GET: UserCustomerController
         public ActionResult Index()
-        {
+        {   
             var loggedInId = _usermanager.GetUserId(HttpContext.User);
             var mycustomers = _db.UserCustomer.Include(u => u.User).Include(s => s.customer).Where(s => s.User.Id == loggedInId);
             return View(mycustomers);
@@ -28,28 +30,43 @@ namespace data_receiver.Controllers
         // GET: UserCustomerController/Details/5
         public ActionResult Details(int id)
         {
+            
             return View();
         }
-
         // GET: UserCustomerController/Create
+
         public ActionResult Create()
         {
-            return View();
+            //hier maak ik een instantie van die viewmodel
+            var vm = new UserCustomerViewModel();
+
+            vm.customers = _db.Customer
+                .Where(s => !_db.UserCustomer.Select(s => s.customerId).Contains(s.Id))
+                .Select(s => new SelectListItem { Value = s.Id.ToString(), Text = s.firstname })
+                .ToList();
+
+            vm.users = _db.Users.Select(s => new SelectListItem {Value = s.Id , Text = s.FirstName }).ToList();
+
+            return View(vm);
         }
 
         // POST: UserCustomerController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(UserCustomerViewModel UserCustomerViewModel)
         {
-            try
+
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var customer = new UserCustomer { customerId = UserCustomerViewModel.customerId, UserId = UserCustomerViewModel.userId };
+                
+
+                _db.UserCustomer.Add(customer);
+                _db.SaveChanges(); 
+                return Ok();
             }
-            catch
-            {
-                return View();
-            }
+            return BadRequest();
+            
         }
 
         // GET: UserCustomerController/Edit/5

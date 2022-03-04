@@ -1,7 +1,10 @@
 ﻿using data_receiver.Data;
 using data_receiver.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace data_receiver.Controllers
 {
@@ -9,36 +12,60 @@ namespace data_receiver.Controllers
     public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _db;
-        // GET: TeamController
+        private readonly UserManager<ApplicationUser> _usermanager;
+        // GET: CustomerController
 
-        public CustomerController(ApplicationDbContext db)
+        public CustomerController(ApplicationDbContext db, UserManager<ApplicationUser> usermanager)
         {
             _db = db;
+            _usermanager = usermanager;
         }
+        [Authorize]
         public ActionResult Index()
         {
-            IEnumerable<customer> customer = _db.Customer;
+            //list with customers who have no user
+            IEnumerable<customer> customer = _db.Customer.Where(s => !_db.UserCustomer.Select(s => s.customerId).Contains(s.Id));
+
+
             return View(customer);
         }
-
-        // GET: TeamController/Details/5
-        public ActionResult Details(int id)
+        
+        public ActionResult claimCustomer(int id)
         {
-            if(id == null)
+
+            if (id == null)
             {
                 return NotFound();
             }
-            var singleCustomer = _db.Customer.Find(id);    
+            var singleCustomer = _db.Customer.Find(id);
+
             return View(singleCustomer);
         }
 
-        // GET: TeamController/Create
+        [HttpPost]
+        public ActionResult claimCustomer(customer customer)
+        {
+            var loggedInUser = _usermanager.GetUserId(HttpContext.User);
+
+            var usercustomer = new UserCustomer { customerId = customer.Id,UserId = loggedInUser };
+
+            _db.UserCustomer.Add(usercustomer);
+            _db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+        // GET: CustomerController/Details/5
+        public ActionResult Details(int id)
+        {
+            return View();
+        }
+        // GET: CustomerController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: TeamController/Create
+        // POST: CustomerController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(customer customer)
@@ -55,35 +82,38 @@ namespace data_receiver.Controllers
             }
            
         }
-
-        // GET: TeamController/Edit/5
+        // GET: CustomerController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var singleCustomer = _db.Customer.Find(id);
+            return View(singleCustomer);
         }
 
-        // POST: TeamController/Edit/5
+        // POST: CustomerController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, customer customer)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                _db.Customer.Update(customer);
+                _db.SaveChanges();
+                return RedirectToAction("index");
             }
-            catch
-            {
-                return View();
-            }
+            return View(customer);
         }
 
-        // GET: TeamController/Delete/5
+        // GET: CustomerController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: TeamController/Delete/5
+        // POST: CustomerController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

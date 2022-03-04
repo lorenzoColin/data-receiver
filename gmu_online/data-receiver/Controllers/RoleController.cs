@@ -1,30 +1,32 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace data_receiver.Controllers
 {
-    public class AdminController : Controller
+    public class RoleController : Controller
     {
-        // GET: AdminController
+        private readonly RoleManager<IdentityRole> _userroles;
+
+        // GET: RoleController
         public ActionResult Index()
         {
-
             return View();
         }
 
-        // GET: AdminController/Details/5
+        // GET: RoleController/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: AdminController/Create
+        // GET: RoleController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: AdminController/Create
+        // POST: RoleController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
@@ -39,13 +41,13 @@ namespace data_receiver.Controllers
             }
         }
 
-        // GET: AdminController/Edit/5
+        // GET: RoleController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: AdminController/Edit/5
+        // POST: RoleController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -60,13 +62,13 @@ namespace data_receiver.Controllers
             }
         }
 
-        // GET: AdminController/Delete/5
+        // GET: RoleController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: AdminController/Delete/5
+        // POST: RoleController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
