@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using data_receiver.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,11 +8,17 @@ namespace data_receiver.Controllers
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole> _userroles;
+        public RoleController( RoleManager<IdentityRole> userroles)
+        {
+            _userroles = userroles;
+        }
 
         // GET: RoleController
         public ActionResult Index()
         {
-            return View();
+           IEnumerable<IdentityRole> roles = _userroles.Roles;
+           
+            return View(roles);
         }
 
         // GET: RoleController/Details/5
@@ -29,43 +36,73 @@ namespace data_receiver.Controllers
         // POST: RoleController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(Role Role)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
+            if (!ModelState.IsValid)
             {
                 return View();
             }
+            
+            var test = await  _userroles.RoleExistsAsync(Role.RoleName); 
+
+            if (test)
+            {
+                ModelState.AddModelError("role exist","role already exist");
+            }
+             await _userroles.CreateAsync(new IdentityRole(Role.RoleName));         
+
+            return View();
         }
 
         // GET: RoleController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(string id)
         {
-            return View();
+           var singleRole = await _userroles.FindByIdAsync(id);
+            return View(singleRole);
         }
 
         // POST: RoleController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task< ActionResult> Edit( IdentityRole IdentityRole)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                try
+                {   
+                    var role = await _userroles.FindByIdAsync(IdentityRole.Id);
+                    role.Name = IdentityRole.Name;
+                    var result = await _userroles.UpdateAsync(role);
+                    if (!result.Succeeded)
+                    {
+                        ModelState.AddModelError("", result.Errors.First().ToString());
+                        return View();
+                    }
+                    return RedirectToAction("Index");
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
             }
-            catch
-            {
-                return View();
-            }
+
+            return View();
         }
 
         // GET: RoleController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult>Delete(string id)
         {
-            return View();
+            var role = await _userroles.FindByIdAsync(id);
+            
+            if(role == null)
+            {
+                return NotFound();   
+            }
+
+           
+            
+
+            return View(role);
         }
 
         // POST: RoleController/Delete/5
@@ -73,6 +110,7 @@ namespace data_receiver.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
+            
             try
             {
                 return RedirectToAction(nameof(Index));

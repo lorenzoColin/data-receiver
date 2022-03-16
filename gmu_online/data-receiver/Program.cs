@@ -2,6 +2,7 @@ using data_receiver.Data;
 using data_receiver.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddDefaultUI()
             .AddDefaultTokenProviders();
 
+//add a service that can send emails
+builder.Services
+        .AddFluentEmail("lorenzo8399test@gmail.com")
+        .AddRazorRenderer(Directory.GetCurrentDirectory())
+        .AddSmtpSender(new System.Net.Mail.SmtpClient { Host = "smtp.gmail.com",Port = 587,EnableSsl =true,Credentials = new NetworkCredential("lorenzo8399test@gmail.com","Gufm2775") } );
+//this configuration is gmail configuration
 
 builder.Services.AddControllersWithViews();
 

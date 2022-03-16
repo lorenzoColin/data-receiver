@@ -1,6 +1,12 @@
 ﻿using data_receiver.Models;
+using FluentEmail.Core;
+using FluentEmail.Razor;
+using FluentEmail.Smtp;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Net.Mail;
+using System.Text;
 
 namespace data_receiver.Controllers
 {
@@ -15,19 +21,46 @@ namespace data_receiver.Controllers
 
         public IActionResult Index() 
         { 
+
         
             return View();
         }
 
-        public IActionResult Privacy()
+        //[Authorize(Roles ="admin")]
+        public async Task<IActionResult> Privacy([FromServices] IFluentEmail singleEmail)
         {
+
+            //StringBuilder template = new StringBuilder();
+
+            //template.AppendLine("Dear @model.firstname");
+            //template.AppendLine("<p>thanks for blablabla @model.productname. we hope you enjoy</p>");
+            //var model = new { firstname = "LUKE", productname = "product 1"};
+
+            
+            try
+            {
+                var email = singleEmail
+               .To("lorenzo8399@hotmail.com")
+               .Subject("Test email")
+           .UsingTemplate("hi @Model.Name this is the first email @(5 + 5)!", new { Name = "test name" });
+                await email.SendAsync();
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+
+
+                return BadRequest(ex.Message);
+            }
+        
+
+
+
             return View();
         }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
-        {
-            
+        { 
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }

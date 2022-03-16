@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<IdentityRole>
+
+
+<h1>list with roles</h1>
+@*create a new customer*@
+<a asp-controller ="Role" asp-action="Create">create new role</a>
+    <table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">name</th>
+      <th scope="col">edit</th>
+      <th scope="col">delete</th>
+    </tr>
+  </thead>
+  <tbody>
+      @foreach(var role in @Model)
+{
+    <tr>
+      <td>@role.Id</td>
+      <td>@role.Name</td>
+      <td><a asp-controller= "Role" asp-action="edit" asp-route-id = "@role.Id">edit</a></td>
+      <td><a asp-controller= "Role" asp-action="delete" asp-route-id = "@role.Id">delete</a></td>
+    </tr>
+
+}
+  </tbody>
+</table>
+
