@@ -1,0 +1,32 @@
+﻿@using data_receiver.Models.ViewModels;
+
+@model List<UserRoleViewModel>
+<h1>add user to the @ViewBag.userid</h1>
+
+@for(int i = 0; i < @Model.Count; i++)
+{
+    if(@Model[i].InRole == false)
+    {
+        <div style="border:1px solid black;padding:3px;">
+
+        
+         <h4>@Model[i].UserName</h4>  
+        <form method="post" asp-action="editUserInRole" >
+            <input type="text" value= "@Model[i].UserName" name="UserName" hidden/>
+            <input type="text" value= "@Model[i].UserId" name="userId" hidden/>
+            <input type="text" value="@Model[i].RoleId" name="RoleId" hidden/>
+            <p>is in role @Model[i].InRole</p>
+            <input type="submit">
+         </form>
+         </div>
+   
+    
+    
+    }
+   
+}
+
+
+
+
+
