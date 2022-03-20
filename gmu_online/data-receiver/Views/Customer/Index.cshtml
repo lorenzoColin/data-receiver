@@ -1,4 +1,5 @@
-﻿@model IEnumerable<customer>
+﻿@model List<customer>
+
 
 
 <h1>list with customers</h1>
@@ -21,13 +22,14 @@
       @foreach(var customers in @Model)
 {
     <tr>
-      <th scope="row">@customers.Id</th>
+      
+      <td>@customers.Id</td>
       <td>@customers.firstname</td>
       <td>@customers.lastname</td>
       <td>@customers.adress</td>
       <td>@customers.phonenumber</td>
       <td><a asp-controller= "customer" asp-action="edit" asp-route-id = "@customers.Id">edit</a></td>
-      <td><a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.Id">claim User</a></td>
+      <td><a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.Id">claim</a></td>
     </tr>
 
 }

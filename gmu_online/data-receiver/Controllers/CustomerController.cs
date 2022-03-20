@@ -17,22 +17,32 @@ namespace data_receiver.Controllers
 
         public CustomerController(ApplicationDbContext db, UserManager<ApplicationUser> usermanager)
         {
+
             _db = db;
             _usermanager = usermanager;
         }
         [Authorize]
         public ActionResult Index()
         {
-            //list with customers who have no user
-            IEnumerable<customer> customer = _db.Customer.Where(s => !_db.UserCustomer.Select(s => s.customerId).Contains(s.Id));
+            var user = _usermanager.GetUserId(HttpContext.User);
 
+            string query = @"select c.Id,c.firstname,c.lastname,c.phonenumber,c.company,c.adress,c.city,c.actionid,uc.userId,customerId from [Identity].[Customer] as c 
+            left outer join  [Identity].[UserCustomer] as uc  on c.id = uc.customerId 
+            left outer join  [Identity].[User] as u  on u.id = uc.userId where 
+            not exists (select userId,customerId 
+            from [Identity].[UserCustomer] uc 
+            where uc.userId = {0} 
+            and uc.customerId = c.id)";
+
+            var customer = _db.Customer.FromSqlRaw(query,user).ToList();
 
             return View(customer);
+
+
         }
         
         public ActionResult claimCustomer(int id)
         {
-
             if (id == null)
             {
                 return NotFound();
@@ -85,6 +95,7 @@ namespace data_receiver.Controllers
         // GET: CustomerController/Edit/5
         public ActionResult Edit(int id)
         {
+
             if (id == null)
             {
                 return NotFound();

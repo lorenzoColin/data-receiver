@@ -1,0 +1,1 @@
+﻿select * from [Identity][customer] inner join [Identity].[UserCustomer] on [Identity].[Customer].[Id]  = [Identity].[UserCustomer].[customerId] where [Identity].[UserCustomer].[UserId] = '0a65d716-7a15-4aa1-82f9-fce4418fbf1b'

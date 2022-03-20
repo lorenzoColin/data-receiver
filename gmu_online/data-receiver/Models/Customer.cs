@@ -19,7 +19,7 @@ namespace data_receiver.Models
         [Required]
         public string city { get; set; }
         public virtual ICollection<UserCustomer>? UserCustomer { get; set; }
-        public Action? action { get; set; } 
-     
+        public Action? action { get; set; }
+
     }
 }

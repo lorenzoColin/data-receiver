@@ -1,0 +1,12 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Role
+
+
+<form method ="post" asp-action="create">
+                 <div asp-validation-summary="All" class="text-danger"></div>
+    <input type="text" asp-for="RoleName" />
+    <input type="submit" name="submit" />
+</form>
