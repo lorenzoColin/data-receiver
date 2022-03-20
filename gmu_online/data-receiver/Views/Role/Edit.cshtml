@@ -1,6 +1,7 @@
 ﻿@using data_receiver.Models.ViewModels
 @model EditRoleViewModel
 
+
 <h4>customer</h4>
 <hr />
 <div class="row">
@@ -23,7 +24,6 @@
     </div>
 </div>
 
-
     @if (@Model.users.Any())
     {
         <h4>users that are added to this roll</h4>
@@ -42,9 +42,6 @@
     <br>
 <a asp-controller="role" asp-action="editUserInRole" asp-route-id = "@Model.RoleId" class="btn btn-outline-primary" >add some users</a>
 <a asp-action="Index" class="btn btn-outline-primary">Back to List</a>
-
-
-   
 
 
 @section Scripts {
