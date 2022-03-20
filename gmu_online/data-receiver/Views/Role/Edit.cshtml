@@ -23,14 +23,13 @@
         </form>
     </div>
 </div>
-
     @if (@Model.users.Any())
     {
         <h4>users that are added to this roll</h4>
         foreach(var test in @Model.users)
         {
             <ul class="list-group bg-black" >
-                <li class="list-group-item">@test</li>
+                <li class="list-group-item">@test.Value <a asp-action="RemoveUser" asp-route-id="@test.Key" asp-route-RoleName="@Model.RoleName" class="btn btn-primary">remove</a></li>
             </ul>
         }       
     }

@@ -78,11 +78,9 @@ namespace data_receiver.Controllers
                 //check
                 if( await _userManager.IsInRoleAsync(user,model.RoleName))
                 {
-                    model.users.Add(user.UserName.ToString());
+                    model.users.Add(user.Id,user.UserName.ToString());
                 }
             }
-
-
             return View(model);
         }
 
@@ -91,10 +89,7 @@ namespace data_receiver.Controllers
         [ValidateAntiForgeryToken]
         public async Task< ActionResult> Edit( EditRoleViewModel EditRoleViewModel)
         {
-            if (ModelState.IsValid)
-            {
-
-            }
+           
             if (ModelState.IsValid)
             {
                 try
@@ -116,18 +111,33 @@ namespace data_receiver.Controllers
             }
             return View();
         }
-
-        // GET: RoleController/Delete/5
-        public async Task<ActionResult>Delete(string id)
+        
+        public async Task<ActionResult> RemoveUser(string id,string RoleName)
         {
-            var role = await _userroles.FindByIdAsync(id);
-            
-            if(role == null)
+            if(id == null)
             {
-                return NotFound();   
+                return NotFound("not found");
             }
-            return View(role);
+            if(RoleName == null)
+            {
+                return NotFound("rolename not found");
+            }
+            var user = await _userManager.FindByIdAsync(id);
+
+            //remove the specfic user from this role    
+          var remove =  await _userManager.RemoveFromRoleAsync(user, RoleName);
+            
+            if (!remove.Succeeded)
+            {
+                foreach(var error in remove.Errors)
+                {
+                    ModelState.AddModelError("error",error.Description);
+                }
+            }
+
+            return RedirectToAction("Index");
         }
+        
         [HttpGet]
         public async Task<ActionResult> editUserInRole(string id)
         {
@@ -151,8 +161,6 @@ namespace data_receiver.Controllers
                     UserName = user.UserName,
                 };
 
-
-
                 //als de user waar we over heen loopen in de roll
                 //zit voegen we deze toe aan de list hier boven
                 //en zet de zet de propperty van inrole naar true
@@ -168,8 +176,6 @@ namespace data_receiver.Controllers
                     model.Add(userRoleViewModel);
                     userRoleViewModel.InRole = false;
                 }
-
-
             }
             //dan sturen we deze lijst naar view
             return View(model);
@@ -183,13 +189,22 @@ namespace data_receiver.Controllers
             var role = await _userroles.FindByIdAsync(userRole.RoleId);
 
             await _userManager.AddToRoleAsync(user, role.Name) ;
-            return View(userRole);
-            
+            return RedirectToAction("editUserInRole");
 
         }
-     
-        
-      
+
+
+        // GET: RoleController/Delete/5
+        public async Task<ActionResult> Delete(string id)
+        {
+            var role = await _userroles.FindByIdAsync(id);
+
+            if (role == null)
+            {
+                return NotFound();
+            }
+            return View(role);
+        }
         // POST: RoleController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]

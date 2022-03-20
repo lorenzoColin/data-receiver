@@ -4,13 +4,13 @@
     {
         public EditRoleViewModel()
         {
-            users = new List<string>();
+            users = new Dictionary<string,string>();
         }
         public string RoleId { get; set; }
         public string RoleName { get; set; }
 
         //get a user list that belongs to this role
-        public List<string> users { get; set; }
+        public Dictionary<string,string> users { get; set; }
     }
 
 }
