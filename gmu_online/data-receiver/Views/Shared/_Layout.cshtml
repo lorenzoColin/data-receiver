@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@*@using Microsoft.AspNetCore.Identity
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 <!DOCTYPE html>
@@ -61,3 +61,100 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+*@
+
+
+
+
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+<head>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/data_receiver.styles.css" asp-append />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.css" asp-append />
+</head>
+
+<style>
+    
+  aside ul li a{
+       font-size:26px;
+   }
+   
+  aside ul li{
+       margin-bottom: 39px;
+   }
+   .button-logout{
+       font-size:26px;
+   }
+
+
+</style>
+
+<body style="margin: 0;">
+    <div class="container-fluid">
+        <div class="row flex min-vh-100">
+            <aside class="col-md-3 flex-column" style="background-color: #171D32;">
+                
+                @if (!SignInManager.IsSignedIn(User))
+                {
+                    <h1 class=" text-white text-center mb-5 text-break ">gmu online</h1>     
+                }
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    if (User.IsInRole("teamlead") )
+                    {
+                        <h1>test</h1>
+                    }
+                    <h1 class=" text-white text-center mb-5">gmu</h1>
+                    <br>
+                    <br>
+                    <ul class="navbar-nav mr-auto ">
+                    <li class="nav-item text-center">
+                        <a class="nav-link" sp-area="" asp-controller="Home" asp-action="Index">
+                            <i class="fa fa-house text-white"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item text-center">
+                        <a class="nav-link" sp-area="" asp-controller="usercustomer" asp-action="index">
+                            <i class="fa-solid fa-user-group text-white"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item text-center">
+                        <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                            <i class="fa-solid fa-id-card text-white"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item text-center">
+                        <a class="nav-link" asp-area="" asp-controller="customer" asp-action="index">
+                         <i class="fa-solid fa-briefcase text-white"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <form  class="form-inline text-center" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                            <button  type="submit" class="nav-link btn btn-link text-dark mx-auto button-logout">
+                                <i class="fa fa-sign-out text-white" aria-hidden="true"></i>
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+                }
+            </aside>
+            <main class="col-md-9 " style="background: #1A2037;">
+                <div class="container p-4">
+                    <main role="main" class="pb-3">
+                        @RenderBody()
+                    </main>
+                </div>
+            </main>
+
+        </div>
+    </div>
+</body>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+    
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
