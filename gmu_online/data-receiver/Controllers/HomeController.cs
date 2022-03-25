@@ -30,14 +30,15 @@ namespace data_receiver.Controllers
         //[Authorize(Roles ="admin")]
         public async Task<IActionResult> Privacy([FromServices] IFluentEmail singleEmail)
         {
-
             //StringBuilder template = new StringBuilder();
 
             //template.AppendLine("Dear @model.firstname");
             //template.AppendLine("<p>thanks for blablabla @model.productname. we hope you enjoy</p>");
             //var model = new { firstname = "LUKE", productname = "product 1"};
 
-            
+
+
+
             try
             {
                 var email = singleEmail

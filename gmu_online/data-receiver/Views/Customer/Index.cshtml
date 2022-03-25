@@ -29,8 +29,8 @@
     background-color:#2F3447;
     color:gray;
 }*/
+</style>
 
-    </style>
 <div class="card bg-card" style="min-height: 391px;">
     <div class="row d-flex no-margin">
         <div class="col-md-8">
@@ -49,22 +49,20 @@
     <div class ="row d-flex no-margin" >
        @foreach(var customers in @Model)
         {
-        <div class="col-md-4 p-2 ">
-            <div class="d-flex">
-                <div class="icon-div"  style="margin-top: auto;">
-                <i class="fa-solid fa-circle-user user-circle  "></i>
+                <div class="col-md-4 p-2 ">
+                    <div class="d-flex">
+                        <div class="icon-div"  style="margin-top: auto;">
+                        <i class="fa-solid fa-circle-user user-circle  "></i>
+                        </div>
+                        <div class="flex-sm-column d-flex user-info">
+                            <span class="text-white" >@customers.firstname</span>
+                            <span><a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.Id">claim</a></span>
+                            <span><a asp-controller= "customer" asp-action="edit" asp-route-id = "@customers.Id">edit</a></span>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex-sm-column d-flex user-info">
-                    <span class="text-white" >@customers.firstname</span>
-                    <span><a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.Id">claim</a></span>
-                </div>
-            </div>
-        </div>
         }
-        
     </div>
-
-
 </div>
 
 @*<h1>list with customers</h1>

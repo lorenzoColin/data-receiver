@@ -4,8 +4,11 @@ namespace data_receiver.Models
 {
     public class customer
     {
+       
         [Key]
         public int Id { get; set; }
+        [Required]
+        public string email { get; set; }
         [Required]
         public string firstname { get; set; }
         [Required]
@@ -18,6 +21,7 @@ namespace data_receiver.Models
         public string adress { get; set; }
         [Required]
         public string city { get; set; }
+        public string birthdate { get; set; }
         public virtual ICollection<UserCustomer>? UserCustomer { get; set; }
         public Action? action { get; set; }
 
