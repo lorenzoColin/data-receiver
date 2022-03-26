@@ -26,7 +26,7 @@ namespace data_receiver.Controllers
         {
             var user = _usermanager.GetUserId(HttpContext.User);
 
-            string query = @"select c.Id,c.firstname,c.lastname,c.phonenumber,c.company,c.adress,c.city,c.actionid,c.birthdate ,uc.userId,customerId from [Identity].[Customer] as c 
+            string query = @"select c.Id,c.firstname,c.lastname,c.phonenumber,c.company,c.adress,c.email, c.city,c.actionid,c.birthdate ,uc.userId,customerId from [Identity].[Customer] as c 
             left outer join  [Identity].[UserCustomer] as uc  on c.id = uc.customerId 
             left outer join  [Identity].[User] as u  on u.id = uc.userId where 
             not exists (select userId,customerId 
