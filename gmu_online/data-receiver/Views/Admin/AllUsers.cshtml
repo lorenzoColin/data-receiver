@@ -1,39 +1,43 @@
 ﻿@model IEnumerable<ApplicationUser>
 
+<style>
+    table tr{
+        color:white!important;
+    }
+    .no_decoration{
+        text-decoration:none;
+    }
+    .custum-width{
+            width: 13.666667%!important;
+    }
+</style>
 
-<h1>list with customers</h1>
-@*create a new customer*@
-<a asp-controller ="admin" asp-action="Create">create new customer</a>
+<h1 class="text-white">employees</h1>
+<a asp-controller ="admin" asp-action="Create"  class="no_decoration" >create new user</a>
 
-    <table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">firstname</th>
-      <th scope="col">lastname</th>
-      <th scope="col">username</th>
-      <th scope="col">phonenumber</th>
-      <th scope="col">edit</th>
-      <th scope="col">delete user</th>
-    
 
-    </tr>
-  </thead>
-  <tbody>
+  <div class="row">
+
       @foreach(var Users in @Model)
 {
-    <tr>
-      <th scope="row">@Users.Id</th>
-      <td>@Users.FirstName</td>
-      <td>@Users.LastName</td>
-      <td>@Users.UserName</td>
-      <td>@Users.PhoneNumber</td>
-      <td><a asp-controller= "admin" asp-action="edit" asp-route-id = "@Users.Id">edit</a></td>
-      <td><a asp-controller= "admin" asp-action="delete" asp-route-id = "@Users.Id">delete</a></td>
   
-    </tr>
-
+  <div class="col-sm-2 custum-width ">
+    <div class="card">
+        <i class="fa-solid fa-user-group text-center mt-3 h2 "></i>
+      <div class="card-body text-center">
+        
+        <h6 class="card-title">@Users.FirstName</h6>
+        <span class="text-muted"> </span>
+      
+        
+      </div>
+    </div>
+  </div>
+       
 }
-  </tbody>
-</table>
+</div>
 
+  
+
+ @*<td><a class="no_decoration" asp-controller= "admin" asp-action="edit" asp-route-id = "@Users.Id">edit</a></td>
+      <td><a class="no_decoration"  asp-controller= "admin" asp-action="delete" asp-route-id = "@Users.Id">delete</a></td>*@

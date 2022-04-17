@@ -1,37 +1,63 @@
 ﻿using data_receiver.Data;
 using data_receiver.Models;
 using data_receiver.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using data_receiver.Models;
+using Action = data_receiver.Models.action;
 
 namespace data_receiver.Controllers
 {
     public class AdminController : Controller
     {
+
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _usermanager;
         public AdminController(ApplicationDbContext db, UserManager<ApplicationUser> usermanager)
         {
-    
             _usermanager = usermanager;
             _db = db;
         }
-        // GET: AdminController
-        public ActionResult AllUsers()
+        public async void test(ApplicationUser user)
         {
-
-            IEnumerable<ApplicationUser> users = _db.Users;
+             var role = await _usermanager.GetRolesAsync(user);
+        }
+        // GET: AdminController
+        public async Task<ActionResult> AllUsers()
+        {
+            var id = _db.Users.Find("e34a3af1-4105-4cb3-b84c-5d7f4dd5527a");
+            var users = _db.Users.ToList();
             return View(users);
         }
 
+        [HttpGet]
+        public ActionResult CreateAction()
+        {
 
+            return View();
+        }
+
+        //dit is voor mij als developer dit gaat er uit binnekort
+        [HttpPost]
+        public ActionResult CreateAction(string ActionName)
+        {
+
+         var actionresult =    _db.action.Where(s => s.name == ActionName).ToList();
+
+         var action = new Action() { name = ActionName };
+
+         _db.action.Add(action);
+         _db.SaveChanges();
+         return View();
+        }
         // GET: AdminController/Create
         public ActionResult Create()
         {
             return View();
         }
-
         // POST: AdminController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -41,7 +67,6 @@ namespace data_receiver.Controllers
 
             var result = await _usermanager.CreateAsync(user, CreateUserViewModel.Password);
 
-
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -49,35 +74,41 @@ namespace data_receiver.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-
             return View();
         }
-
         // GET: AdminController/Edit/5
-        public ActionResult Edit(string id)
+        public async Task<ActionResult> Edit(string id)
         {
             if (id == null)
             {
                 return RedirectToAction("allUsers");
             }
-            var user = _db.Users.Find(id);
+            var user = await _usermanager.FindByIdAsync(id);
             return View(user);
         }
-
         // POST: AdminController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task< ActionResult> Edit(ApplicationUser Users)
         {
             try
             {
-                
-                return RedirectToAction(nameof(Index));
-            }
-            catch
+              var bla =  _db.Users.Find(Users.Id);
+
+                bla.FirstName = Users.FirstName;
+                bla.LastName = Users.LastName;
+                bla.PhoneNumber = Users.PhoneNumber;
+                bla.Email = Users.Email;
+                bla.UserName = Users.UserName;
+               
+                _db.SaveChanges();
+
+                return RedirectToAction("AllUsers");
+            }catch (Exception ex)
             {
-                return View();
+                return NotFound(ex.Message);
             }
+
         }
         // GET: AdminController/Delete/5
         [HttpGet]
@@ -91,7 +122,6 @@ namespace data_receiver.Controllers
 
             return View(user);
         }
-
         // POST: AdminController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -99,14 +129,30 @@ namespace data_receiver.Controllers
         {
             var user = _db.Users.Find(id);
 
-            if (id == null)
+            if (user == null)
             {
                 return View();
             }
-
             _db.Users.Remove(user);
             _db.SaveChanges();
             return RedirectToAction("allUsers");
+        }
+        [HttpGet]
+       public ActionResult CreateContact()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateContact(Contact contact)
+        {
+            if (ModelState.IsValid)
+            { 
+                _db.Contact.Add(contact);
+                _db.SaveChanges();
+                return Ok();
+            }
+            return NotFound();
         }
     }
 }

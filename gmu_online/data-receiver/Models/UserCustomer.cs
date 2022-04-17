@@ -2,9 +2,9 @@
 {
     public class UserCustomer
     {
-        public int customerId { get; set; }
-        public customer customer { get; set; }
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
+        public int customerId { get; set; }
+        public Customer customer { get; set; }
     }
 }

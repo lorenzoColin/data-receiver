@@ -1,5 +1,17 @@
-﻿@model IEnumerable<data_receiver.Models.UserCustomer>
+﻿@model IEnumerable<UserCustomer>
 
+<style>
+    table thead{
+        color:white;
+    }
+     table tbody{
+        color:white;
+    }
+    
+    p{
+        color:white!important;
+    }
+</style>
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -12,22 +24,31 @@
             <th>
                 @Html.DisplayNameFor(model => model.User)
             </th>
-            <th></th>
+            <th>
+                contacts
+            </th>
+            <th>
+                remove from company 
+            </th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.customer.firstname)
+                @Html.DisplayFor(modelItem => item.customer.company)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.User.Email)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+               <a asp-controller="UserCustomer" asp-action="mycontact" asp-route-id=@item.customerId  >my contact</a>
+            </td>
+             <td>
+                 <form asp-action="removecustomer">
+                     <input hidden type="text" name="customerId" value="@item.customerId" >
+                     <button class=" btn-danger" type="submit">remove</button>
+                 </form>
             </td>
         </tr>
 }

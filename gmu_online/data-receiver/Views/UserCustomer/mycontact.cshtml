@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Contact>
+ 
+<style>
+          
+p{
+    color:white!important;
+}
+h1{
+    color:white!important;
+}
+</style>
+
+<h1>claim this contact</h1>
+@foreach(var contact in @Model)
+{
+    <form asp-action="claimContact" >
+      <p>@contact.email</p>  
+        <input hidden name="contactId" value="@contact.Id" >
+        <input hidden name="customerId" value="@ViewBag.customerId" >
+        <input type="submit" value="claime" >
+    </form>
+    <br>
+}
+<h1>claimed contacts</h1>
+@foreach(var mycontact in @ViewBag.customercontact)
+{
+    <p>@mycontact.contact.email</p>
+}

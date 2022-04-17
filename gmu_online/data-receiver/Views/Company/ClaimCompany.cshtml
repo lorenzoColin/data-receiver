@@ -1,0 +1,23 @@
+﻿
+@model Customer
+
+<h4 class="text-white">UserCustomer</h4>
+<hr />
+<form method="post" class="text-white">
+                <h2>claim this company @Model.company</h2>
+                <hr />
+                <div class="form-floating">
+                    <input name = "id" value = "@Model.Id" hidden  class="form-control" autocomplete="username" aria-required="true" />
+                    <label asp-for="Id" class="form-label"></label>
+                </div>
+                <div>
+                    <button id="login-submit" type="submit" class=" btn btn-sm btn-primary">create</button>
+                </div>
+            </form>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
