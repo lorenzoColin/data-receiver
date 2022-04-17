@@ -4,7 +4,7 @@
 
 namespace data_receiver.Migrations
 {
-    public partial class updatetypebirthdateforcustomer : Migration
+    public partial class customercollectiononactionmodel : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

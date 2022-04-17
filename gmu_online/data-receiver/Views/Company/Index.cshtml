@@ -1,9 +1,6 @@
-﻿@using data_receiver.Models.ViewModels
-@model  List<CustomerActionViewModel> ;
+﻿@model IEnumerable<Customer>
 
-    
-
-    <style>
+<style>
         .border-search{
             border-left:1px solid white;
         }
@@ -39,14 +36,14 @@
 
 <div class="container">
     <div class="flex">
-        <a asp-controller="customer" asp-action="create"  >create customer</a>
+        <a asp-controller="company" asp-action="create"  >create company</a>
     </div>
 </div>
 
 <div class="card bg-card" style="min-height: 391px;">
     <div class="row d-flex no-margin">
         <div class="col-md-8">
-            <h3 class="text-white ">all customers</h3>
+            <h3 class="text-white ">all company</h3>
         </div>
         <div class="col-md-4 d-flex justify-content-end">
               <div class="input-group-prepend " style="margin:auto" >
@@ -57,9 +54,8 @@
               <input type="text" class="form-control form-control-sm placeholder-search" placeholder="zoek naar gebruikers" style="line-height: 1.88; background: #1F2843!important;border: 0">
         </div>
     </div>
- 
     <div class ="row d-flex no-margin" >
-       @foreach(var customers in @Model)
+       @foreach(var company in @Model)
         {
                 <div class="col-md-4 p-2 ">
                     <div class="d-flex">
@@ -67,20 +63,12 @@
                         <i class="fa-solid fa-circle-user user-circle  "></i>
                         </div>
                         <div class="flex-sm-column d-flex user-info">
-                            <span class="text-white" >@customers.customer.company </span>
-                            <span><a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.customer.Id">claim</a></span>
-                            <span><a asp-controller= "customer" asp-action="edit" asp-route-id = "@customers.customer.Id">edit</a></span>
-                            <span><a asp-controller= "customer" asp-action="delete" asp-route-id = "@customers.customer.Id">delete</a></span>
-                            <label>@customers.actionName</label>
-
+                            <span class="text-white" >@company.company</span>
+                            <span><a asp-controller= "company" asp-action="claimCompany" asp-route-id = "@company.Id">claim a company</a></span>
+                            <span><a asp-controller= "company" asp-action="edit" asp-route-id = "@company.Id">edit</a></span>
                         </div>
                     </div>
                 </div>
         }
     </div>
 </div>
-
-
-
-
-

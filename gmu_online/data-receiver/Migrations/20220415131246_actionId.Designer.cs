@@ -12,8 +12,8 @@ using data_receiver.Data;
 namespace data_receiver.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220325105846_email propperty for customer model")]
-    partial class emailproppertyforcustomermodel
+    [Migration("20220415131246_actionId")]
+    partial class actionId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -25,21 +25,21 @@ namespace data_receiver.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("data_receiver.Models.Action", b =>
+            modelBuilder.Entity("data_receiver.Models.action", b =>
                 {
-                    b.Property<string>("id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
                     b.Property<string>("name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("type")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
 
-                    b.ToTable("Action", "Identity");
+                    b.ToTable("action", "Identity");
                 });
 
             modelBuilder.Entity("data_receiver.Models.ApplicationUser", b =>
@@ -115,16 +115,13 @@ namespace data_receiver.Migrations
                     b.ToTable("User", "Identity");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.customer", b =>
+            modelBuilder.Entity("data_receiver.Models.Contact", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("actionid")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("adress")
                         .IsRequired()
@@ -135,10 +132,6 @@ namespace data_receiver.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("city")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("company")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -160,9 +153,59 @@ namespace data_receiver.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("actionid");
+                    b.ToTable("Contact", "Identity");
+                });
+
+            modelBuilder.Entity("data_receiver.Models.Customer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("Actionid")
+                        .HasColumnType("int");
+
+                    b.Property<string>("admin")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("adress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("city")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("company")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("phonenumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Actionid");
 
                     b.ToTable("Customer", "Identity");
+                });
+
+            modelBuilder.Entity("data_receiver.Models.CustomerContact", b =>
+                {
+                    b.Property<int>("contactId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("customerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("contactId", "customerId");
+
+                    b.HasIndex("customerId");
+
+                    b.ToTable("CustomerContact", "Identity");
                 });
 
             modelBuilder.Entity("data_receiver.Models.UserCustomer", b =>
@@ -313,13 +356,32 @@ namespace data_receiver.Migrations
                     b.ToTable("UserTokens", "Identity");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.customer", b =>
+            modelBuilder.Entity("data_receiver.Models.Customer", b =>
                 {
-                    b.HasOne("data_receiver.Models.Action", "action")
+                    b.HasOne("data_receiver.Models.action", "Action")
                         .WithMany()
-                        .HasForeignKey("actionid");
+                        .HasForeignKey("Actionid");
 
-                    b.Navigation("action");
+                    b.Navigation("Action");
+                });
+
+            modelBuilder.Entity("data_receiver.Models.CustomerContact", b =>
+                {
+                    b.HasOne("data_receiver.Models.Contact", "contact")
+                        .WithMany("CustomerContact")
+                        .HasForeignKey("contactId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("data_receiver.Models.Customer", "customer")
+                        .WithMany("CustomerContact")
+                        .HasForeignKey("customerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("contact");
+
+                    b.Navigation("customer");
                 });
 
             modelBuilder.Entity("data_receiver.Models.UserCustomer", b =>
@@ -330,7 +392,7 @@ namespace data_receiver.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("data_receiver.Models.customer", "customer")
+                    b.HasOne("data_receiver.Models.Customer", "customer")
                         .WithMany("UserCustomer")
                         .HasForeignKey("customerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -397,8 +459,15 @@ namespace data_receiver.Migrations
                     b.Navigation("UserCustomer");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.customer", b =>
+            modelBuilder.Entity("data_receiver.Models.Contact", b =>
                 {
+                    b.Navigation("CustomerContact");
+                });
+
+            modelBuilder.Entity("data_receiver.Models.Customer", b =>
+                {
+                    b.Navigation("CustomerContact");
+
                     b.Navigation("UserCustomer");
                 });
 #pragma warning restore 612, 618

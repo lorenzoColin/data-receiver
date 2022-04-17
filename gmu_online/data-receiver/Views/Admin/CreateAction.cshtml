@@ -1,0 +1,16 @@
+﻿@model data_receiver.Models.action
+
+
+@{
+    var trigger = new List<SelectListItem>
+    {
+        new SelectListItem{Value="email",Text="email"},
+        new SelectListItem{Value="sms",Text="sms"}
+    };
+}
+
+<form asp-action="createAction">
+       <select name="ActionName" asp-items="@trigger">
+       </select> 
+<input  type="submit"  />
+</form>

@@ -1,10 +1,10 @@
 ﻿namespace data_receiver.Models
 {
-    public class UserCustomer
-    {
-        public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
+    public class CustomerContact
+    {  
         public int customerId { get; set; }
         public Customer customer { get; set; }
+        public int contactId { get; set; }
+        public Contact contact { get; set; }
     }
 }

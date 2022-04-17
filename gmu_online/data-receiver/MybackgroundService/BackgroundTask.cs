@@ -32,43 +32,44 @@ namespace data_receiver.MybackgroundService
                 while(!stoppingToken.IsCancellationRequested)
                 {
 
-                //service created om customers op te halen
+                ////service created om customers op te halen
+                ////customer scope
                 using var scope = _service.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var customers = context.Customer;
+                var contacts = context.Contact;
 
-                //mail scope
+                ////mail scope
                 using var test = _service.CreateScope();
                 var mail = test.ServiceProvider.GetRequiredService<IFluentEmail>();
 
+                ////date time
+                var src = DateTime.Now.ToString("dd-MM-yyyy");
 
-                //date time
-                var src = DateTime.Now;
-                var time = src.ToLongTimeString();
-                var NowTime = src.ToShortTimeString();
-                var nowDate = src.ToShortDateString();
-
-                //loop over elke customer
-                foreach(var customer in customers)
+                ////loop over elke contact heen
+                foreach (var contact in contacts)
                 {
-                    //check of birtday gelijk is aan datum van nu
-                    if(customer.birthdate == nowDate)
+                    var rawDate = DateTime.Parse(contact.birthdate);
+                    var correctDate = rawDate.ToString("dd-MM-yyyy");
+
+                    if (src == correctDate)
                     {
-                        //zo ja stuur een mail
-                        var email = mail
-                        .To("lorenzo8399@hotmail.com")
-                        .Subject("Test email")
-                        .UsingTemplate("hi @Model.Name this is the first email @(5 + 5)!", new { Name = "test name" });
-                        mail.Send();
-                        // log informatie om te testen of ie wel hierin komt
-                        _logger.LogInformation("customer {0} its your birthday {1}", customer.firstname,customer.birthdate);
+                    //    var email = mail
+                    //    .To("lorenzo8399@hotmail.com")
+                    //    .Subject("birthday")
+                    //    .UsingTemplate("hi @Model.Name this is your birthday", new { Name = contact.firstname });
+                    //    mail.Send();
+                    //    // log informatie om te testen of ie wel hierin komt
+                    //    _logger.LogInformation("customer {0} its your birthday {1}", contact.firstname, contact.birthdate);
 
+                        Console.WriteLine("{0} je bent jarig ", contact.email);
                     }
+                    else
+                    {
+                        Console.WriteLine("jij bent niet jarig pik {0} datum: {1}  ",contact.email,contact.birthdate);
+                    }
+                
                 }
-
-                    //hij loopt op dit mommemt om de 5 seconden dit moet veranderd worden naar
-                    // dat ie om de dag checkt
-                   await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
                 }
         }
 

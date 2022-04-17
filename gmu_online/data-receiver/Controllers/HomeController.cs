@@ -54,11 +54,7 @@ namespace data_receiver.Controllers
 
                 return BadRequest(ex.Message);
             }
-        
 
-
-
-            return View();
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

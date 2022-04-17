@@ -1,5 +1,6 @@
 ﻿using data_receiver.Data;
 using data_receiver.Models;
+using data_receiver.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -27,49 +28,50 @@ namespace data_receiver.Controllers
             return View(mycustomers);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult claimContact(CustomerContactViewModel customercontact)
+        {
+
+
+            var cutomercont = new CustomerContact { contactId = customercontact.contactId, customerId = customercontact.customerId};
+            _db.CustomerContact.Add(cutomercont);
+            _db.SaveChanges();
+
+            return RedirectToAction("mycontact");
+        }
+
+        public ActionResult mycontact(Customer customer)
+        {
+
+            ViewBag.customerId = customer.Id;
+
+            //alle contacten die nog niet in die customer zitten
+            int customerId = customer.Id;
+            string query = @" select c.Id,c.email,c.firstname,c.lastname,c.phonenumber,c.adress, c.city, c.birthdate,uc.customerId,uc.contactId from [Identity].[Contact] as c 
+                left outer join  [Identity].[CustomerContact] as uc  on c.id = uc.contactId 
+                left outer join  [Identity].[customer] as u  on u.id = uc.customerId 
+                where not exists (SELECT  contactId,customerId 
+                from [Identity].[CustomerContact] uc 
+                where  uc.customerId = {0}
+                and uc.contactId = c.id)";
+           IEnumerable<Contact> contact = _db.Contact.FromSqlRaw(query, customerId ).Distinct();
+
+           IEnumerable<CustomerContact> customercontact = _db.CustomerContact.Include(s => s.contact).Include( s => s.customer).Where( s => s.customerId == customerId);
+
+            ViewBag.customercontact = customercontact;
+            return View(contact);
+        }
+
+
         // GET: UserCustomerController/Details/5
         public ActionResult Details(int id)
         {
-            
             return View();
         }
-        // GET: UserCustomerController/Create
 
-        public ActionResult Create()
-        {
-            //hier maak ik een instantie van die viewmodel
-            var vm = new UserCustomerViewModel();
+        
 
-            vm.customers = _db.Customer
-                .Where(s => !_db.UserCustomer.Select(s => s.customerId).Contains(s.Id))
-                .Select(s => new SelectListItem { Value = s.Id.ToString(), Text = s.firstname })
-                .ToList();
-
-            vm.users = _db.Users.Select(s => new SelectListItem {Value = s.Id , Text = s.FirstName }).ToList();
-
-            return View(vm);
-        }
-
-        // POST: UserCustomerController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(UserCustomerViewModel UserCustomerViewModel)
-        {
-
-            if (ModelState.IsValid)
-            {
-                var customer = new UserCustomer { customerId = UserCustomerViewModel.customerId, UserId = UserCustomerViewModel.userId };
-                
-
-                _db.UserCustomer.Add(customer);
-                _db.SaveChanges(); 
-                return Ok();
-            }
-            return BadRequest();
-            
-        }
-
-        // GET: UserCustomerController/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
@@ -90,24 +92,29 @@ namespace data_receiver.Controllers
             }
         }
 
-        // GET: UserCustomerController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
 
         // POST: UserCustomerController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult removecustomer(int customerId)
         {
+            
             try
             {
-                return RedirectToAction(nameof(Index));
+                var loggedInId = _usermanager.GetUserId(HttpContext.User);
+
+
+                var usercustomer = new UserCustomer { UserId = loggedInId, customerId = customerId };
+
+                _db.UserCustomer.Remove(usercustomer);
+                _db.SaveChanges();
+
+
+                return RedirectToAction("index");
             }
-            catch
+            catch(Exception ex)
             {
-                return View();
+                return NotFound(ex.Message);
             }
         }
     }

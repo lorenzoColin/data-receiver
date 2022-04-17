@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using data_receiver.Data;
 
@@ -11,9 +12,10 @@ using data_receiver.Data;
 namespace data_receiver.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220415135352_actionId updatedd")]
+    partial class actionIdupdatedd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -357,7 +359,7 @@ namespace data_receiver.Migrations
             modelBuilder.Entity("data_receiver.Models.Customer", b =>
                 {
                     b.HasOne("data_receiver.Models.action", "action")
-                        .WithMany("Customer")
+                        .WithMany()
                         .HasForeignKey("actionId");
 
                     b.Navigation("action");
@@ -450,11 +452,6 @@ namespace data_receiver.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("data_receiver.Models.action", b =>
-                {
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("data_receiver.Models.ApplicationUser", b =>

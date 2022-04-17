@@ -12,9 +12,12 @@ namespace data_receiver.Data
             : base(options)
         {
         }
-        public DbSet<customer> Customer { get; set; }
+        public DbSet<Customer> Customer { get; set; }
+        public DbSet<action> action { get; set; }
+        public DbSet<Contact> Contact { get; set; }
+        public DbSet<CustomerContact> CustomerContact { get; set; }
         public DbSet<UserCustomer> UserCustomer { get; set; }
-        public DbSet<Models.Action> Action { get; set; }
+
 
 
         //this function gonne rename the names of the tables in my database
@@ -23,6 +26,12 @@ namespace data_receiver.Data
             base.OnModelCreating(builder);
 
 
+     
+
+            //ignore identity tables
+            builder.Ignore<IdentityUser>();
+
+            //usercustomer
             builder.Entity<UserCustomer>()
         .HasKey(bc => new { bc.UserId, bc.customerId });
             builder.Entity<UserCustomer>()
@@ -35,9 +44,23 @@ namespace data_receiver.Data
                 .WithMany(c => c.UserCustomer)
                 .HasForeignKey(bc => bc.customerId);
 
+            //customercontact
+            builder.Entity<CustomerContact>()
+       .HasKey(bc => new { bc.contactId, bc.customerId });
+            builder.Entity<CustomerContact>()
+                .HasOne(bc => bc.customer)
+                .WithMany(b => b.CustomerContact)
+                .HasForeignKey(bc => bc.customerId);
+
+            builder.Entity<CustomerContact>()
+                .HasOne(bc => bc.contact)
+                .WithMany(c => c.CustomerContact)
+                .HasForeignKey(bc => bc.contactId);
+
 
             builder.HasDefaultSchema("Identity");
-            builder.Ignore<IdentityUser>();
+           
+
             builder.Entity<ApplicationUser>(entity =>
             {
                 entity.ToTable(name: "User");
@@ -66,6 +89,9 @@ namespace data_receiver.Data
             {
                 entity.ToTable("UserTokens");
             });
-        }
+
+         
     }
+       
+  }
 }

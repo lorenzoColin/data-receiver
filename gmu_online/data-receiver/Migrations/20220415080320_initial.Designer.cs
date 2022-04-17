@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using data_receiver.Data;
 
@@ -11,9 +12,10 @@ using data_receiver.Data;
 namespace data_receiver.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220415080320_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,9 +164,6 @@ namespace data_receiver.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("actionId")
-                        .HasColumnType("int");
-
                     b.Property<string>("admin")
                         .HasColumnType("nvarchar(max)");
 
@@ -185,8 +184,6 @@ namespace data_receiver.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("actionId");
 
                     b.ToTable("Customer", "Identity");
                 });
@@ -354,15 +351,6 @@ namespace data_receiver.Migrations
                     b.ToTable("UserTokens", "Identity");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.Customer", b =>
-                {
-                    b.HasOne("data_receiver.Models.action", "action")
-                        .WithMany("Customer")
-                        .HasForeignKey("actionId");
-
-                    b.Navigation("action");
-                });
-
             modelBuilder.Entity("data_receiver.Models.CustomerContact", b =>
                 {
                     b.HasOne("data_receiver.Models.Contact", "contact")
@@ -450,11 +438,6 @@ namespace data_receiver.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("data_receiver.Models.action", b =>
-                {
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("data_receiver.Models.ApplicationUser", b =>
