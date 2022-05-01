@@ -10,10 +10,22 @@
     .custum-width{
             width: 13.666667%!important;
     }
+    .linear-text{
+        background: linear-gradient(90deg, #5ED4D4 0%, #DC582C 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+text-fill-color: transparent;
+
+
+    }
 </style>
 
-<h1 class="text-white">employees</h1>
-<a asp-controller ="admin" asp-action="Create"  class="no_decoration" >create new user</a>
+<div class = "d-flex ">
+    <h1 class="linear-text">all employees</h1>
+</div>
+
+<a asp-controller ="admin" asp-action="Create"  class="no_decoration " >create new user</a>
 
 
   <div class="row">
@@ -27,7 +39,7 @@
       <div class="card-body text-center">
         
         <h6 class="card-title">@Users.FirstName</h6>
-        <span class="text-muted"> </span>
+        <a asp-action="Edit" asp-route-id=@Users.Id class="text-muted">edit user </a>
       
         
       </div>

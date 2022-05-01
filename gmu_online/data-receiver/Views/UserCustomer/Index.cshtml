@@ -1,56 +1,91 @@
-﻿@model IEnumerable<UserCustomer>
+﻿@using data_receiver.Models.ViewModels
+@model List<UserCustomerViewModel> 
 
-<style>
-    table thead{
-        color:white;
-    }
-     table tbody{
-        color:white;
-    }
-    
-    p{
-        color:white!important;
-    }
-</style>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.customer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                contacts
-            </th>
-            <th>
-                remove from company 
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.customer.company)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Email)
-            </td>
-            <td>
-               <a asp-controller="UserCustomer" asp-action="mycontact" asp-route-id=@item.customerId  >my contact</a>
-            </td>
-             <td>
-                 <form asp-action="removecustomer">
-                     <input hidden type="text" name="customerId" value="@item.customerId" >
-                     <button class=" btn-danger" type="submit">remove</button>
-                 </form>
-            </td>
-        </tr>
+
+ <style>
+        .border-search{
+            border-left:1px solid white;
+        }
+        .placeholder-search::placeholder{
+            color:white;
+            align-items:center;
+        }
+        .search-icon{
+            color:white;
+            background-color:black;
+        }
+        .user-circle{
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 40px;
 }
-    </tbody>
-</table>
+.no-margin{
+    margin:0px!important;
+}
+.user-info{
+    margin-left:8px;
+}
+
+.bg-card{
+    background: #1A1A1A!important;
+
+}   
+.user-circle{
+    background-color:#2F3447;
+    color:gray;
+}
+.btn-background{
+    background: linear-gradient(90deg, #DE334F 0%, #DC582C 100%);
+}
+
+.card-color{
+    background: #1A1A1A;
+    border: 1px solid white;
+
+}
+</style>
+
+@*@foreach(var test in @Model)
+{
+    <div style="border:1px solid black;" >
+        <a asp-controller="usercustomer" asp-action="mycontact" asp-route-id=@test.customer.Id  >my contact</a>
+        <p>@test.customer.company</p>
+        <p>@test.actionName</p>
+       
+    </div>
+}*@
+
+
+<div class="card bg-card text-white" style="min-height: 391px;">
+    <div class="p-3">
+          <div class="row d-flex mb-4">
+            <div class="col-md-8">
+                    <h3 class="text-white ">my customers</h3>
+            </div>
+            <div class="col-md-4 d-flex justify-content-end">
+                 <a asp-controller="customer" asp-action="create" class="btn btn-primary btn-background"  >go to all customers</a>
+            </div>
+        </div>
+        <div class ="row d-flex no-margin  align-items-center " >
+           @foreach(var customers in @Model)
+            {
+                    <div class="col-md-2 p-3 ">
+                        <div class="card card-color"   >
+                            <i class="fa-solid fa-user-group text-center mt-3 h2 "></i>
+                            <div class="card-body text-center">
+                            <h6 class="card-title">@customers.Customer.Klant</h6>
+                               <div class="flex-column d-flex">
+                                @*<a asp-action="mycontact" asp-route-id=@customers.DebiteurnrId  class="text-muted ">my contact</a>*@
+                                <a asp-controller="usercustomer" asp-action="EditAction" asp-route-id=@customers.DebiteurnrId    class="text-muted ">edit</a>
+                                <form asp-action="removecustomer">
+                                    <input hidden type="text" name="customerId" value="@customers.DebiteurnrId" >
+                                    <button class=" btn-danger" type="submit">remove</button>
+                                </form>
+                                </div>
+                            </div>
+                        </div>      
+                    </div>
+            }
+        </div>
+    </div>
+</div>

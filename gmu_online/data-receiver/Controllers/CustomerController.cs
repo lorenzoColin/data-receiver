@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using data_receiver.Models.ViewModels;
+using Nest;
+using data_receiver.ElasticConnection;
 
 namespace data_receiver.Controllers
 {
@@ -12,51 +14,66 @@ namespace data_receiver.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ElasticClient _client;
+
 
 
         // GET: CustomerController
-        public CustomerController(ApplicationDbContext dbcontext, UserManager<ApplicationUser> userManager)
+        public CustomerController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
+            _client = new ElasticSearchClient().EsClient();
             _userManager = userManager;
-            _db = dbcontext;
+            _db = db;
         }
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-
-
+            //my user id 
             var user = _userManager.GetUserId(HttpContext.User);
-            string query = @" select c.Id,c.company,c.phonenumber,c.city,c.adress,c.admin, c.actionId, uc.customerId,uc.UserId from [Identity].[Customer] as c 
-                left outer join  [Identity].[UserCustomer] as uc  on c.id = uc.customerId 
-                left outer join  [Identity].[User] as u  on u.id = uc.userId 
-                where not exists (SELECT  userId,customerId 
-                from [Identity].[UserCustomer] uc 
-                where  uc.userId = {0}
-                and uc.customerId = c.id)";
+            //ingelogde user
+            var loggedInUser = await _db.Users.FindAsync(user);
 
-            IEnumerable<Customer> Customer = _db.Customer.FromSqlRaw(query, user).Distinct();
+            //elastic search client
+            var search = await _client.SearchAsync<Customer>();
+            var live_clients = search.Documents;
 
+            //my customers
+            IEnumerable<UserCustomer> userCustomers = _db.UserCustomer;
 
+            //list to add all customers
+            var allcustomers = new Dictionary<string, string>();
 
-            var customerView = new List<CustomerActionViewModel>();
+            //list to add my customers
+            var mycustomers = new Dictionary<string, string>();
 
-            foreach (var sii in Customer)
+            foreach (var mycustomer in userCustomers)
             {
-                var action = _db.action.FirstOrDefault(s => s.id == sii.actionId);
-                if(action == null)
+                if (mycustomer.UserId == user)
                 {
-                    customerView.Add(new CustomerActionViewModel { customer = sii, CustomerId = sii.Id, });
-                    Console.WriteLine("null value");
+                    var searchclient = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(mycustomer.DebiteurnrId))));
+                    var singlecustomer = searchclient.Documents.FirstOrDefault(s => s.Debiteurnr == mycustomer.DebiteurnrId);
+                    mycustomers.Add(singlecustomer.Debiteurnr, singlecustomer.Contact);
                 }
-                if(action!= null)
-                {
-                    customerView.Add(new CustomerActionViewModel { customer = sii, CustomerId = sii.Id,actionName = action.name,actionId = action.id });
-                    var name =  action.name;
-                }
-
+            }
+            foreach (var live_client in live_clients)
+            {
+                allcustomers.Add(live_client.Debiteurnr, live_client.Contact);
             }
 
+            //hier haal de klanten die de ingelogde gebruiker heeft weg van de lijst met alle klanten
+            //nu hou ik klanten over die de ingelogde gebruiker niet beheerd
+            var customers = allcustomers.Except(mycustomers).ToArray();
 
-            return View(customerView);
+            var customertoclaim = new List<Customer>();
+
+            foreach (var customer in customers)
+            {
+                var searchclient = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(customer.Key))));
+                var result = searchclient.Documents.FirstOrDefault();
+
+                customertoclaim.Add(result);
+            }
+            return View(customertoclaim);
+
         }
         // GET: CustomerController/Create
         public ActionResult Create()
@@ -71,7 +88,7 @@ namespace data_receiver.Controllers
         {
             if (ModelState.IsValid)
             {
-                _db.Customer.Add(Customer);
+                //_db.cu.Add(Customer);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -104,10 +121,10 @@ namespace data_receiver.Controllers
             
             
 
-            var customer =  _db.Customer.Find(id);
+            //var customer =  _db.Customer.Find(id);
 
             
-            return View(customer);
+            return View();
         }
 
         // POST: CustomerController/Edit/5
@@ -121,7 +138,7 @@ namespace data_receiver.Controllers
             if (ModelState.IsValid)
             {
                 Customer.actionId = Customer.actionId;
-                _db.Customer.Update(Customer);
+                //_db.Customer.Update(Customer);
                 _db.SaveChanges();
             }
             return RedirectToAction("index");
@@ -130,8 +147,8 @@ namespace data_receiver.Controllers
         // GET: CustomerController/Delete/5
         public ActionResult Delete(int id)
         {
-            var customer = _db.Customer.Find(id);
-            return View(customer);
+            //var customer = _db.Customer.Find(id);
+            return View();
         }
 
         // POST: CustomerController/Delete/5
@@ -139,40 +156,48 @@ namespace data_receiver.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeletePost(int id)
         {
-            var customer = _db.Customer.Find(id);
+            //var customer = _db.Customer.Find(id);
 
-            if (customer == null)
-            {
-                return NotFound();
-            }
+            //if (customer == null)
+            //{
+            //    return NotFound();
+            //}
 
            
-            _db.Customer.Remove(customer);
+            //_db.Customer.Remove(customer);
             _db.SaveChanges();
             return RedirectToAction("index");
         }
-        public ActionResult claimCustomer(int id)
+        public async Task<ActionResult> claimCustomer(string id)
         {
-          
-            var singleCustomer = _db.Customer.Find(id);
-
-            if (singleCustomer == null)
+            if(id == null)
             {
                 return NotFound();
             }
 
-            return View(singleCustomer);
+
+            //my user id 
+            var userid = _userManager.GetUserId(HttpContext.User);
+            //ingelogde user
+            var loggedInUser = await _db.Users.FindAsync(userid);
+
+            var userCustomer = new UserCustomer { DebiteurnrId = id, User = loggedInUser, UserId = userid };
+
+            _db.UserCustomer.Add(userCustomer);
+            _db.SaveChanges();
+
+
+            return RedirectToAction("index");
         }
         [HttpPost]
         public async Task<ActionResult> claimCustomer(Customer Customer)
         {
             var loggedInUserId = _userManager.GetUserId(HttpContext.User);
 
-        
 
-            var UserCustomer = new UserCustomer { UserId = loggedInUserId, customerId = Customer.Id };
+            //var UserCustomer = new UserCustomer { UserId = loggedInUserId, customerId = Customer.Id };
 
-           await _db.UserCustomer.AddAsync(UserCustomer);
+           //await _db.UserCustomer.AddAsync(UserCustomer);
  
            await _db.SaveChangesAsync();
 
@@ -181,11 +206,11 @@ namespace data_receiver.Controllers
 
         public ActionResult setTrigger(int id, int triggerId)
         {
-        var customer = _db.Customer.Find(id);
+        //var customer = _db.Customer.Find(id);
 
-            customer.actionId = triggerId;
+            //customer.actionId = triggerId;
 
-            _db.Update(customer);
+            //_db.Update(customer);
             _db.SaveChanges();
 
             return View();

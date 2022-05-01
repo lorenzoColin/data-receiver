@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace data_receiver.Migrations
 {
-    public partial class initial : Migration
+    public partial class tet : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -44,24 +44,6 @@ namespace data_receiver.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Contact", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Customer",
-                schema: "Identity",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    company = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    admin = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    phonenumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    city = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    adress = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Customer", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -108,30 +90,34 @@ namespace data_receiver.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CustomerContact",
+                name: "Customer",
                 schema: "Identity",
                 columns: table => new
                 {
-                    customerId = table.Column<int>(type: "int", nullable: false),
-                    contactId = table.Column<int>(type: "int", nullable: false)
+                    Debiteurnr = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Klant = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Consultant = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Max_budget = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Doelstelling = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Resultaat = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Datum_live = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Contract = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Contact = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Latest_videocall = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Latest_contact = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CMS = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    actionId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CustomerContact", x => new { x.contactId, x.customerId });
+                    table.PrimaryKey("PK_Customer", x => x.Debiteurnr);
                     table.ForeignKey(
-                        name: "FK_CustomerContact_Contact_contactId",
-                        column: x => x.contactId,
+                        name: "FK_Customer_action_actionId",
+                        column: x => x.actionId,
                         principalSchema: "Identity",
-                        principalTable: "Contact",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CustomerContact_Customer_customerId",
-                        column: x => x.customerId,
-                        principalSchema: "Identity",
-                        principalTable: "Customer",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "action",
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -185,19 +171,14 @@ namespace data_receiver.Migrations
                 schema: "Identity",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    customerId = table.Column<int>(type: "int", nullable: false)
+                    DebiteurnrId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserCustomer", x => new { x.UserId, x.customerId });
-                    table.ForeignKey(
-                        name: "FK_UserCustomer_Customer_customerId",
-                        column: x => x.customerId,
-                        principalSchema: "Identity",
-                        principalTable: "Customer",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_UserCustomer", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserCustomer_User_UserId",
                         column: x => x.UserId,
@@ -278,6 +259,39 @@ namespace data_receiver.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CustomerContact",
+                schema: "Identity",
+                columns: table => new
+                {
+                    contactId = table.Column<int>(type: "int", nullable: false),
+                    customerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CustomerContact", x => x.contactId);
+                    table.ForeignKey(
+                        name: "FK_CustomerContact_Contact_contactId",
+                        column: x => x.contactId,
+                        principalSchema: "Identity",
+                        principalTable: "Contact",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CustomerContact_Customer_customerId",
+                        column: x => x.customerId,
+                        principalSchema: "Identity",
+                        principalTable: "Customer",
+                        principalColumn: "Debiteurnr",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customer_actionId",
+                schema: "Identity",
+                table: "Customer",
+                column: "actionId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_CustomerContact_customerId",
                 schema: "Identity",
@@ -319,10 +333,10 @@ namespace data_receiver.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserCustomer_customerId",
+                name: "IX_UserCustomer_UserId",
                 schema: "Identity",
                 table: "UserCustomer",
-                column: "customerId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserLogins_UserId",
@@ -339,10 +353,6 @@ namespace data_receiver.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "action",
-                schema: "Identity");
-
             migrationBuilder.DropTable(
                 name: "CustomerContact",
                 schema: "Identity");
@@ -385,6 +395,10 @@ namespace data_receiver.Migrations
 
             migrationBuilder.DropTable(
                 name: "User",
+                schema: "Identity");
+
+            migrationBuilder.DropTable(
+                name: "action",
                 schema: "Identity");
         }
     }

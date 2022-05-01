@@ -87,7 +87,7 @@ namespace data_receiver.Controllers
         // POST: RoleController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task< ActionResult> Edit( EditRoleViewModel EditRoleViewModel)
+        public async Task< ActionResult >Edit( EditRoleViewModel EditRoleViewModel)
         {
            
             if (ModelState.IsValid)

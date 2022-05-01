@@ -1,12 +1,9 @@
 ﻿using data_receiver.Data;
 using data_receiver.Models;
 using data_receiver.Models.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using data_receiver.Models;
+
 using Action = data_receiver.Models.action;
 
 namespace data_receiver.Controllers
@@ -28,7 +25,7 @@ namespace data_receiver.Controllers
         // GET: AdminController
         public async Task<ActionResult> AllUsers()
         {
-            var id = _db.Users.Find("e34a3af1-4105-4cb3-b84c-5d7f4dd5527a");
+            var id = await _db.Users.FindAsync("e34a3af1-4105-4cb3-b84c-5d7f4dd5527a");
             var users = _db.Users.ToList();
             return View(users);
         }
@@ -93,7 +90,7 @@ namespace data_receiver.Controllers
         {
             try
             {
-              var bla =  _db.Users.Find(Users.Id);
+              var bla =  await _db.Users.FindAsync(Users.Id);
 
                 bla.FirstName = Users.FirstName;
                 bla.LastName = Users.LastName;

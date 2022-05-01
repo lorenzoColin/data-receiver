@@ -22,6 +22,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddDefaultTokenProviders();
 
 
+// add service for getting the current uri
+
 
 
 //add a service that can send emails

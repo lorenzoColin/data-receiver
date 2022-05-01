@@ -12,8 +12,8 @@ using data_receiver.Data;
 namespace data_receiver.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220415131734_actionId updated")]
-    partial class actionIdupdated
+    [Migration("20220430124904_tet")]
+    partial class tet
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -158,35 +158,61 @@ namespace data_receiver.Migrations
 
             modelBuilder.Entity("data_receiver.Models.Customer", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("Debiteurnr")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CMS")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Consultant")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Contact")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Contract")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Datum_live")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Doelstelling")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Klant")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Latest_contact")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Latest_videocall")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Max_budget")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Remarks")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Resultaat")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("actionId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("actionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("admin")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("adress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("city")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("company")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("phonenumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasKey("Debiteurnr");
 
                     b.HasIndex("actionId");
 
@@ -198,10 +224,11 @@ namespace data_receiver.Migrations
                     b.Property<int>("contactId")
                         .HasColumnType("int");
 
-                    b.Property<int>("customerId")
-                        .HasColumnType("int");
+                    b.Property<string>("customerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("contactId", "customerId");
+                    b.HasKey("contactId");
 
                     b.HasIndex("customerId");
 
@@ -210,15 +237,22 @@ namespace data_receiver.Migrations
 
             modelBuilder.Entity("data_receiver.Models.UserCustomer", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("customerId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "customerId");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.HasIndex("customerId");
+                    b.Property<string>("DebiteurnrId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserCustomer", "Identity");
                 });
@@ -359,10 +393,8 @@ namespace data_receiver.Migrations
             modelBuilder.Entity("data_receiver.Models.Customer", b =>
                 {
                     b.HasOne("data_receiver.Models.action", "action")
-                        .WithMany()
-                        .HasForeignKey("actionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Customer")
+                        .HasForeignKey("actionId");
 
                     b.Navigation("action");
                 });
@@ -375,15 +407,13 @@ namespace data_receiver.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("data_receiver.Models.Customer", "customer")
+                    b.HasOne("data_receiver.Models.Customer", null)
                         .WithMany("CustomerContact")
                         .HasForeignKey("customerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("contact");
-
-                    b.Navigation("customer");
                 });
 
             modelBuilder.Entity("data_receiver.Models.UserCustomer", b =>
@@ -394,15 +424,7 @@ namespace data_receiver.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("data_receiver.Models.Customer", "customer")
-                        .WithMany("UserCustomer")
-                        .HasForeignKey("customerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("User");
-
-                    b.Navigation("customer");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -456,6 +478,11 @@ namespace data_receiver.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("data_receiver.Models.action", b =>
+                {
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("data_receiver.Models.ApplicationUser", b =>
                 {
                     b.Navigation("UserCustomer");
@@ -469,8 +496,6 @@ namespace data_receiver.Migrations
             modelBuilder.Entity("data_receiver.Models.Customer", b =>
                 {
                     b.Navigation("CustomerContact");
-
-                    b.Navigation("UserCustomer");
                 });
 #pragma warning restore 612, 618
         }

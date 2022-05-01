@@ -3,7 +3,7 @@
     public class CustomerActionViewModel
     {
 
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
         public int?  actionId { get; set; }
 
         public string actionName { get; set; } = "no action set";

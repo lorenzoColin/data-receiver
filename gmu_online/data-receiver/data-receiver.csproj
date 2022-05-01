@@ -23,10 +23,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.2" />
     <PackageReference Include="Mvc.RazorTools.FontAwesome" Version="5.0.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
+    <PackageReference Include="NEST" Version="7.17.1" />
   </ItemGroup>
 
 </Project>

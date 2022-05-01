@@ -1,4 +1,5 @@
 ﻿using data_receiver.Data;
+using data_receiver.ElasticConnection;
 using data_receiver.Models;
 using data_receiver.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Nest;
 using System.Linq;
 
 namespace data_receiver.Controllers
@@ -15,40 +17,76 @@ namespace data_receiver.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _usermanager;
+        private readonly ElasticClient _client;
         public UserCustomerController(ApplicationDbContext db, UserManager<ApplicationUser> usermanager)
         {
+            _client = new ElasticSearchClient().EsClient();
             _usermanager = usermanager;
             _db = db;
         }
         // GET: UserCustomerController
-        public ActionResult Index()
-        {   
-            var loggedInId = _usermanager.GetUserId(HttpContext.User);
-            var mycustomers = _db.UserCustomer.Include(u => u.User).Include(s => s.customer).Where(s => s.User.Id == loggedInId);
-            return View(mycustomers);
-        }
+        public async Task< ActionResult >Index()
+        {
 
+            var user = _usermanager.GetUserId(HttpContext.User);
+            //ingelogde user
+            var loggedInUser = await _db.Users.FindAsync(user);
+
+
+
+
+            var usercustomerviewmodel = new List<UserCustomerViewModel>();
+
+
+
+            //1.kijken of de ingelogde gebruiker niet in pitvot table staat
+            //2.kijken naar klanten die nog niet in pivot table staat
+            var usercustomer = _db.UserCustomer;
+            foreach (var item in usercustomer)
+            {
+
+
+                
+
+                //laat alle customer zien van de ingelogde user
+                if (item.UserId == user)
+                {
+
+                    var search = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(item.DebiteurnrId))));
+                    var live_clients = search.Documents.FirstOrDefault(s => s.Debiteurnr == item.DebiteurnrId);
+                    var applicationUser = _db.Users.Find(item.UserId);
+
+                    usercustomerviewmodel.Add(
+                         new UserCustomerViewModel
+                         {
+                             Users = applicationUser,
+                             Customer = live_clients,
+                             DebiteurnrId = item.DebiteurnrId,
+                             userId = item.UserId,
+                         });
+
+                }
+            }
+            return View(usercustomerviewmodel);
+
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult claimContact(CustomerContactViewModel customercontact)
         {
-
-
             var cutomercont = new CustomerContact { contactId = customercontact.contactId, customerId = customercontact.customerId};
             _db.CustomerContact.Add(cutomercont);
             _db.SaveChanges();
 
-            return RedirectToAction("mycontact");
+            return RedirectToAction("mycontact",customercontact.customerId);
         }
 
         public ActionResult mycontact(Customer customer)
         {
-
-            ViewBag.customerId = customer.Id;
-
+            ViewBag.customerId = customer.Debiteurnr;
             //alle contacten die nog niet in die customer zitten
-            int customerId = customer.Id;
-            string query = @" select c.Id,c.email,c.firstname,c.lastname,c.phonenumber,c.adress, c.city, c.birthdate,uc.customerId,uc.contactId from [Identity].[Contact] as c 
+            string customerId = customer.Debiteurnr;
+            string query = @" select c. ,uc.customerId,uc.contactId from [Identity].[Contact] as c 
                 left outer join  [Identity].[CustomerContact] as uc  on c.id = uc.contactId 
                 left outer join  [Identity].[customer] as u  on u.id = uc.customerId 
                 where not exists (SELECT  contactId,customerId 
@@ -57,46 +95,53 @@ namespace data_receiver.Controllers
                 and uc.contactId = c.id)";
            IEnumerable<Contact> contact = _db.Contact.FromSqlRaw(query, customerId ).Distinct();
 
-           IEnumerable<CustomerContact> customercontact = _db.CustomerContact.Include(s => s.contact).Include( s => s.customer).Where( s => s.customerId == customerId);
+           //IEnumerable<CustomerContact> customercontact = _db.CustomerContact.Include(s => s.contact).Include( s => s.customer).Where( s => s.customerId == customerId);
 
-            ViewBag.customercontact = customercontact;
+            //ViewBag.customercontact = customercontact;
             return View(contact);
         }
-
-
-        // GET: UserCustomerController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult EditAction(int id)
         {
-            return View();
-        }
+          //action a user can choose
+            string queryAction = @"select * from [Identity].[action] as a
+            where not exists(select * from [Identity].[Customer] where actionId = a.id and id = {0} )";
+            ViewBag.actionlist = _db.action.FromSqlRaw(queryAction,id).Select(s => new SelectListItem
+            {
+                Text = s.name,
+                Value = s.id.ToString()
+            }).ToList<SelectListItem>();
 
-        
+            //current action
+            string currentActionstring = @"select a.id, a.Name,c.ActionId from [Identity].[action] as a
+                                    inner join [Identity].[Customer] as c on a.id = c.actionId
+                                    where c.Id = {0}";
 
-        public ActionResult Edit(int id)
-        {
+           ViewBag.currentAction = _db.action.FromSqlRaw(currentActionstring, id).ToList();
+
+            //var customer =  _db.Customer.Find(id);
+
+
             return View();
         }
 
         // POST: UserCustomerController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult EditAction(Customer customer)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            //var SingleCustomer = _db.Customer.Find(customer.Debiteurnr);
+
+            //SingleCustomer.actionId = customer.actionId;
+            // _db.SaveChanges();
+            return RedirectToAction("editAction", customer.Debiteurnr);
+
         }
 
 
         // POST: UserCustomerController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult removecustomer(int customerId)
+        public ActionResult removecustomer(string customerId)
         {
             
             try
@@ -104,9 +149,9 @@ namespace data_receiver.Controllers
                 var loggedInId = _usermanager.GetUserId(HttpContext.User);
 
 
-                var usercustomer = new UserCustomer { UserId = loggedInId, customerId = customerId };
+                //var usercustomer = new UserCustomer { UserId = loggedInId, customerId = customerId };
 
-                _db.UserCustomer.Remove(usercustomer);
+                //_db.UserCustomer.Remove(usercustomer);
                 _db.SaveChanges();
 
 

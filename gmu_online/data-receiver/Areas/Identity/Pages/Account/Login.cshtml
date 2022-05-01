@@ -2,26 +2,32 @@
 @model LoginModel
 
 @{
-    ViewData["Title"] = "Log in";
+    ViewData["Title"] = "Log in";  
+    Layout = "_TestLayout";
 }
-
 <style>
    .login-class{
         border-radius: 15px!important;
-        background: #1F2843!important;
-        border:1px solid #1A2037!important;
+        background: #1A1A1A!important;
+        border:none;
+        color:white!important;
     }
     input::placeholder{
         color:white!important;    
-        border:1px solid #1A2037;
+        border:none;
     }
     input:focus{
         color:white!important;
     }
+    .linear-button{
+        background: linear-gradient(90deg, #DE334F 0%, #DC582C 100%);
+border-radius: 15px;
+border:none;
+    }
 </style>
    <div class="container mx-auto w-50">
-    <form style="padding-top: 139px; class="mb-4 login-class" method="post">
-          <h1 class="text-white" style=" margin-bottom:20px;">@ViewData["Title"]</h1>
+    <form style="padding-top: 80px; class="mb-4 login-class" method="post">
+          <h3 class="text-white" style=" margin-bottom:20px;">@ViewData["Title"]</h3>
          <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
             <input asp-for="Input.Email" class="form-control  login-class" placeholder="email" >
@@ -31,19 +37,9 @@
             <input asp-for="Input.Password" autocomplete="current-password" class="form-control login-class" id="exampleInputPassword1" placeholder="Password">
             <span asp-validation-for="Input.Password" class="text-danger"></span>
         </div>
-            <button type="submit" class="btn btn-primary mt-4">Sign in</button>
-              <div>
-                    <p>
-                        <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
-                    </p>
-                    <p>
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
-                    </p>
-                    <p>
-                        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
-                    </p>
-                </div>
-                       
+        <div class="form-group d-flex justify-content-end">
+               <button type="submit" class="btn btn-primary mt-4 linear-button ">lets go</button>
+        </div>  
     </form>
 </div>
 

@@ -1,0 +1,53 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+<head>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/data_receiver.styles.css" asp-append />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.css" asp-append />
+</head>
+<style>
+  aside ul li a{
+       font-size:26px;
+   }
+  aside ul li{
+       margin-bottom: 39px;
+   }
+   .button-logout{
+       font-size:26px;
+   }
+   .gradient-color{
+       font-weight:800;
+       background: linear-gradient(89.95deg, #5ED4D4 0.05%, #DC582C 99.96%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+text-fill-color: transparent;
+    width: 20%;
+   }
+</style>
+
+<body style="margin: 0;">
+    <div class="container-fluid">
+        <div class="row flex min-vh-100">
+           
+            <main class="col-md-12" style="background: black;">
+                <div class="container p-4">
+                    <div class="d-flex justify-content-start" >
+                        <h1 class="gradient-color ">gmu dashboard</h1>
+                    </div>
+                     
+                    <main role="main" class="pb-3">
+                        @RenderBody()
+                    </main>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+    
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)

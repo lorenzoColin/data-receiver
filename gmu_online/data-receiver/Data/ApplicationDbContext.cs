@@ -12,7 +12,6 @@ namespace data_receiver.Data
             : base(options)
         {
         }
-        public DbSet<Customer> Customer { get; set; }
         public DbSet<action> action { get; set; }
         public DbSet<Contact> Contact { get; set; }
         public DbSet<CustomerContact> CustomerContact { get; set; }
@@ -32,25 +31,21 @@ namespace data_receiver.Data
             builder.Ignore<IdentityUser>();
 
             //usercustomer
-            builder.Entity<UserCustomer>()
-        .HasKey(bc => new { bc.UserId, bc.customerId });
+        //    builder.Entity<UserCustomer>()
+        //.HasKey(bc => new { bc.UserId });
             builder.Entity<UserCustomer>()
                 .HasOne(bc => bc.User)
                 .WithMany(b => b.UserCustomer)
                 .HasForeignKey(bc => bc.UserId);
 
-            builder.Entity<UserCustomer>()
-                .HasOne(bc => bc.customer)
-                .WithMany(c => c.UserCustomer)
-                .HasForeignKey(bc => bc.customerId);
 
             //customercontact
-            builder.Entity<CustomerContact>()
-       .HasKey(bc => new { bc.contactId, bc.customerId });
-            builder.Entity<CustomerContact>()
-                .HasOne(bc => bc.customer)
-                .WithMany(b => b.CustomerContact)
-                .HasForeignKey(bc => bc.customerId);
+           builder.Entity<CustomerContact>()
+       .HasKey(bc => new { bc.contactId });
+       //     builder.Entity<CustomerContact>()
+       //         .HasOne(bc => bc.customer)
+       //         .WithMany(b => b.CustomerContact)
+       //         .HasForeignKey(bc => bc.customerId);
 
             builder.Entity<CustomerContact>()
                 .HasOne(bc => bc.contact)

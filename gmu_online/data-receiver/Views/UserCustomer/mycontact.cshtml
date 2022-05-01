@@ -1,12 +1,46 @@
 ﻿@model IEnumerable<Contact>
- 
-<style>
-          
-p{
-    color:white!important;
+
+    
+ <style>
+        .border-search{
+            border-left:1px solid white;
+        }
+        .placeholder-search::placeholder{
+            color:white;
+            align-items:center;
+        }
+        .search-icon{
+            color:white;
+            background-color:black;
+        }
+        .user-circle{
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 40px;
 }
-h1{
-    color:white!important;
+.no-margin{
+    margin:0px!important;
+}
+.user-info{
+    margin-left:8px;
+}
+
+.bg-card{
+    background: #1A1A1A!important;
+
+}   
+.user-circle{
+    background-color:#2F3447;
+    color:gray;
+}
+.btn-background{
+    background: linear-gradient(90deg, #DE334F 0%, #DC582C 100%);
+}
+
+.card-color{
+    background: #1A1A1A;
+    border: 1px solid white;
+
 }
 </style>
 
@@ -21,8 +55,40 @@ h1{
     </form>
     <br>
 }
-<h1>claimed contacts</h1>
-@foreach(var mycontact in @ViewBag.customercontact)
-{
-    <p>@mycontact.contact.email</p>
-}
+
+
+
+
+    <div class="p-3">
+          <div class="row d-flex mb-4">
+            <div class="col-md-8">
+                    <h3 class="text-white ">my contacts</h3>
+            </div>
+        </div>
+ 
+        <div class ="row d-flex no-margin  align-items-center " >
+           @foreach(var customers in  @ViewBag.customercontact)
+            {
+                    <div class="col-md-2 p-3 ">
+                        <div class="card card-color"   >
+                            <i class="fa-solid fa-user-group text-center mt-3 h2 "></i>
+                            <div class="card-body text-center">
+                            <h6 class="card-title">@customers.contact.email</h6>
+                            </div>
+                        </div>      
+                    </div>
+            }
+        </div>
+   </div>
+
+
+
+
+
+
+
+
+
+
+
+

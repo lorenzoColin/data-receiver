@@ -1,8 +1,20 @@
-﻿@model Customer
+﻿@*@model Customer
 
-<h4 class="text-white">customer</h4>
+
+<style>
+    .text-gradient{
+        background: linear-gradient(90deg, #5ED4D4 0%, #DC582C 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text!important;
+text-fill-color: transparent!important;
+font-weight:800;
+    }
+</style>
+
+<h4 class="text-gradient">edit @Model.</h4>
 <hr />
-<div class="row text-white">
+<div class="row text-white d-flex">
     <div class="col-md-4">
         <form asp-action="edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -23,9 +35,9 @@
                 <span asp-validation-for="city" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="adress" class="control-label"></label>
-                <input asp-for="adress" class="form-control" />
-                <span asp-validation-for="adress" class="text-danger"></span>
+                <label asp-for="estimatedResult" class="control-label"></label>
+                <input asp-for="estimatedResult" class="form-control" />
+                <span asp-validation-for="estimatedResult" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label>your current action is : @foreach(var current in @ViewBag.currentAction){@current.name}</label>
@@ -39,6 +51,9 @@
             </div>
         </form>
     </div>
+    <div class="col-md-6 d-flex justify-content-end">
+       
+    </div>
 </div>
 
 <div>
@@ -48,3 +63,4 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+*@

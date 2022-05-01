@@ -13,8 +13,6 @@ namespace data_receiver.MybackgroundService
         private readonly ILogger<BackgroundTask>  _logger;
         private readonly IServiceProvider _service;
 
-
-
         public BackgroundTask( ILogger<BackgroundTask> logger, IServiceProvider services)
         {
             _service = services;
@@ -24,10 +22,6 @@ namespace data_receiver.MybackgroundService
         //dit is de functie die draaid zodra de app aan staat 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken )
         {
-
-
-            
-
             //zo lang de app niet sluit
                 while(!stoppingToken.IsCancellationRequested)
                 {
@@ -65,7 +59,7 @@ namespace data_receiver.MybackgroundService
                     }
                     else
                     {
-                        Console.WriteLine("jij bent niet jarig pik {0} datum: {1}  ",contact.email,contact.birthdate);
+                        Console.WriteLine("jij bent niet jarig {0} datum: {1}  ",contact.email,contact.birthdate);
                     }
                 
                 }

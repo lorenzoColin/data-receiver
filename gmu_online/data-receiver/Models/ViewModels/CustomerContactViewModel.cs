@@ -2,7 +2,7 @@
 {
     public class CustomerContactViewModel
     {
-        public int customerId { get; set; }
+        public string customerId { get; set; }
         public int contactId { get; set; }
     }
 }

@@ -1,10 +1,13 @@
-﻿namespace data_receiver.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace data_receiver.Models
 {
     public class UserCustomer
     {
+        [Key]
+        public int Id { get; set; }
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
-        public int customerId { get; set; }
-        public Customer customer { get; set; }
+        public string? DebiteurnrId { get; set; }
     }
 }
