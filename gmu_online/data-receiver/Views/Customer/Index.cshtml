@@ -52,12 +52,12 @@
 <div class="card bg-card text-white" style="min-height: 391px;">
     <div class="p-3">
           <div class="row d-flex mb-4">
-            <div class="col-md-8">
+            <div class="col-md-12">
                     <h3 class="text-white ">all customers</h3>
             </div>
-            <div class="col-md-4 d-flex justify-content-end">
+           @* <div class="col-md-4 d-flex justify-content-end">
                  <a asp-controller="customer" asp-action="create" class="btn btn-primary btn-background"  >create customer</a>
-            </div>
+            </div>*@
         </div>
  
         <div class ="row d-flex no-margin  align-items-center " >
@@ -70,7 +70,7 @@
                             <h6 class="card-title">@customers.Klant</h6>
                                <div class="flex-column d-flex">
                                 <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.Debiteurnr" class="text-muted text-decoration-none">claim</a>  
-                                <a asp-controller= "customer" asp-action="delete" asp-route-id = "@customers.Debiteurnr"  class="text-muted text-decoration-none">delete</a>
+                                @*<a asp-controller= "customer" asp-action="delete" asp-route-id = "@customers.Debiteurnr"  class="text-muted text-decoration-none">delete</a>*@
                                 </div>
                             </div>
                         </div>      

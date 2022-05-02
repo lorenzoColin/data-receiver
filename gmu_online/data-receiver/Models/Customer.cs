@@ -20,7 +20,6 @@ namespace data_receiver.Models
         public string CMS { get; set; }
         public int? actionId { get; set; }
         public action? action { get; set; }
-        public virtual ICollection<CustomerContact>? CustomerContact { get; set; }
     }
 
 }

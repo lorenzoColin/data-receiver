@@ -75,11 +75,9 @@
                             <div class="card-body text-center">
                             <h6 class="card-title">@customers.Customer.Klant</h6>
                                <div class="flex-column d-flex">
-                                @*<a asp-action="mycontact" asp-route-id=@customers.DebiteurnrId  class="text-muted ">my contact</a>*@
-                                <a asp-controller="usercustomer" asp-action="EditAction" asp-route-id=@customers.DebiteurnrId    class="text-muted ">edit</a>
                                 <form asp-action="removecustomer">
-                                    <input hidden type="text" name="customerId" value="@customers.DebiteurnrId" >
-                                    <button class=" btn-danger" type="submit">remove</button>
+                                    <input hidden type="text" name="DebiteurnrId" value="@customers.DebiteurnrId" >
+                                    <button class=" btn-danger" type="submit">unclaim</button>
                                 </form>
                                 </div>
                             </div>

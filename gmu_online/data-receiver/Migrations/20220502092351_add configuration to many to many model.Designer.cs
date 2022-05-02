@@ -12,8 +12,8 @@ using data_receiver.Data;
 namespace data_receiver.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220430124904_tet")]
-    partial class tet
+    [Migration("20220502092351_add configuration to many to many model")]
+    partial class addconfigurationtomanytomanymodel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -115,126 +115,6 @@ namespace data_receiver.Migrations
                     b.ToTable("User", "Identity");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.Contact", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("adress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("birthdate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("city")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("firstname")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("lastname")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("phonenumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Contact", "Identity");
-                });
-
-            modelBuilder.Entity("data_receiver.Models.Customer", b =>
-                {
-                    b.Property<string>("Debiteurnr")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CMS")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Consultant")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Contact")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Contract")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Datum_live")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Doelstelling")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Klant")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Latest_contact")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Latest_videocall")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Max_budget")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Remarks")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Resultaat")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("actionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Debiteurnr");
-
-                    b.HasIndex("actionId");
-
-                    b.ToTable("Customer", "Identity");
-                });
-
-            modelBuilder.Entity("data_receiver.Models.CustomerContact", b =>
-                {
-                    b.Property<int>("contactId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("customerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("contactId");
-
-                    b.HasIndex("customerId");
-
-                    b.ToTable("CustomerContact", "Identity");
-                });
-
             modelBuilder.Entity("data_receiver.Models.UserCustomer", b =>
                 {
                     b.Property<int>("Id")
@@ -255,6 +135,29 @@ namespace data_receiver.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserCustomer", "Identity");
+                });
+
+            modelBuilder.Entity("data_receiver.Models.UserCustomerAction", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<int>("actionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("usercustomerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("actionId");
+
+                    b.HasIndex("usercustomerId");
+
+                    b.ToTable("UserCustomerAction", "Identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -390,32 +293,6 @@ namespace data_receiver.Migrations
                     b.ToTable("UserTokens", "Identity");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.Customer", b =>
-                {
-                    b.HasOne("data_receiver.Models.action", "action")
-                        .WithMany("Customer")
-                        .HasForeignKey("actionId");
-
-                    b.Navigation("action");
-                });
-
-            modelBuilder.Entity("data_receiver.Models.CustomerContact", b =>
-                {
-                    b.HasOne("data_receiver.Models.Contact", "contact")
-                        .WithMany("CustomerContact")
-                        .HasForeignKey("contactId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("data_receiver.Models.Customer", null)
-                        .WithMany("CustomerContact")
-                        .HasForeignKey("customerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("contact");
-                });
-
             modelBuilder.Entity("data_receiver.Models.UserCustomer", b =>
                 {
                     b.HasOne("data_receiver.Models.ApplicationUser", "User")
@@ -425,6 +302,25 @@ namespace data_receiver.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("data_receiver.Models.UserCustomerAction", b =>
+                {
+                    b.HasOne("data_receiver.Models.action", "action")
+                        .WithMany("UserCustomerAction")
+                        .HasForeignKey("actionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("data_receiver.Models.UserCustomer", "UserCustomer")
+                        .WithMany("UserCustomerAction")
+                        .HasForeignKey("usercustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserCustomer");
+
+                    b.Navigation("action");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -480,7 +376,7 @@ namespace data_receiver.Migrations
 
             modelBuilder.Entity("data_receiver.Models.action", b =>
                 {
-                    b.Navigation("Customer");
+                    b.Navigation("UserCustomerAction");
                 });
 
             modelBuilder.Entity("data_receiver.Models.ApplicationUser", b =>
@@ -488,14 +384,9 @@ namespace data_receiver.Migrations
                     b.Navigation("UserCustomer");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.Contact", b =>
+            modelBuilder.Entity("data_receiver.Models.UserCustomer", b =>
                 {
-                    b.Navigation("CustomerContact");
-                });
-
-            modelBuilder.Entity("data_receiver.Models.Customer", b =>
-                {
-                    b.Navigation("CustomerContact");
+                    b.Navigation("UserCustomerAction");
                 });
 #pragma warning restore 612, 618
         }

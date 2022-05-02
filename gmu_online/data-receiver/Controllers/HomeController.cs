@@ -39,6 +39,9 @@ namespace data_receiver.Controllers
         }
         public async Task< IActionResult> Index() 
         {
+            var usercustomeraction = new UserCustomerAction { actionId = 3, usercustomerId = 3 };
+            _db.UserCustomerAction.Add(usercustomeraction);
+            _db.SaveChanges();
             return View();
         }
 

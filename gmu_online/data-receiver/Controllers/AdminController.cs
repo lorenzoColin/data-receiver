@@ -134,22 +134,22 @@ namespace data_receiver.Controllers
             _db.SaveChanges();
             return RedirectToAction("allUsers");
         }
-        [HttpGet]
-       public ActionResult CreateContact()
-        {
-            return View();
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult CreateContact(Contact contact)
-        {
-            if (ModelState.IsValid)
-            { 
-                _db.Contact.Add(contact);
-                _db.SaveChanges();
-                return Ok();
-            }
-            return NotFound();
-        }
+       // [HttpGet]
+       //public ActionResult CreateContact()
+       // {
+       //     return View();
+       // }
+       // [HttpPost]
+       // [ValidateAntiForgeryToken]
+       // public ActionResult CreateContact(Contact contact)
+       // {
+       //     if (ModelState.IsValid)
+       //     { 
+       //         _db.Contact.Add(contact);
+       //         _db.SaveChanges();
+       //         return Ok();
+       //     }
+       //     return NotFound();
+       // }
     }
 }

@@ -4,7 +4,8 @@
     {
         public int id { get; set; }
         public string name { get; set; }
-        public IList<Customer> Customer { get; set; }
+        public virtual ICollection<UserCustomerAction> UserCustomerAction { get; set; }
+
 
     }
 }

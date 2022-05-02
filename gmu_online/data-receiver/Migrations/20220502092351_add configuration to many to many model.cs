@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace data_receiver.Migrations
 {
-    public partial class tet : Migration
+    public partial class addconfigurationtomanytomanymodel : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -24,26 +24,6 @@ namespace data_receiver.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_action", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Contact",
-                schema: "Identity",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    firstname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    lastname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    phonenumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    adress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    city = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    birthdate = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Contact", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -87,37 +67,6 @@ namespace data_receiver.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_User", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Customer",
-                schema: "Identity",
-                columns: table => new
-                {
-                    Debiteurnr = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Klant = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Consultant = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Max_budget = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Doelstelling = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Resultaat = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Datum_live = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Contract = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Contact = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Latest_videocall = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Latest_contact = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CMS = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    actionId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Customer", x => x.Debiteurnr);
-                    table.ForeignKey(
-                        name: "FK_Customer_action_actionId",
-                        column: x => x.actionId,
-                        principalSchema: "Identity",
-                        principalTable: "action",
-                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -260,43 +209,33 @@ namespace data_receiver.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CustomerContact",
+                name: "UserCustomerAction",
                 schema: "Identity",
                 columns: table => new
                 {
-                    contactId = table.Column<int>(type: "int", nullable: false),
-                    customerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    usercustomerId = table.Column<int>(type: "int", nullable: false),
+                    actionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CustomerContact", x => x.contactId);
+                    table.PrimaryKey("PK_UserCustomerAction", x => x.id);
                     table.ForeignKey(
-                        name: "FK_CustomerContact_Contact_contactId",
-                        column: x => x.contactId,
+                        name: "FK_UserCustomerAction_action_actionId",
+                        column: x => x.actionId,
                         principalSchema: "Identity",
-                        principalTable: "Contact",
+                        principalTable: "action",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserCustomerAction_UserCustomer_usercustomerId",
+                        column: x => x.usercustomerId,
+                        principalSchema: "Identity",
+                        principalTable: "UserCustomer",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CustomerContact_Customer_customerId",
-                        column: x => x.customerId,
-                        principalSchema: "Identity",
-                        principalTable: "Customer",
-                        principalColumn: "Debiteurnr",
-                        onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Customer_actionId",
-                schema: "Identity",
-                table: "Customer",
-                column: "actionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CustomerContact_customerId",
-                schema: "Identity",
-                table: "CustomerContact",
-                column: "customerId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
@@ -339,6 +278,18 @@ namespace data_receiver.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserCustomerAction_actionId",
+                schema: "Identity",
+                table: "UserCustomerAction",
+                column: "actionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserCustomerAction_usercustomerId",
+                schema: "Identity",
+                table: "UserCustomerAction",
+                column: "usercustomerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserLogins_UserId",
                 schema: "Identity",
                 table: "UserLogins",
@@ -354,10 +305,6 @@ namespace data_receiver.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CustomerContact",
-                schema: "Identity");
-
-            migrationBuilder.DropTable(
                 name: "RoleClaims",
                 schema: "Identity");
 
@@ -366,7 +313,7 @@ namespace data_receiver.Migrations
                 schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "UserCustomer",
+                name: "UserCustomerAction",
                 schema: "Identity");
 
             migrationBuilder.DropTable(
@@ -382,11 +329,11 @@ namespace data_receiver.Migrations
                 schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "Contact",
+                name: "action",
                 schema: "Identity");
 
             migrationBuilder.DropTable(
-                name: "Customer",
+                name: "UserCustomer",
                 schema: "Identity");
 
             migrationBuilder.DropTable(
@@ -395,10 +342,6 @@ namespace data_receiver.Migrations
 
             migrationBuilder.DropTable(
                 name: "User",
-                schema: "Identity");
-
-            migrationBuilder.DropTable(
-                name: "action",
                 schema: "Identity");
         }
     }

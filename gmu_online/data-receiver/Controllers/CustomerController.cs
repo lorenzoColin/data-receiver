@@ -170,10 +170,7 @@ namespace data_receiver.Controllers
         }
         public async Task<ActionResult> claimCustomer(string id)
         {
-            if(id == null)
-            {
-                return NotFound();
-            }
+            
 
 
             //my user id 
@@ -189,20 +186,7 @@ namespace data_receiver.Controllers
 
             return RedirectToAction("index");
         }
-        [HttpPost]
-        public async Task<ActionResult> claimCustomer(Customer Customer)
-        {
-            var loggedInUserId = _userManager.GetUserId(HttpContext.User);
-
-
-            //var UserCustomer = new UserCustomer { UserId = loggedInUserId, customerId = Customer.Id };
-
-           //await _db.UserCustomer.AddAsync(UserCustomer);
- 
-           await _db.SaveChangesAsync();
-
-            return RedirectToAction("Index");
-        }
+        
 
         public ActionResult setTrigger(int id, int triggerId)
         {

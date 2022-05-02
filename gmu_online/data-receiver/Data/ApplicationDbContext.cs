@@ -13,9 +13,12 @@ namespace data_receiver.Data
         {
         }
         public DbSet<action> action { get; set; }
-        public DbSet<Contact> Contact { get; set; }
-        public DbSet<CustomerContact> CustomerContact { get; set; }
+        //public DbSet<Contact> Contact { get; set; }
+        //public DbSet<CustomerContact> CustomerContact { get; set; }
         public DbSet<UserCustomer> UserCustomer { get; set; }
+        public DbSet<UserCustomerAction> UserCustomerAction { get; set; }
+
+        
 
 
 
@@ -27,10 +30,10 @@ namespace data_receiver.Data
 
      
 
-            //ignore identity tables
-            builder.Ignore<IdentityUser>();
+        //ignore identity tables
+        builder.Ignore<IdentityUser>();
 
-            //usercustomer
+        //usercustomer
         //    builder.Entity<UserCustomer>()
         //.HasKey(bc => new { bc.UserId });
             builder.Entity<UserCustomer>()
@@ -40,17 +43,17 @@ namespace data_receiver.Data
 
 
             //customercontact
-           builder.Entity<CustomerContact>()
-       .HasKey(bc => new { bc.contactId });
-       //     builder.Entity<CustomerContact>()
-       //         .HasOne(bc => bc.customer)
-       //         .WithMany(b => b.CustomerContact)
-       //         .HasForeignKey(bc => bc.customerId);
+       //    builder.Entity<UserCustomerAction>()
+       //.HasKey(bc => new { bc.actionId,bc.usercustomerId });
+            builder.Entity<UserCustomerAction>()
+                .HasOne(bc => bc.UserCustomer)
+                .WithMany(b => b.UserCustomerAction)
+                .HasForeignKey(bc => bc.usercustomerId);
 
-            builder.Entity<CustomerContact>()
-                .HasOne(bc => bc.contact)
-                .WithMany(c => c.CustomerContact)
-                .HasForeignKey(bc => bc.contactId);
+            builder.Entity<UserCustomerAction>()
+                .HasOne(bc => bc.action)
+                .WithMany(c => c.UserCustomerAction)
+                .HasForeignKey(bc => bc.actionId);
 
 
             builder.HasDefaultSchema("Identity");
