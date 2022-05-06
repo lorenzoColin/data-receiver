@@ -88,35 +88,74 @@ namespace data_receiver.Controllers
 
         //    return View(contact);
         //}
-        public ActionResult EditAction(int id)
+        public async Task< ActionResult> Edit(string DebiteurnrId)
         {
-          //action a user can choose
-            string queryAction = @"select * from [Identity].[action] as a
-            where not exists(select * from [Identity].[Customer] where actionId = a.id and id = {0} )";
-            ViewBag.actionlist = _db.action.FromSqlRaw(queryAction,id).Select(s => new SelectListItem
+         
+
+            var search = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(DebiteurnrId))));
+
+            var live_clients = search.Documents.FirstOrDefault();
+
+            var loggedInId = _usermanager.GetUserId(HttpContext.User);
+
+            var test  = _db.UserCustomer.Where(s => s.UserId == loggedInId && s.DebiteurnrId == live_clients.Debiteurnr).FirstOrDefault();
+
+            if(test != null)
             {
-                Text = s.name,
-                Value = s.id.ToString()
-            }).ToList<SelectListItem>();
+                ViewBag.usercustomer = test.Id;
+            }
 
-            //current action
-            string currentActionstring = @"select a.id, a.Name,c.ActionId from [Identity].[action] as a
-                                    inner join [Identity].[Customer] as c on a.id = c.actionId
-                                    where c.Id = {0}";
+            //  //action a user can choose
+            //    string queryAction = @"select * from [Identity].[action] as a
+            //    where not exists(select * from [Identity].[Customer] where actionId = a.id and id = {0} )";
+            //    ViewBag.actionlist = _db.action.FromSqlRaw(queryAction,id).Select(s => new SelectListItem
+            //    {
+            //        Text = s.description,
+            //        Value = s.id.ToString()
+            //    }).ToList<SelectListItem>();
 
-           ViewBag.currentAction = _db.action.FromSqlRaw(currentActionstring, id).ToList();
+            //    //current action
+            //    string currentActionstring = @"select a.id, a.Name,c.ActionId from [Identity].[action] as a
+            //                            inner join [Identity].[Customer] as c on a.id = c.actionId
+            //                            where c.Id = {0}";
 
+            //   ViewBag.currentAction = _db.action.FromSqlRaw(currentActionstring, id).ToList();
 
+            ViewBag.action = _db.action;
 
-            return View();
-        }
-
+            return View(live_clients);
+            }
         // POST: UserCustomerController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditAction(Customer customer)
+        public ActionResult edit(UserCustomerAction UserCustomerAction)
         {
-            return RedirectToAction("editAction", customer.Debiteurnr);
+            var mine = _db.UserCustomerAction.Where<UserCustomerAction>(s => s.usercustomerId == UserCustomerAction.usercustomerId);
+
+
+
+            var list = new List<UserCustomerAction>();
+
+            //loop over alle usercustomeraction die jij heb
+            foreach (var sej in mine)
+            {
+                if(sej.value == UserCustomerAction.value)
+                {
+
+                  var sejjjjj =   _db.UserCustomerAction.Find(sej.id);
+
+                    list.Add(sejjjjj);
+                    break;
+                }
+               
+            }
+
+            list[0].value = UserCustomerAction.value;
+            _db.SaveChanges();
+
+
+            
+            return RedirectToAction("edit");
         }
 
 

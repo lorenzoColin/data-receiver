@@ -61,7 +61,6 @@ namespace data_receiver.MybackgroundService
                 //    {
                 //        Console.WriteLine("jij bent niet jarig {0} datum: {1}  ",contact.email,contact.birthdate);
                 //    }
-                
                 //}
                 await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
                 }

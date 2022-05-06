@@ -1,0 +1,95 @@
+﻿@model Customer
+
+<div class="row">
+    
+ <h4 class="text-white col-md-6">customer</h4>
+<h4 style="text-align:end;" class="col-md-6 text-white">triggers</h4>
+
+</div>
+
+<div class="row text-white ">
+    <div class="col-md-6 d-flex ">
+        <form asp-action="EditAction">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Debiteurnr" />
+            <div class="form-group">
+                <div class="form-group">
+                    <label asp-for="CMS" class="control-label"></label>
+                    <input disabled asp-for="CMS" class="form-control" />
+                    <span asp-validation-for="CMS" class="text-danger"></span>
+                </div>
+                 <div class="form-group">
+                    <label asp-for="Consultant" class="control-label"></label>
+                    <input disabled asp-for="Consultant" class="form-control" />
+                    <span asp-validation-for="Consultant" class="text-danger"></span>
+                </div>
+                 <div class="form-group">
+                    <label asp-for="Contact" class="control-label"></label>
+                    <input disabled asp-for="Contact" class="form-control" />
+                    <span asp-validation-for="Contact" class="text-danger"></span>
+                </div>
+                 <div class="form-group">
+                    <label asp-for="Contract" class="control-label"></label>
+                    <input disabled asp-for="Contract" class="form-control" />
+                    <span asp-validation-for="Contract" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Datum_live" class="control-label"></label>
+                    <input disabled asp-for="Datum_live" class="form-control" />
+                    <span asp-validation-for="Datum_live" class="text-danger"></span>
+                </div>
+                 <div class="form-group">
+                    <label asp-for="Max_budget" class="control-label"></label>
+                    <input disabled asp-for="Max_budget" class="form-control" />
+                    <span asp-validation-for="Max_budget" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Resultaat" class="control-label"></label>
+                    <input disabled asp-for="Resultaat" class="form-control" />
+                    <span asp-validation-for="Resultaat" class="text-danger"></span>
+                </div>
+               @* <label>your current action is : @foreach(var current in @ViewBag.currentAction){@current.name}</label>
+                <br>*@
+         @*       <select asp-for=actionId asp-items=@ViewBag.actionlist>
+
+                   <option></option>
+                </select>*@
+            </div>
+            @*<div class="form-group mt-2">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>*@
+        </form>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end">
+        <div class="border w-100">
+            @foreach(var action in @ViewBag.action)
+            {
+                <div class="border p-3">
+
+              
+                <p>@action.description</p>
+                
+                <form method="post">
+                  
+                    <input name="value" type="number" min="1" max="100" placeholder="example 50%" >
+                    <input hidden name="actionId" value="@action.id" >
+                    <input hidden name="usercustomerId" value="@ViewBag.usercustomer"   >
+                    <input type="submit" class="mt-2" >
+                </form>
+
+
+                </div>
+            }
+          
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

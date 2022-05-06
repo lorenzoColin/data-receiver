@@ -42,9 +42,9 @@ namespace data_receiver.Controllers
         public ActionResult CreateAction(string ActionName)
         {
 
-         var actionresult =    _db.action.Where(s => s.name == ActionName).ToList();
+         var actionresult =    _db.action.Where(s => s.description == ActionName).ToList();
 
-         var action = new Action() { name = ActionName };
+         var action = new Action() { description = ActionName };
 
          _db.action.Add(action);
          _db.SaveChanges();

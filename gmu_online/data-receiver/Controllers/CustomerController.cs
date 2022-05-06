@@ -105,7 +105,7 @@ namespace data_receiver.Controllers
             where not exists(select * from [Identity].[Customer] where actionId = a.id and id = {0} )";
             ViewBag.actionlist = _db.action.FromSqlRaw(queryAction,id).Select(s => new SelectListItem
             {
-                Text = s.name,
+                Text = s.description,
                 Value = s.id.ToString()
             }).ToList<SelectListItem>();
 
