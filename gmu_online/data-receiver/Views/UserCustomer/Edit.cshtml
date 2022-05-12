@@ -1,89 +1,117 @@
-﻿@model Customer
+﻿@using data_receiver.Models.ViewModels
+@model List<UserCustomerActionViewModel>
 
 <div class="row">
-    
- <h4 class="text-white col-md-6">customer</h4>
+<h4 class="text-white col-md-6">customer</h4>
 <h4 style="text-align:end;" class="col-md-6 text-white">triggers</h4>
-
 </div>
 
-<div class="row text-white ">
-    <div class="col-md-6 d-flex ">
-        <form asp-action="EditAction">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Debiteurnr" />
-            <div class="form-group">
-                <div class="form-group">
-                    <label asp-for="CMS" class="control-label"></label>
-                    <input disabled asp-for="CMS" class="form-control" />
-                    <span asp-validation-for="CMS" class="text-danger"></span>
-                </div>
-                 <div class="form-group">
-                    <label asp-for="Consultant" class="control-label"></label>
-                    <input disabled asp-for="Consultant" class="form-control" />
-                    <span asp-validation-for="Consultant" class="text-danger"></span>
-                </div>
-                 <div class="form-group">
-                    <label asp-for="Contact" class="control-label"></label>
-                    <input disabled asp-for="Contact" class="form-control" />
-                    <span asp-validation-for="Contact" class="text-danger"></span>
-                </div>
-                 <div class="form-group">
-                    <label asp-for="Contract" class="control-label"></label>
-                    <input disabled asp-for="Contract" class="form-control" />
-                    <span asp-validation-for="Contract" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Datum_live" class="control-label"></label>
-                    <input disabled asp-for="Datum_live" class="form-control" />
-                    <span asp-validation-for="Datum_live" class="text-danger"></span>
-                </div>
-                 <div class="form-group">
-                    <label asp-for="Max_budget" class="control-label"></label>
-                    <input disabled asp-for="Max_budget" class="form-control" />
-                    <span asp-validation-for="Max_budget" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Resultaat" class="control-label"></label>
-                    <input disabled asp-for="Resultaat" class="form-control" />
-                    <span asp-validation-for="Resultaat" class="text-danger"></span>
-                </div>
-               @* <label>your current action is : @foreach(var current in @ViewBag.currentAction){@current.name}</label>
-                <br>*@
-         @*       <select asp-for=actionId asp-items=@ViewBag.actionlist>
 
-                   <option></option>
-                </select>*@
+@foreach(var list in @Model)
+{
+    <div class="row text-white ">
+    <div class="col-md-6 d-flex ">
+
+            <div class="form-group">
+                
+             <div class="form-group">
+                    <label  class="control-label">debiteurnr</label>
+                    <input disabled value="@list.live_clients.Debiteurnr" class="form-control"  />
+                </div>
+                <div class="form-group">
+                    <label  class="control-label">cms</label>
+                    <input disabled value="@list.live_clients.CMS" class="form-control" />
+                </div>
+                 <div class="form-group">
+                    <label class="control-label">sConsultant</label>
+                    <input disabled value="@list.live_clients.Consultant" class="form-control" />
+                </div>
+                 <div class="form-group">
+                    <label  class="control-label">Contact</label>
+                    <input disabled value="@list.live_clients.Contact" class="form-control" />
+                </div>
+                 <div class="form-group">
+                    <label class="control-label">contract</label>
+                    <input disabled  value="@list.live_clients.Contract" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Datum_live</label>
+                    <input disabled value="@list.live_clients.Datum_live" class="form-control" />
+                </div>
+                 <div class="form-group">
+                    <label  class="control-label">Max budget</label>
+                    <input disabled  value="@list.live_clients.Max_budget" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label  class="control-label">Resultaat</label>
+                    <input disabled value="@list.live_clients.Resultaat" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label  class="control-label">last contact</label>
+                    <input disabled value="@list.live_clients.Latest_contact" class="form-control" />
+                </div>
             </div>
-            @*<div class="form-group mt-2">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>*@
-        </form>
+          
     </div>
     <div class="col-md-6 d-flex justify-content-end">
-        <div class="border w-100">
-            @foreach(var action in @ViewBag.action)
+       <div class="border w-100">
+            @foreach(var action in @list.action)
             {
-                <div class="border p-3">
 
-              
-                <p>@action.description</p>
-                
-                <form method="post">
-                  
-                    <input name="value" type="number" min="1" max="100" placeholder="example 50%" >
-                    <input hidden name="actionId" value="@action.id" >
-                    <input hidden name="usercustomerId" value="@ViewBag.usercustomer"   >
-                    <input type="submit" class="mt-2" >
-                </form>
-
-
-                </div>
+                    if(action.id == 1)
+                    {
+                        <div class="border p-3">
+                        <p>@action.description</p>
+                        <form method="post" asp-action="EditPost" asp-controller="UserCustomer">
+                        
+                            <input name="value" type="number" min=1 max=100 class="form-control"   placeholder="example 50%" >
+                            <input hidden name="actionId" value="@action.id" >
+                            <input hidden name="usercustomerId" value="@list.usercusotmerId"   >
+                            <input type="submit" class="mt-2" >
+                        </form>
+                    </div>
+                    }
+                    if(action.id == 3)
+                    {
+                        <div class="border p-3">
+                        <p>@action.description</p>
+                        <form method="post" asp-action="EditPost" asp-controller="UserCustomer">
+                        
+                            <input name="value" type="number" min=1 max=12 class="form-control"   placeholder="3 months" >
+                            <input hidden name="actionId" value="@action.id" >
+                            <input hidden name="usercustomerId" value="@list.usercusotmerId"   >
+                            <input type="submit" class="mt-2" >
+                        </form>
+                    </div>
+                    }       
             }
-          
+            <h3>current page per month</h3>
+            <div class="d-flex row">
+                @foreach(var myactions in @list.UserCustomerAction)
+                {
+                        if(myactions.action.id == 1)
+                        {
+                            <p class="col-md-2" >@myactions.value %</p>
+                        }
+                }
+            </div>
+            <h3>last video call</h3>
+            <div class=" d-flex row">
+                @foreach(var myactions in @list.UserCustomerAction)
+                {
+                    if(myactions.action.id == 3)
+                    {
+                        <p class="col-md-2" >mail after @myactions.value months </p>
+                    }
+                }
+            </div>
+
+
         </div>
+        
     </div>
 </div>
+}
 
 <div>
     <a asp-action="Index">Back to List</a>

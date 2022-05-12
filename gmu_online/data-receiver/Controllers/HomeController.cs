@@ -13,6 +13,8 @@ using Nest;
 using data_receiver.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
+using data_receiver.Models.ViewModels;
 
 namespace data_receiver.Controllers
 {
@@ -20,28 +22,29 @@ namespace data_receiver.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ElasticClient client;
+        private readonly ElasticClient _client;
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
 
 
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
-           
 
-            //var connection = new ConnectionSettings(new Uri("https://elastic:6j3iG7RMNJxvzBk6FlkMeodf@e72a9bd694ed48a1a4b453cec4229c9d.europe-west4.gcp.elastic-cloud.com:9243"))
-            //    .DefaultIndex("sea_klanten").DefaultFieldNameInferrer(p => p);
 
-            //client = new ElasticClient(connection);
+            _client = new ElasticSearchClient().EsClient();
             _logger = logger;
             _db = db;
             _userManager = userManager;
         }
-        public async Task< IActionResult> Index() 
+        public async Task< IActionResult> Index([FromServices] IFluentEmail singleEmai) 
         {
+          
+
 
             return View();
         }
+
+        
 
         //[Authorize(Roles ="admin")]
         public async Task<IActionResult> Privacy([FromServices] IFluentEmail singleEmail)

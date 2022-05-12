@@ -45,15 +45,7 @@
 }
 </style>
 
-@*@foreach(var test in @Model)
-{
-    <div style="border:1px solid black;" >
-        <a asp-controller="usercustomer" asp-action="mycontact" asp-route-id=@test.customer.Id  >my contact</a>
-        <p>@test.customer.company</p>
-        <p>@test.actionName</p>
-       
-    </div>
-}*@
+
 
 
 <div class="card bg-card text-white" style="min-height: 391px;">
