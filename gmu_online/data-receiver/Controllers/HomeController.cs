@@ -38,8 +38,22 @@ namespace data_receiver.Controllers
         }
         public async Task< IActionResult> Index([FromServices] IFluentEmail singleEmai) 
         {
-          
 
+            var search  = await _client.GetAsync<_12779_campaigns>(new DocumentPath<_12779_campaigns>(new Id("42cf3453-e52d-4543-94c8-87ac0055759f")), s => s.Index("12779_campaigns") );
+
+
+           //var search =  _client.Search<_12779_campaigns>(s => s.Index("12779_campaigns") );
+
+            var live_clients = search.Source;
+
+            //12779_campaigns
+            // var template = @"@{ Layout = ""Views/Shared/MailTemplate.cshtml""; }";
+            // var model = new { Name = "LUKE", Numbers = new[] { "1", "2", "3" } };
+            // var email = singleEmai
+            //    .To("lorenzo8399@hotmail.com")
+            //    .Subject("Test email")
+            //.UsingTemplate(template,model);
+            // await email.SendAsync();
 
             return View();
         }

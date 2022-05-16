@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace data_receiver.Migrations
 {
-    public partial class addconfigurationtomanytomanymodel : Migration
+    public partial class test1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,7 +19,8 @@ namespace data_receiver.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    actionName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    description = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -216,7 +217,8 @@ namespace data_receiver.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     usercustomerId = table.Column<int>(type: "int", nullable: false),
-                    actionId = table.Column<int>(type: "int", nullable: false)
+                    actionId = table.Column<int>(type: "int", nullable: false),
+                    value = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

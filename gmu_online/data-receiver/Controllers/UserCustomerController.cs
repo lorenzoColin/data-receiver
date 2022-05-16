@@ -97,9 +97,13 @@ namespace data_receiver.Controllers
             var result = new List<UserCustomerActionViewModel>();
             var search = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(DebiteurnrId))));
             var live_clients = search.Documents.FirstOrDefault();
+
+            ViewBag.action = search.Documents.FirstOrDefault();
+
             var loggedInId = _usermanager.GetUserId(HttpContext.User);
             var usercustomer = _db.UserCustomer.Where(s => s.UserId == loggedInId && s.DebiteurnrId == live_clients.Debiteurnr).FirstOrDefault();
             var usercustomerId = usercustomer.Id;
+
 
             IEnumerable<UserCustomerAction> usercustomeraction = _db.UserCustomerAction.Where(s => s.usercustomerId == usercustomerId);
 
@@ -143,7 +147,8 @@ namespace data_receiver.Controllers
                             ModelState.AddModelError("duplicate", "duplicate value");
                         }
                        break;
-                        case 3:
+                        //last video call actionId 2
+                        case 2:
                         if (userCustomerAction.value == UserCustomerAction.value)
                         {
                             var sejjjjj = _db.UserCustomerAction.Find(userCustomerAction.id);
@@ -157,17 +162,20 @@ namespace data_receiver.Controllers
                             _db.SaveChanges();
                             ModelState.AddModelError("duplicate", "duplicate value");
                         }
-                        break;
+                      break;
                 }
             }
             //if there is a duplicate overwrite the same value instead
+            //actionId 1 == Currentbudget
             if (UserCustomerAction.actionId == 1 &&  duplicate == false)
             {
                 _db.UserCustomerAction.Add(UserCustomerAction);
                 _db.SaveChanges();
             }
-            if (UserCustomerAction.actionId == 3 && duplicate == false)
+            //actionId == 2 Latest_videocall 
+            if (UserCustomerAction.actionId == 2 && duplicate == false)
             {
+                    
                 _db.UserCustomerAction.Add(UserCustomerAction);
                 _db.SaveChanges();
             }

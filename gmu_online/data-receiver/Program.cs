@@ -30,7 +30,10 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 builder.Services
         .AddFluentEmail("lorenzo8399test@gmail.com")
         .AddRazorRenderer(Directory.GetCurrentDirectory())
-        .AddSmtpSender(new System.Net.Mail.SmtpClient { Host = "smtp.gmail.com",Port = 587,EnableSsl =true,Credentials = new NetworkCredential("lorenzo8399test@gmail.com","Gufm2775") } );
+        .AddSmtpSender(new System.Net.Mail.SmtpClient { Host = "smtp.gmail.com",Port = 587,EnableSsl =true,Credentials = new NetworkCredential("lorenzo8399test@gmail.com","Gufm2775") } )
+        .AddRazorRenderer(typeof(Program));
+
+
 //this configuration is gmail configuration
 
 builder.Services.AddControllersWithViews();

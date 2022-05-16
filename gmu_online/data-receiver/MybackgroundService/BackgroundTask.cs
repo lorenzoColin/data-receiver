@@ -22,9 +22,8 @@ namespace data_receiver.MybackgroundService
             _client = new ElasticSearchClient().EsClient();
             _service = services;
             _logger = logger;
-          
         }
-
+        //currentBudget is action id 1
         public async Task currentBudget()
         {
             ////service created om customers op te halen
@@ -80,60 +79,197 @@ namespace data_receiver.MybackgroundService
                     //dit is een test het kan weg later
                     mail.Add(usercustomer);
                 }
+                mail.Add(usercustomer);
+
+
             }
         }
 
-
+        //LastVideoCall is action id 2
         public  async Task LastVideoCall()
         {
             using var scope = _service.CreateScope();
+            //database
             var _db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            ////mail scope
-            using var test = _service.CreateScope();
-            var Sendmail = test.ServiceProvider.GetRequiredService<IFluentEmail>();
+            //mails
+            var Sendmail = scope.ServiceProvider.GetRequiredService<IFluentEmail>();
+
+            IEnumerable<UserCustomerAction> userCustomerActions = _db.UserCustomerAction;
+
+
+            foreach (var usercustomerAction in userCustomerActions)
+            {
+                //if actionId 2 laaste video call gesprek
+                //naam moet actionName worden
+                if(usercustomerAction.actionId == 2)
+                {
+                var usercustomer = _db.UserCustomer.Find(usercustomerAction.usercustomerId);
+                var user = await _db.Users.FindAsync(usercustomer.UserId);
+                var client = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(usercustomer.DebiteurnrId))));
+                var customer = client.Documents.FirstOrDefault();
+
+
+                    var soo = new List<string>();
+
+                    //als customer niet null is en customer heeft een latest_video call propperty dan kom je in de if statement
+                    if(customer != null && customer.Latest_videocall != "Geen behoefte aan bij de klant.")
+                    {
+                        //date of today
+                        var Datenow = DateTime.Now.ToString("d/M/yyyy");
+
+                        //date of now with datime type;
+                        var DateOftoday =   DateTime.Parse(Datenow);
+
+                        //dit is de laatste keer dat ze hebben gebeld
+                        var Latest_videocall = customer.Latest_videocall;
+                        var Latest_videocallDate = DateTime.Parse(Latest_videocall);
+
+
+
+                        //this function gonne look at the latest_videcaldate and adds the value of the month to it
+                        //het probleem met dit is als je laatste video call 2021 maart is en je vult 3 manden in krijg je em nooit binnen
+                        //oplossing voor vinden...
+                        var reminderMailDay = Latest_videocallDate.AddMonths(usercustomerAction.value).ToString("d/M/yyyy");
+                        var remindermailtype = DateTime.Parse(reminderMailDay);
+
+                        //dit is 2 maanden na de eerste reminder
+                        var secondreminderMail = DateTime.Parse(reminderMailDay).AddDays(2).ToString("d/M/yyyy");;
+                        var secondaryremindermailtype = DateTime.Parse(secondreminderMail);
+
+
+
+                        //als de datum van nu gelijk is aan 2 dagen na de reminder of langer is dan 2 dagen na de reminder
+                        //dan is deze propperty true
+                        bool twoDaysafterReminder = DateOftoday == secondaryremindermailtype;
+
+
+
+                        //als dit true is
+                        if (twoDaysafterReminder == true)
+                        {
+                            //functie maken om de proppertys te verwijderen
+                            //want ze ze zijn niet meer 
+                            Console.WriteLine("verwijder deze values");
+                            break;
+                        }
+
+
+
+
+                        //grab the date from now and add the months when you want to receive an email
+                        //var reminderMailDay = DateOftoday.AddMonths(usercustomerAction.value).ToString("d/M/yyyy");
+
+
+                        //if de date of now is equal to the remindermailDate
+                        if (Datenow == reminderMailDay)
+                        {
+                            //send mail to the user 
+                            Console.WriteLine(string.Format("reminder {0} plan your next video call in with the company {1} contact is {2} ", user.Email, customer.Klant, customer.Contact));
+              
+                            //send mail to the customer
+                            Console.WriteLine(String.Format("reminder {0} from {1} your last video call is a long time ago  ", customer.Klant, customer.Contact));
+                        }
+
+                         
+
+                    }
+                
+                }
+            }
+            await Task.CompletedTask;
+        }
+
+        //deze moet gemaakt worden
+        //LastContact is action Id 3
+        public async Task LastContact()
+        {
+            using var scope = _service.CreateScope();
+            //database
+            var _db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            //mails
+            var Sendmail = scope.ServiceProvider.GetRequiredService<IFluentEmail>();
 
 
             IEnumerable<UserCustomerAction> userCustomerActions = _db.UserCustomerAction;
 
+
             foreach (var usercustomerAction in userCustomerActions)
             {
-                if(usercustomerAction.actionId == 3)
+                //if actionId 3 laaste contact call gesprek
+                if (usercustomerAction.actionId == 3)
                 {
-                    // 12-05-20222
+                    var usercustomer = _db.UserCustomer.Find(usercustomerAction.usercustomerId);
+                    var user = await _db.Users.FindAsync(usercustomer.UserId);
+                    var client = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(usercustomer.DebiteurnrId))));
+                    var customer = client.Documents.FirstOrDefault();
 
-                    // 5 maanden
+                    //dit is de laatste keer dat ze hebben gebeld
+                    var Latest_contact = customer.Latest_contact;
+                    var Latest_contactDate = DateTime.Parse(Latest_contact);
 
-                    //12-05-2022
+                    //grab the date from now and add the months when you want to receive an email
+                    var reminderMailDay = Latest_contactDate.AddMonths(usercustomerAction.value).ToString("d/M/yyyy");
 
-                    Console.WriteLine(usercustomerAction.value);
+                    //date of today
+                    var DateOftoday = DateTime.Now.ToString("d/M/yyyy");
+                    var day = DateTime.Now;
+
+
+                    //dit is 2 maanden na de eerste reminder
+                    var secondreminderMail = DateTime.Parse(reminderMailDay).AddDays(2).ToString("d/M/yyyy"); ;
+                    var secondaryremindermailtype = DateTime.Parse(secondreminderMail);
+
+
+
+                    //als de datum van nu gelijk is aan 2 dagen na de reminder of langer is dan 2 dagen na de reminder
+                    //dan is deze propperty true
+                    bool twoDaysafterReminder = day == secondaryremindermailtype;
+
+
+                    if (twoDaysafterReminder == true)
+                    {
+                        //functie maken om de proppertys te verwijderen
+                        //want ze ze zijn niet meer 
+                        Console.WriteLine("verwijder deze values");
+                        break;
+                    }
+
+
+
+                    //if de date of now is equal to the remindermailDate
+                    if (DateOftoday == reminderMailDay)
+                    {
+                        //send mail to the user 
+                        Console.WriteLine(string.Format("reminder {0} plan your next video call in with the company {1} contact is {2} ", user.Email, customer.Klant, customer.Contact));
+
+                        //send mail to the customer
+                        Console.WriteLine(String.Format("reminder {0} from {1} your last video call is a long time ago  ", customer.Klant, customer.Contact));
+                    }
 
                 }
-            }
 
-            var s = 2;
+            }
+            await Task.CompletedTask;
+
         }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken )
         {
-
-
-
             //zo lang de app niet sluit
                 while(!stoppingToken.IsCancellationRequested)
                 {
-
                 LastVideoCall();
                 currentBudget();
 
+                //////service created om customers op te halen
+                //////customer scope
+                //using var scope = _service.CreateScope();
+                //var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                ////var contacts = context.Contact;
 
-                ////service created om customers op te halen
-                ////customer scope
-                using var scope = _service.CreateScope();
-                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                //var contacts = context.Contact;
-
-                ////mail scope
-                using var test = _service.CreateScope();
-                var mail = test.ServiceProvider.GetRequiredService<IFluentEmail>();
+                //////mail scope
+                //using var test = _service.CreateScope();
+                //var mail = test.ServiceProvider.GetRequiredService<IFluentEmail>();
 
 
                 

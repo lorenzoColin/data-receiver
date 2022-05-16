@@ -1,6 +1,11 @@
 ﻿@using data_receiver.Models.ViewModels
 @model List<UserCustomerActionViewModel>
 
+
+@{
+    var customerHasVideoCall = true;
+}
+
 <div class="row">
 <h4 class="text-white col-md-6">customer</h4>
 <h4 style="text-align:end;" class="col-md-6 text-white">triggers</h4>
@@ -9,6 +14,10 @@
 
 @foreach(var list in @Model)
 {
+    if(@list.live_clients.Latest_videocall == "Geen behoefte aan bij de klant.")
+    {
+        customerHasVideoCall = false;
+    }
     <div class="row text-white ">
     <div class="col-md-6 d-flex ">
 
@@ -38,6 +47,10 @@
                     <label class="control-label">Datum_live</label>
                     <input disabled value="@list.live_clients.Datum_live" class="form-control" />
                 </div>
+                <div class="form-group">
+                    <label class="control-label">latest videocall</label>
+                    <input disabled value="@list.live_clients.Latest_videocall" class="form-control" />
+                </div>
                  <div class="form-group">
                     <label  class="control-label">Max budget</label>
                     <input disabled  value="@list.live_clients.Max_budget" class="form-control" />
@@ -49,6 +62,14 @@
                 <div class="form-group">
                     <label  class="control-label">last contact</label>
                     <input disabled value="@list.live_clients.Latest_contact" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label  class="control-label">doelstelling</label>
+                    <input disabled value="@list.live_clients.Doelstelling" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label  class="control-label ">remarks</label>
+                    <input disabled value="@list.live_clients.Remarks" class="form-control " />
                 </div>
             </div>
           
@@ -71,7 +92,7 @@
                         </form>
                     </div>
                     }
-                    if(action.id == 3)
+                    if(action.id == 2 && customerHasVideoCall != false)
                     {
                         <div class="border p-3">
                         <p>@action.description</p>
@@ -82,8 +103,9 @@
                             <input hidden name="usercustomerId" value="@list.usercusotmerId"   >
                             <input type="submit" class="mt-2" >
                         </form>
-                    </div>
-                    }       
+                        </div>
+                    }
+
             }
             <h3>current page per month</h3>
             <div class="d-flex row">
@@ -95,18 +117,24 @@
                         }
                 }
             </div>
-            <h3>last video call</h3>
-            <div class=" d-flex row">
-                @foreach(var myactions in @list.UserCustomerAction)
+
+                @if (customerHasVideoCall == false)
                 {
-                    if(myactions.action.id == 3)
-                    {
-                        <p class="col-md-2" >mail after @myactions.value months </p>
-                    }
+
                 }
-            </div>
-
-
+                else
+                {
+                    <h3>last video call</h3>
+                    <div class=" d-flex row">
+                        @foreach(var myactions in @list.UserCustomerAction)
+                        {
+                            if(myactions.action.id == 2 )
+                            {
+                                <p class="col-md-2" >mail after @myactions.value months </p>
+                            }
+                        }
+                    </div>   
+                }
         </div>
         
     </div>
