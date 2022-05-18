@@ -15,9 +15,28 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using data_receiver.Models.ViewModels;
+using Google.Ads.GoogleAds.Lib;
+using Google.Ads.GoogleAds.V10.Services;
+using Google.Ads.GoogleAds;
+using Google.Ads.GoogleAds.Config;
+using Google.Ads.GoogleAds.V10.Errors;
+
+
+//"_id": "13249fa0-ad1f-4d17-8d36-7289503bb652",
+//"Debiteurnr": "12759",
+//"Klant": "Veiligheids-sloten",
+//"Beheerder": "Annerieke ",
+//"Status": "Live",
+//"datum_live": "01-03-2021",
+//"budget_afspr": "€ 5.000,00",
+//"Doelstelling": "ROAS 1200%",
+//"Servicefee_afspraak": "min. €450 >€500 staffel"
+//},
+
 
 namespace data_receiver.Controllers
 {
+    
     [Authorize]
     public class HomeController : Controller
     {
@@ -29,22 +48,20 @@ namespace data_receiver.Controllers
 
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
-
-
             _client = new ElasticSearchClient().EsClient();
             _logger = logger;
             _db = db;
             _userManager = userManager;
         }
-        public async Task< IActionResult> Index([FromServices] IFluentEmail singleEmai) 
+
+        public async Task< IActionResult> Index([FromServices] IFluentEmail singleEmai)
         {
 
-            var search  = await _client.GetAsync<_12779_campaigns>(new DocumentPath<_12779_campaigns>(new Id("42cf3453-e52d-4543-94c8-87ac0055759f")), s => s.Index("12779_campaigns") );
+           
 
 
-           //var search =  _client.Search<_12779_campaigns>(s => s.Index("12779_campaigns") );
 
-            var live_clients = search.Source;
+
 
             //12779_campaigns
             // var template = @"@{ Layout = ""Views/Shared/MailTemplate.cshtml""; }";

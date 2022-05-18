@@ -90,13 +90,13 @@ namespace data_receiver.Controllers
         {
             try
             {
-              var bla =  await _db.Users.FindAsync(Users.Id);
+              var User =  await _db.Users.FindAsync(Users.Id);
 
-                bla.FirstName = Users.FirstName;
-                bla.LastName = Users.LastName;
-                bla.PhoneNumber = Users.PhoneNumber;
-                bla.Email = Users.Email;
-                bla.UserName = Users.UserName;
+                User.FirstName = Users.FirstName;
+                User.LastName = Users.LastName;
+                User.PhoneNumber = Users.PhoneNumber;
+                User.Email = Users.Email;
+                User.UserName = Users.UserName;
                
                 _db.SaveChanges();
 

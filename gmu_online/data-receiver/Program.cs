@@ -1,11 +1,16 @@
 using data_receiver.Data;
 using data_receiver.Models;
 using data_receiver.MybackgroundService;
+using Google.Api.Ads.AdWords.Lib;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+
 
 
 // Add services to the container.
@@ -22,7 +27,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddDefaultTokenProviders();
 
 
-// add service for getting the current uri
+//adds
+//builder.Services.AddSingleton<AdWordsAppConfig>(scope => new AdWordsAppConfig(builder.Configuration.GetSection("AdWordsApi")));
+//builder.Services.AddScoped<GoogleAdWordsService>();
 
 
 

@@ -62,7 +62,7 @@ namespace data_receiver.MybackgroundService
                 {
 
                     var singleUs =  _db.UserCustomer.Find(usercustomer.usercustomerId);
-                    var user = _db.Users.Find(singleUs.UserId);
+                    var user = _db.Users.Find(singleUs.userid);
                     var client = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(singleUs.DebiteurnrId))));
                     var customer = client.Documents.FirstOrDefault();
 
@@ -104,7 +104,7 @@ namespace data_receiver.MybackgroundService
                 if(usercustomerAction.actionId == 2)
                 {
                 var usercustomer = _db.UserCustomer.Find(usercustomerAction.usercustomerId);
-                var user = await _db.Users.FindAsync(usercustomer.UserId);
+                var user = await _db.Users.FindAsync(usercustomer.userid);
                 var client = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(usercustomer.DebiteurnrId))));
                 var customer = client.Documents.FirstOrDefault();
 
@@ -199,7 +199,7 @@ namespace data_receiver.MybackgroundService
                 if (usercustomerAction.actionId == 3)
                 {
                     var usercustomer = _db.UserCustomer.Find(usercustomerAction.usercustomerId);
-                    var user = await _db.Users.FindAsync(usercustomer.UserId);
+                    var user = await _db.Users.FindAsync(usercustomer.userid);
                     var client = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(usercustomer.DebiteurnrId))));
                     var customer = client.Documents.FirstOrDefault();
 

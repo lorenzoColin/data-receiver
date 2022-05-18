@@ -36,10 +36,10 @@ namespace data_receiver.Data
         //usercustomer
         //    builder.Entity<UserCustomer>()
         //.HasKey(bc => new { bc.UserId });
-            builder.Entity<UserCustomer>()
-                .HasOne(bc => bc.User)
-                .WithMany(b => b.UserCustomer)
-                .HasForeignKey(bc => bc.UserId);
+            //builder.Entity<UserCustomer>()
+            //    .HasOne(bc => bc.us)
+            //    .WithMany(b => b.UserCustomer)
+            //    .HasForeignKey(bc => bc.UserId);
 
 
             //customercontact

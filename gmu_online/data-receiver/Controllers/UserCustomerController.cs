@@ -42,12 +42,12 @@ namespace data_receiver.Controllers
         {
 
             //laat alle customer zien van de ingelogde user
-            if (item.UserId == user)
+            if (item.userid == user)
             {
 
                 var search = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(item.DebiteurnrId))));
                 var live_clients = search.Documents.FirstOrDefault(s => s.Debiteurnr == item.DebiteurnrId);
-                var applicationUser = _db.Users.Find(item.UserId);
+                var applicationUser = _db.Users.Find(item.userid);
 
                 usercustomerviewmodel.Add(
                         new UserCustomerViewModel
@@ -55,7 +55,7 @@ namespace data_receiver.Controllers
                             Users = applicationUser,
                             Customer = live_clients,
                             DebiteurnrId = item.DebiteurnrId,
-                            userId = item.UserId,
+                            userId = item.userid,
                         });
 
             }
@@ -89,7 +89,6 @@ namespace data_receiver.Controllers
         //    return View(contact);
         //}
 
-        
         [Route("usercustomer/edit/{DebiteurnrId}")]
         public async Task<ActionResult> Edit(string DebiteurnrId)
         {
@@ -101,7 +100,7 @@ namespace data_receiver.Controllers
             ViewBag.action = search.Documents.FirstOrDefault();
 
             var loggedInId = _usermanager.GetUserId(HttpContext.User);
-            var usercustomer = _db.UserCustomer.Where(s => s.UserId == loggedInId && s.DebiteurnrId == live_clients.Debiteurnr).FirstOrDefault();
+            var usercustomer = _db.UserCustomer.Where(s => s.userid == loggedInId && s.DebiteurnrId == live_clients.Debiteurnr).FirstOrDefault();
             var usercustomerId = usercustomer.Id;
 
 
@@ -192,8 +191,8 @@ namespace data_receiver.Controllers
         public ActionResult removecustomer(string DebiteurnrId)
         {    
             var loggedInId = _usermanager.GetUserId(HttpContext.User);
-            var usercustomer = new UserCustomer { UserId = loggedInId, DebiteurnrId = DebiteurnrId };
-            var customer = _db.UserCustomer.Where(x => x.UserId == loggedInId && x.DebiteurnrId == usercustomer.DebiteurnrId).First();
+            var UserCustomer = new UserCustomer { userid = loggedInId, DebiteurnrId = DebiteurnrId };
+            var customer = _db.UserCustomer.Where(x => x.userid == loggedInId && x.DebiteurnrId == UserCustomer.DebiteurnrId).First();
 
             _db.UserCustomer.Remove(customer);
             _db.SaveChanges();

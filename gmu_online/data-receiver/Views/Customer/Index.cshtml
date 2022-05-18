@@ -1,5 +1,5 @@
 ﻿@using data_receiver.Models.ViewModels
-@model  List<Customer> ;
+@model  List<CustomerViewModel> ;
 
     
 
@@ -59,6 +59,9 @@
                  <a asp-controller="customer" asp-action="create" class="btn btn-primary btn-background"  >create customer</a>
             </div>*@
         </div>
+
+        
+
  
         <div class ="row d-flex no-margin  align-items-center " >
            @foreach(var customers in @Model)
@@ -67,9 +70,9 @@
                         <div class="card card-color"   >
                             <i class="fa-solid fa-user-group text-center mt-3 h2 "></i>
                             <div class="card-body text-center">
-                            <h6 class="card-title">@customers.Klant</h6>
+                            <h6 class="card-title">@customers.customer.Klant</h6>
                                <div class="flex-column d-flex">
-                                <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.Debiteurnr" class="text-muted text-decoration-none">claim</a>  
+                                <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType" class="text-muted text-decoration-none">claim</a>  
                                 @*<a asp-controller= "customer" asp-action="delete" asp-route-id = "@customers.Debiteurnr"  class="text-muted text-decoration-none">delete</a>*@
                                 </div>
                             </div>

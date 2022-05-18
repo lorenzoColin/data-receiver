@@ -12,8 +12,8 @@ using data_receiver.Data;
 namespace data_receiver.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220514214719_test1")]
-    partial class test1
+    [Migration("20220518060206_add")]
+    partial class add
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -128,15 +128,18 @@ namespace data_receiver.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("DebiteurnrId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("customerType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("userid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("UserCustomer", "Identity");
                 });
@@ -300,17 +303,6 @@ namespace data_receiver.Migrations
                     b.ToTable("UserTokens", "Identity");
                 });
 
-            modelBuilder.Entity("data_receiver.Models.UserCustomer", b =>
-                {
-                    b.HasOne("data_receiver.Models.ApplicationUser", "User")
-                        .WithMany("UserCustomer")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("data_receiver.Models.UserCustomerAction", b =>
                 {
                     b.HasOne("data_receiver.Models.action", "action")
@@ -384,11 +376,6 @@ namespace data_receiver.Migrations
             modelBuilder.Entity("data_receiver.Models.action", b =>
                 {
                     b.Navigation("UserCustomerAction");
-                });
-
-            modelBuilder.Entity("data_receiver.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("UserCustomer");
                 });
 
             modelBuilder.Entity("data_receiver.Models.UserCustomer", b =>

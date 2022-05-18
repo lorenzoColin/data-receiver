@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using data_receiver.Models.ViewModels;
 using Nest;
 using data_receiver.ElasticConnection;
+using System.Collections.Generic;
 
 namespace data_receiver.Controllers
 {
@@ -15,8 +16,6 @@ namespace data_receiver.Controllers
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ElasticClient _client;
-
-
 
         // GET: CustomerController
         public CustomerController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
@@ -32,48 +31,138 @@ namespace data_receiver.Controllers
             //ingelogde user
             var loggedInUser = await _db.Users.FindAsync(user);
 
-            //elastic search client
-            var search = await _client.SearchAsync<Customer>();
-            var live_clients = search.Documents;
+            //sma klanten
+            var search = _client.Search<Sma_klanten>(s => s.Index("sma_klanten"));
+            var sma_klanten = search.Documents;
+            var CustomerViewModel = new List<CustomerViewModel>();
+
+            
+
+            //dit zijn alle sma klanten
+            foreach (var sma in sma_klanten)
+            {                
+                CustomerViewModel.Add(new CustomerViewModel
+                {
+                    customerType = "sma_klanten",
+                    customer = new Customer
+                    {
+                        Debiteurnr = sma.Debiteurnr,
+                        Klant = sma.Klant,
+                        Consultant = sma.Beheerder,
+                        Datum_live = sma.datum_live,
+                        Max_budget = sma.budget_afspr,
+                        Doelstelling = sma.Doelstelling,
+                        Servicefee_afspraak = sma.Servicefee_afspraak,
+                        CustomerType = "sma_klanten"
+                    }
+                });
+            }
+
+
+            var search1 = _client.Search<Customer>(s => s.Index("sea_klanten"));
+            var sea_klanten = search1.Documents;
+            foreach (var sea in sea_klanten)
+            {
+                CustomerViewModel.Add(new CustomerViewModel
+                {
+                    customerType = "sea_klanten",
+                    customer = sea,
+                });
+
+                sea.CustomerType = "sea_klanten";
+            }
+
+
+
+            //dit zijn alle klanten van sma en sea
+            var AllCustomers = CustomerViewModel;
+
+
 
             //my customers
             IEnumerable<UserCustomer> userCustomers = _db.UserCustomer;
-
-            //list to add all customers
-            var allcustomers = new Dictionary<string, string>();
-
             //list to add my customers
-            var mycustomers = new Dictionary<string, string>();
+            var mycustomers = new List<CustomerViewModel>();
 
             foreach (var mycustomer in userCustomers)
             {
-                if (mycustomer.UserId == user)
+                //mijn user ophalen vanuit die table
+                if (mycustomer.userid == user)
                 {
-                    var searchclient = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(mycustomer.DebiteurnrId))));
-                    var singlecustomer = searchclient.Documents.FirstOrDefault(s => s.Debiteurnr == mycustomer.DebiteurnrId);
-                    mycustomers.Add(singlecustomer.Debiteurnr, singlecustomer.Contact);
+                    foreach(var test in AllCustomers)
+                    {
+                        if(mycustomer.DebiteurnrId == test.customer.Debiteurnr && mycustomer.customerType == test.customer.CustomerType)
+                        {
+                            mycustomers.Add(new CustomerViewModel { customer = test.customer,customerType = test.customerType } );
+                        }
+                    }
+                    
+                    //var searchclient = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(mycustomer.DebiteurnrId))));
+                    //var singlecustomer = searchclient.Documents.FirstOrDefault(s => s.Debiteurnr == mycustomer.DebiteurnrId);
+                    //mycustomers.Add(singlecustomer.Debiteurnr, singlecustomer.Contact);
                 }
             }
-            foreach (var live_client in live_clients)
-            {
-                allcustomers.Add(live_client.Debiteurnr, live_client.Contact);
-            }
 
-            //hier haal de klanten die de ingelogde gebruiker heeft weg van de lijst met alle klanten
-            //nu hou ik klanten over die de ingelogde gebruiker niet beheerd
-            var customers = allcustomers.Except(mycustomers).ToArray();
 
-            var customertoclaim = new List<Customer>();
 
-            foreach (var customer in customers)
-            {
-                var searchclient = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(customer.Key))));
-                var result = searchclient.Documents.FirstOrDefault();
+         
+           
+            ////hier pakt ik alle customer en haal ik mijn customer eraf
+            //var customers = AllCustomers.Except(mycustomers).ToArray();
 
-                customertoclaim.Add(result);
-            }
-            return View(customertoclaim);
 
+
+
+
+            //var sma_klanten = _client.Search<Sma_klanten>(s => s.Index("sma_klanten"));
+            ////my user id 
+            //var user = _userManager.GetUserId(HttpContext.User);
+            ////ingelogde user
+            //var loggedInUser = await _db.Users.FindAsync(user);
+
+            ////elastic search client
+            //var search = await _client.SearchAsync<Customer>();
+            //var live_clients = search.Documents;
+
+            ////my customers
+            //IEnumerable<UserCustomer> userCustomers = _db.UserCustomer;
+
+            ////list to add all customers
+            //var allcustomers = new Dictionary<string, string>();
+
+            ////list to add my customers
+            //var mycustomers = new Dictionary<string, string>();
+
+            //foreach (var mycustomer in userCustomers)
+            //{
+            //    if (mycustomer.UserId == user)
+            //    {
+            //        var searchclient = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(mycustomer.DebiteurnrId))));
+            //        var singlecustomer = searchclient.Documents.FirstOrDefault(s => s.Debiteurnr == mycustomer.DebiteurnrId);
+            //        mycustomers.Add(singlecustomer.Debiteurnr, singlecustomer.Contact);
+            //    }
+            //}
+            //foreach (var live_client in live_clients)
+            //{
+            //    allcustomers.Add(live_client.Debiteurnr, live_client.Contact);
+            //}
+
+            ////hier haal de klanten die de ingelogde gebruiker heeft weg van de lijst met alle klanten
+            ////nu hou ik klanten over die de ingelogde gebruiker niet beheerd
+            //var customers = allcustomers.Except(mycustomers).ToArray();
+
+            //var customertoclaim = new List<Customer>();
+
+            //foreach (var customer in customers)
+            //{
+            //    var searchclient = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(customer.Key))));
+            //    var result = searchclient.Documents.FirstOrDefault();
+
+            //    customertoclaim.Add(result);
+            //}
+            //return View(customertoclaim);
+
+            return View();
         }
         // GET: CustomerController/Create
         public ActionResult Create()
@@ -127,22 +216,7 @@ namespace data_receiver.Controllers
             return View();
         }
 
-        // POST: CustomerController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public  ActionResult Edit(Customer Customer)
-        {
-
-
-
-            if (ModelState.IsValid)
-            {
-                Customer.actionId = Customer.actionId;
-                //_db.Customer.Update(Customer);
-                _db.SaveChanges();
-            }
-            return RedirectToAction("index");
-        }
+  
 
         // GET: CustomerController/Delete/5
         public ActionResult Delete(int id)
@@ -178,10 +252,10 @@ namespace data_receiver.Controllers
             //ingelogde user
             var loggedInUser = await _db.Users.FindAsync(userid);
 
-            var userCustomer = new UserCustomer { DebiteurnrId = id, User = loggedInUser, UserId = userid };
+            //var userCustomer = new UserCustomer { DebiteurnrId = id, UserId = loggedInUser, UserId = userid };
 
-            _db.UserCustomer.Add(userCustomer);
-            _db.SaveChanges();
+            //_db.UserCustomer.Add(userCustomer);
+            //_db.SaveChanges();
 
 
             return RedirectToAction("index");
