@@ -20,6 +20,9 @@ using Google.Ads.GoogleAds.V10.Services;
 using Google.Ads.GoogleAds;
 using Google.Ads.GoogleAds.Config;
 using Google.Ads.GoogleAds.V10.Errors;
+using Google.Api.Ads.AdWords.Lib;
+using Google.Ads.Gax.Config;
+using static Google.Ads.GoogleAds.V10.Resources.AccountBudget;
 
 
 //"_id": "13249fa0-ad1f-4d17-8d36-7289503bb652",
@@ -46,8 +49,11 @@ namespace data_receiver.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
 
 
+
+
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
+
             _client = new ElasticSearchClient().EsClient();
             _logger = logger;
             _db = db;
@@ -56,21 +62,65 @@ namespace data_receiver.Controllers
 
         public async Task< IActionResult> Index([FromServices] IFluentEmail singleEmai)
         {
+            //var user = _userManager.GetUserId(HttpContext.User);
 
-           
+            //var customerList = new CustomerList(_db);
+
+            //var mycustomers = customerList.getmycustomers(user);
 
 
 
 
 
-            //12779_campaigns
-            // var template = @"@{ Layout = ""Views/Shared/MailTemplate.cshtml""; }";
-            // var model = new { Name = "LUKE", Numbers = new[] { "1", "2", "3" } };
-            // var email = singleEmai
-            //    .To("lorenzo8399@hotmail.com")
-            //    .Subject("Test email")
-            //.UsingTemplate(template,model);
-            // await email.SendAsync();
+            //var adswordconfig = new AdWordsAppConfig
+            //{
+            //    DeveloperToken = "yBzwour2WR3cjnO6--vr7w",
+            //    OAuth2ClientId = "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",
+            //    OAuth2RefreshToken = "1//09rPlYi19UE5fCgYIARAAGAkSNwF-L9Ir7pKSkmp7OUsROXQn0KisD4l_0_wdtaS8HifT59R6z1_wDlthtZdeyZI1kUP5lVRhcMQ",
+            //    ClientCustomerId = "3743262179",
+            //    OAuth2ClientSecret = "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"
+            //};
+
+
+            //            GoogleAdsConfig config = new GoogleAdsConfig()
+            //            {
+            //                DeveloperToken = "yBzwour2WR3cjnO6--vr7w",
+            //                LoginCustomerId = "3743262179",
+            //                OAuth2Mode = OAuth2Flow.APPLICATION,
+            //                OAuth2ClientId = "515940014204-5o7gipoadae7vg70khnrk2qijrs7mmf9.apps.googleusercontent.com",
+            //                OAuth2ClientSecret = "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",
+            //                OAuth2RefreshToken = "1//09rXVRXziweZDCgYIARAAGAkSNwF-L9IrRfxuLR6OlDxxSyRa8umTp7fULugMkbZ-7beWPhb0X5wU81LqMZ3J7mVWYg-uFPW6-6E",
+            //            };
+            //            //connectie api
+            //            var client = new GoogleAdsClient(config);
+            //            var googleAdsService = client.GetService(Services.V10.GoogleAdsService);
+
+
+
+            //            string query = @"SELECT account_budget.total_adjustments_micros FROM account_budget WHERE customer.descriptive_name LIKE '%geneo%'
+            //";
+
+            //            try
+            //            {
+            //                // Issue a search request.
+            //                googleAdsService.SearchStream("3274915968", query,
+            //                    delegate (SearchGoogleAdsStreamResponse resp)
+            //                    {
+            //                        foreach (var googleAdsRow in resp.Results)
+            //                        {
+            //                            Console.WriteLine(String.Format(" {0} ", googleAdsRow.AccountBudget.TotalAdjustmentsMicros/ 1000000)); 
+            //                        }
+            //                    }
+            //                );
+            //            }
+            //            catch (GoogleAdsException e)
+            //            {
+            //                Console.WriteLine("Failure:");
+            //                Console.WriteLine($"Message: {e.Message}");
+            //                Console.WriteLine($"Failure: {e.Failure}");
+            //                Console.WriteLine($"Request ID: {e.RequestId}");
+            //                throw;
+            //            }
 
             return View();
         }

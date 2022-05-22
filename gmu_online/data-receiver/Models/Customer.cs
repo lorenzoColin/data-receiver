@@ -4,33 +4,34 @@ namespace data_receiver.Models
 {
     public class Customer
     {
+        public string _id { get; set; }
 
         //props for sea_klanten
-        [Key]
-        public string? Debiteurnr { get; set; }
-        public string? Klant { get; set; }
-        public string? Consultant { get; set; }
-        public string? Max_budget { get; set; }
-        public string? Doelstelling { get; set; }
-        public string? Resultaat { get; set; }
-        public string? Datum_live { get; set; }
-        public string? Contract { get; set; }
-        public string? Contact { get; set; }
-        public string? Latest_videocall { get; set; }
-        public string? Latest_contact { get; set; }
-        public string? Remarks { get; set; }
-        public string? CMS { get; set; }
+        public string? Debiteurnr { get; set; } = "n.v.t";
+        public string? Klant { get; set; } = "n.v.t";
+        public string? Consultant { get; set; } = "n.v.t";
+        public string? Max_budget { get; set; } = "n.v.t";
+        public string? Doelstelling { get; set; } = "n.v.t";
+        public string? Resultaat { get; set; } = "n.v.t";
+        public string? Datum_live { get; set; } = "n.v.t";
+        public string? Contract { get; set; } = "n.v.t";
+        public string? Contact { get; set; } = "n.v.t";
+        public string? Latest_videocall { get; set; } 
+        public string? Latest_contact { get; set; } = "n.v.t";
+        public string? Remarks { get; set; } = "n.v.t";
+        public string? CMS { get; set; } = "n.v.t";
 
         //propperty from sma_klanten
 
-        public string? Servicefee_afspraak { get; set; }
-        public string? CustomerType { get; set; } 
-
-        
-
+        public string? Servicefee_afspraak { get; set; } = "n.v.t";
+        public string? CustomerType { get; set; } = "n.v.t";
+        public string? status { get; set; } = "n.v.t";
 
 
-       
+
+
+
+
     }
 
 }

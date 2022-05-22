@@ -12,6 +12,7 @@ namespace data_receiver.Models
         public action? action { get; set; }
         public int value { get; set; }
 
+
     }
 
 }

@@ -2,7 +2,7 @@
 {
     public class CustomerViewModel
     {
-        public string customerType { get; set; }
+        public string? customerType { get; set; }
 
         public Customer customer { get; set; }  
     }

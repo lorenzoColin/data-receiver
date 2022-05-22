@@ -1,9 +1,10 @@
 ﻿@using data_receiver.Models.ViewModels
-@model List<UserCustomerActionViewModel>
+@model UserCustomerActionViewModel
 
 
 @{
     var customerHasVideoCall = true;
+    var latestVideoCall = true;
 }
 
 <div class="row">
@@ -12,9 +13,7 @@
 </div>
 
 
-@foreach(var list in @Model)
-{
-    if(@list.live_clients.Latest_videocall == "Geen behoefte aan bij de klant.")
+    @if(@Model.customer.Latest_videocall == "Geen behoefte aan bij de klant." || @Model.customer.Latest_videocall == null)
     {
         customerHasVideoCall = false;
     }
@@ -25,58 +24,62 @@
                 
              <div class="form-group">
                     <label  class="control-label">debiteurnr</label>
-                    <input disabled value="@list.live_clients.Debiteurnr" class="form-control"  />
+                    <input disabled value="@Model.customer.Debiteurnr" class="form-control"  />
                 </div>
                 <div class="form-group">
                     <label  class="control-label">cms</label>
-                    <input disabled value="@list.live_clients.CMS" class="form-control" />
+                    <input disabled value="@Model.customer.CMS" class="form-control" />
                 </div>
                  <div class="form-group">
                     <label class="control-label">sConsultant</label>
-                    <input disabled value="@list.live_clients.Consultant" class="form-control" />
+                    <input disabled value="@Model.customer.Consultant" class="form-control" />
                 </div>
                  <div class="form-group">
                     <label  class="control-label">Contact</label>
-                    <input disabled value="@list.live_clients.Contact" class="form-control" />
+                    <input disabled value="@Model.customer.Contact" class="form-control" />
                 </div>
                  <div class="form-group">
                     <label class="control-label">contract</label>
-                    <input disabled  value="@list.live_clients.Contract" class="form-control" />
+                    <input disabled  value="@Model.customer.Contract" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">Datum_live</label>
-                    <input disabled value="@list.live_clients.Datum_live" class="form-control" />
+                    <input disabled value="@Model.customer.Datum_live" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">latest videocall</label>
-                    <input disabled value="@list.live_clients.Latest_videocall" class="form-control" />
+                    <input disabled value="@Model.customer.Latest_videocall" class="form-control" />
                 </div>
                  <div class="form-group">
                     <label  class="control-label">Max budget</label>
-                    <input disabled  value="@list.live_clients.Max_budget" class="form-control" />
+                    <input disabled  value="@Model.customer.Max_budget" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label  class="control-label">Resultaat</label>
-                    <input disabled value="@list.live_clients.Resultaat" class="form-control" />
+                    <input disabled value="@Model.customer.Resultaat" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label  class="control-label">last contact</label>
-                    <input disabled value="@list.live_clients.Latest_contact" class="form-control" />
+                    <input disabled value="@Model.customer.Latest_contact" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label  class="control-label">doelstelling</label>
-                    <input disabled value="@list.live_clients.Doelstelling" class="form-control" />
+                    <input disabled value="@Model.customer.Doelstelling" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label  class="control-label ">remarks</label>
-                    <input disabled value="@list.live_clients.Remarks" class="form-control " />
+                    <input disabled value="@Model.customer.Remarks" class="form-control " />
+                </div>
+                 <div class="form-group">
+                    <label  class="control-label ">status</label>
+                    <input disabled value="@Model.customer.status" class="form-control " />
                 </div>
             </div>
           
     </div>
     <div class="col-md-6 d-flex justify-content-end">
        <div class="border w-100">
-            @foreach(var action in @list.action)
+            @foreach(var action in @Model.action)
             {
 
                     if(action.id == 1)
@@ -87,7 +90,7 @@
                         
                             <input name="value" type="number" min=1 max=100 class="form-control"   placeholder="example 50%" >
                             <input hidden name="actionId" value="@action.id" >
-                            <input hidden name="usercustomerId" value="@list.usercusotmerId"   >
+                            <input hidden name="usercustomerId" value="@Model.usercustomerId"   >
                             <input type="submit" class="mt-2" >
                         </form>
                     </div>
@@ -100,16 +103,18 @@
                         
                             <input name="value" type="number" min=1 max=12 class="form-control"   placeholder="3 months" >
                             <input hidden name="actionId" value="@action.id" >
-                            <input hidden name="usercustomerId" value="@list.usercusotmerId"   >
+                            <input hidden name="customerType" value="@Model.customer.CustomerType" >
+                            <input hidden name="usercustomerId" value="@Model.usercustomerId"   >
                             <input type="submit" class="mt-2" >
                         </form>
                         </div>
                     }
 
+
             }
             <h3>current page per month</h3>
             <div class="d-flex row">
-                @foreach(var myactions in @list.UserCustomerAction)
+                @foreach(var myactions in @Model.UserCustomerAction)
                 {
                         if(myactions.action.id == 1)
                         {
@@ -126,7 +131,7 @@
                 {
                     <h3>last video call</h3>
                     <div class=" d-flex row">
-                        @foreach(var myactions in @list.UserCustomerAction)
+                        @foreach(var myactions in @Model.UserCustomerAction)
                         {
                             if(myactions.action.id == 2 )
                             {

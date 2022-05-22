@@ -1,5 +1,5 @@
 ﻿@using data_receiver.Models.ViewModels
-@model List<UserCustomerViewModel> 
+@model List<CustomerViewModel> 
 
 
  <style>
@@ -65,13 +65,13 @@
                         <div class="card card-color"   >
                             <i class="fa-solid fa-user-group text-center mt-3 h2 "></i>
                             <div class="card-body text-center">
-                            <h6 class="card-title">@customers.Customer.Klant</h6>
+                            <h6 class="card-title">@customers.customer.Klant</h6>
                                <div class="flex-column d-flex">
                                 <form asp-action="removecustomer">
-                                    <input hidden type="text" name="DebiteurnrId" value="@customers.DebiteurnrId" >
+                                    <input hidden type="text" name="DebiteurnrId" value="@customers.customer.Debiteurnr" >
                                     <button class=" btn-danger" type="submit">unclaim</button>
                                 </form>
-                                <a class=" btn-danger" asp-action ="edit" asp-route-DebiteurnrId=@customers.DebiteurnrId. >edit</a>
+                                <a class=" btn-danger" asp-action ="edit" asp-route-DebiteurnrId="@customers.customer.Debiteurnr" asp-route-customerType="@customers.customer.CustomerType" >edit</a>
                                 </div>
                             </div>
                         </div>      

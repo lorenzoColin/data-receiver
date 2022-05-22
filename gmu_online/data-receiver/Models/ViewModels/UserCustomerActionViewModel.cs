@@ -4,8 +4,8 @@
 
     public class UserCustomerActionViewModel
     {
-        public Customer live_clients { get; set; }
-        public int usercusotmerId { get; set;}
+        public Customer customer { get; set; }
+        public int usercustomerId { get; set;}
         public IEnumerable<UserCustomerAction> UserCustomerAction { get; set;}
 
         public IEnumerable<action>  action { get; set; }

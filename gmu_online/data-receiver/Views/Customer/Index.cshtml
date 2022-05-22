@@ -62,9 +62,10 @@
 
         
 
- 
+
+        <h3>all klanten</h3>
         <div class ="row d-flex no-margin  align-items-center " >
-           @foreach(var customers in @Model)
+           @foreach(var customers in @Model )
             {
                     <div class="col-md-2 p-3 ">
                         <div class="card card-color"   >
@@ -73,13 +74,14 @@
                             <h6 class="card-title">@customers.customer.Klant</h6>
                                <div class="flex-column d-flex">
                                 <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType" class="text-muted text-decoration-none">claim</a>  
-                                @*<a asp-controller= "customer" asp-action="delete" asp-route-id = "@customers.Debiteurnr"  class="text-muted text-decoration-none">delete</a>*@
                                 </div>
                             </div>
                         </div>      
                     </div>
             }
         </div>
+
+      
     </div>
 </div>
 
