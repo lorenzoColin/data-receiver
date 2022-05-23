@@ -62,65 +62,76 @@ namespace data_receiver.Controllers
 
         public async Task< IActionResult> Index([FromServices] IFluentEmail singleEmai)
         {
-            //var user = _userManager.GetUserId(HttpContext.User);
 
-            //var customerList = new CustomerList(_db);
+            var list = new List<double>();
 
-            //var mycustomers = customerList.getmycustomers(user);
-
+            
 
 
+            var adswordconfig = new AdWordsAppConfig
+            {
+                DeveloperToken = "yBzwour2WR3cjnO6--vr7w",
+                OAuth2ClientId = "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",
+                OAuth2RefreshToken = "1//09rPlYi19UE5fCgYIARAAGAkSNwF-L9Ir7pKSkmp7OUsROXQn0KisD4l_0_wdtaS8HifT59R6z1_wDlthtZdeyZI1kUP5lVRhcMQ",
+                ClientCustomerId = "3743262179",
+                OAuth2ClientSecret = "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"
+            };
 
 
-            //var adswordconfig = new AdWordsAppConfig
-            //{
-            //    DeveloperToken = "yBzwour2WR3cjnO6--vr7w",
-            //    OAuth2ClientId = "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",
-            //    OAuth2RefreshToken = "1//09rPlYi19UE5fCgYIARAAGAkSNwF-L9Ir7pKSkmp7OUsROXQn0KisD4l_0_wdtaS8HifT59R6z1_wDlthtZdeyZI1kUP5lVRhcMQ",
-            //    ClientCustomerId = "3743262179",
-            //    OAuth2ClientSecret = "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"
-            //};
+            GoogleAdsConfig config = new GoogleAdsConfig()
+            {
+                DeveloperToken = "yBzwour2WR3cjnO6--vr7w",
+                LoginCustomerId = "3743262179",
+                OAuth2Mode = OAuth2Flow.APPLICATION,
+                OAuth2ClientId = "515940014204-5o7gipoadae7vg70khnrk2qijrs7mmf9.apps.googleusercontent.com",
+                OAuth2ClientSecret = "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",
+                OAuth2RefreshToken = "1//09rXVRXziweZDCgYIARAAGAkSNwF-L9IrRfxuLR6OlDxxSyRa8umTp7fULugMkbZ-7beWPhb0X5wU81LqMZ3J7mVWYg-uFPW6-6E",
+            };
+            //connectie api
+            var client = new GoogleAdsClient(config);
+            var googleAdsService = client.GetService(Services.V10.GoogleAdsService);
 
 
-            //            GoogleAdsConfig config = new GoogleAdsConfig()
-            //            {
-            //                DeveloperToken = "yBzwour2WR3cjnO6--vr7w",
-            //                LoginCustomerId = "3743262179",
-            //                OAuth2Mode = OAuth2Flow.APPLICATION,
-            //                OAuth2ClientId = "515940014204-5o7gipoadae7vg70khnrk2qijrs7mmf9.apps.googleusercontent.com",
-            //                OAuth2ClientSecret = "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",
-            //                OAuth2RefreshToken = "1//09rXVRXziweZDCgYIARAAGAkSNwF-L9IrRfxuLR6OlDxxSyRa8umTp7fULugMkbZ-7beWPhb0X5wU81LqMZ3J7mVWYg-uFPW6-6E",
-            //            };
-            //            //connectie api
-            //            var client = new GoogleAdsClient(config);
-            //            var googleAdsService = client.GetService(Services.V10.GoogleAdsService);
+            string query = @"SELECT
+  campaign.name, 
+  campaign.status,  
+ metrics.cost_micros, metrics.average_cpc, metrics.average_cpm
+FROM campaign
+WHERE segments.date = '2022-05-23' AND campaign.name = '[NL] - Experience Center Cruquius - Radius Targeting'";
 
 
+            //cost_micros nope
+            // metrics.average_cost nope
+            //metrics.current_model_attributed_conversions_value_per_cost // nope
+            //metrics.active_view_measurable_cost_micros // nope 
+            //metrics.average_cost  //nope 
 
-            //            string query = @"SELECT account_budget.total_adjustments_micros FROM account_budget WHERE customer.descriptive_name LIKE '%geneo%'
-            //";
 
-            //            try
-            //            {
-            //                // Issue a search request.
-            //                googleAdsService.SearchStream("3274915968", query,
-            //                    delegate (SearchGoogleAdsStreamResponse resp)
-            //                    {
-            //                        foreach (var googleAdsRow in resp.Results)
-            //                        {
-            //                            Console.WriteLine(String.Format(" {0} ", googleAdsRow.AccountBudget.TotalAdjustmentsMicros/ 1000000)); 
-            //                        }
-            //                    }
-            //                );
-            //            }
-            //            catch (GoogleAdsException e)
-            //            {
-            //                Console.WriteLine("Failure:");
-            //                Console.WriteLine($"Message: {e.Message}");
-            //                Console.WriteLine($"Failure: {e.Failure}");
-            //                Console.WriteLine($"Request ID: {e.RequestId}");
-            //                throw;
-            //            }
+            try
+            {
+                // Issue a search request.
+                googleAdsService.SearchStream("7247702932", query,
+                    delegate (SearchGoogleAdsStreamResponse resp)
+                    {
+                        foreach (var googleAdsRow in resp.Results)
+                        {
+                        Console.WriteLine(String.Format("campaigne name {0}| campaign status {1} | cost is {2} | cost {3}",googleAdsRow.Campaign.Name, googleAdsRow.Campaign.Status,googleAdsRow.Metrics.CostMicros / 1000000,googleAdsRow.Metrics.CostMicros ));
+
+
+                        }
+                    }
+                );
+            }
+            catch (GoogleAdsException e)
+            {
+                Console.WriteLine("Failure:");
+                Console.WriteLine($"Message: {e.Message}");
+                Console.WriteLine($"Failure: {e.Failure}");
+                Console.WriteLine($"Request ID: {e.RequestId}");
+                throw;
+            }
+
+           var sss =  list.Sum() ;
 
             return View();
         }
