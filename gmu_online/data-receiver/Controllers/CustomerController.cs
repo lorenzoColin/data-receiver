@@ -11,11 +11,7 @@ using System.Collections.Generic;
 
 namespace data_receiver.Controllers
 {
-    // enum test
-    //{
-    //    sma_klanten = 0,
-    //    sea_klanten  = 1
-    //}
+    
     public class CustomerController : Controller
     {
 
@@ -31,39 +27,21 @@ namespace data_receiver.Controllers
             _db = db;
         }
 
-      
         public async Task<ActionResult> Index() 
         {
-            //my user id 
+            //loggedIn user
             var user = _userManager.GetUserId(HttpContext.User);
-            //ingelogde user
             var loggedInUser = _db.Users.Find(user);
-            var customerList = new CustomerList(_db);
 
+            //customer that hase no relationship with the current users
+            var customerList = new CustomerList(_db);
             var unclaimedCustomerlist =  customerList.unclaimedCustomerlist(user);
 
-    
             return View(unclaimedCustomerlist);
         }
         // GET: CustomerController/Create
      
 
-        // POST: CustomerController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(Customer Customer)
-        {
-            if (ModelState.IsValid)
-            {
-                //_db.cu.Add(Customer);
-                _db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
         // GET: CustomerController/Edit/5
         public ActionResult Edit(int id)
         {
@@ -75,31 +53,19 @@ namespace data_receiver.Controllers
                 Text = s.description,
                 Value = s.id.ToString()
             }).ToList<SelectListItem>();
-
             //current action
             string currentActionstring = @"select a.id, a.Name,c.ActionId from [Identity].[action] as a
                                     inner join [Identity].[Customer] as c on a.id = c.actionId
                                     where c.Id = {0}";
+            ViewBag.currentAction = _db.action.FromSqlRaw(currentActionstring, id).ToList();            
 
-           ViewBag.currentAction = _db.action.FromSqlRaw(currentActionstring, id).ToList();
-
-
-
-            
-            
-
-            //var customer =  _db.Customer.Find(id);
-
-            
             return View();
         }
 
-  
 
         // GET: CustomerController/Delete/5
         public ActionResult Delete(int id)
         {
-            //var customer = _db.Customer.Find(id);
             return View();
         }
 
@@ -122,7 +88,6 @@ namespace data_receiver.Controllers
         }
         public async Task<ActionResult> claimCustomer(string id, string customerType )
         {
-            
             //my user id 
             var userid = _userManager.GetUserId(HttpContext.User);
             //ingelogde user

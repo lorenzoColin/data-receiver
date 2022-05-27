@@ -55,8 +55,33 @@ public class CustomerList
             });
             sea.CustomerType = "sea_klanten";
         }
+        var search2 = _client.Search<Seo_klanten>(s => s.Index("seo_klanten"));
+        var seo_klanten = search2.Documents;
 
-        //dit zijn alle klanten van sma en sea
+        foreach (var seo in seo_klanten)
+        {
+            CustomerViewModel.Add(new CustomerViewModel
+            {
+                customer = new Customer
+                {
+                    Debiteurnr = seo.Debiteurnr,
+                    Klant = seo.Klant,
+                    URL_klant = seo.URL_klant,
+                    Consultant = seo.Consultant,
+                    Max_budget = seo.Budget,
+                    Service_fee = seo.Service_fee,
+                    Overeenkomst = seo.Overeenkomst,
+                    Contact = seo.Contact,
+                    Datum_live = seo.Datum_live,
+                    Remarks = seo.Opmerkingen,
+                    CMS = seo.CMS,
+                    status = seo.status,
+                    CustomerType = "seo_klanten"
+                }
+            });
+        }
+
+        //dit zijn alle klanten van sma en sea en seo
         var AllCustomers = CustomerViewModel;
 
         //my customers
@@ -122,6 +147,33 @@ public class CustomerList
             });
         }
 
+        var search2 = _client.Search<Seo_klanten>(s => s.Index("seo_klanten"));
+        var seo_klanten = search2.Documents;
+
+        foreach (var seo in seo_klanten)
+        {
+            CustomerViewModel.Add(new CustomerViewModel
+            {
+                customer = new Customer
+                {
+                    Debiteurnr = seo.Debiteurnr,
+                    Klant = seo.Klant,
+                    URL_klant = seo.URL_klant,
+                    Consultant = seo.Consultant,
+                    Max_budget = seo.Budget,
+                    Service_fee = seo.Service_fee,
+                    Overeenkomst = seo.Overeenkomst,
+                    Contact = seo.Contact,
+                    Datum_live = seo.Datum_live,
+                    Remarks = seo.Opmerkingen,
+                    CMS = seo.CMS,
+                    status = seo.status,
+                    CustomerType = "seo_klanten"
+                }
+            });
+        }
+
+
         var search1 = _client.Search<Customer>(s => s.Index("sea_klanten"));
         var sea_klanten = search1.Documents;
         foreach (var sea in sea_klanten)
@@ -152,10 +204,6 @@ public class CustomerList
                         mycustomers.Add(new CustomerViewModel { customer = test.customer, customerType = test.customerType });
                     }
                 }
-
-                //var searchclient = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(mycustomer.DebiteurnrId))));
-                //var singlecustomer = searchclient.Documents.FirstOrDefault(s => s.Debiteurnr == mycustomer.DebiteurnrId);
-                //mycustomers.Add(singlecustomer.Debiteurnr, singlecustomer.Contact);
             }
         }
 
@@ -167,6 +215,9 @@ public class CustomerList
     //list with all customers
     public List<CustomerViewModel> getallcustomers()
     {
+
+
+
 
         //sma klanten
         var search = _client.Search<Sma_klanten>(s => s.Index("sma_klanten"));
@@ -193,6 +244,36 @@ public class CustomerList
             });
         }
 
+
+        //seo klanten
+        var search2 = _client.Search<Seo_klanten>(s => s.Index("seo_klanten"));
+        var seo_klanten = search2.Documents;
+
+        foreach (var seo in seo_klanten)
+        {
+            CustomerViewModel.Add(new CustomerViewModel
+            {
+                customer = new Customer
+                {
+                    Debiteurnr = seo.Debiteurnr,
+                    Klant= seo.Klant,
+                    URL_klant = seo.URL_klant,
+                    Consultant= seo.Consultant,
+                    Max_budget = seo.Budget,
+                    Service_fee = seo.Service_fee,
+                    Overeenkomst = seo.Overeenkomst,
+                    Contact = seo.Contact,
+                    Datum_live = seo.Datum_live,
+                    Remarks =   seo.Opmerkingen,
+                    CMS = seo.CMS,
+                    status = seo.status,
+                    CustomerType = "seo_klanten"
+                }
+            });
+        }
+
+
+        //sea klanten
         var search1 = _client.Search<Customer>(s => s.Index("sea_klanten"));
         var sea_klanten = search1.Documents;
         foreach (var sea in sea_klanten)

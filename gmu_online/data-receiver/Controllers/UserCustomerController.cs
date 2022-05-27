@@ -37,7 +37,6 @@ namespace data_receiver.Controllers
           var claimedcustomers =  customerlist.claimedcustomerlist(userId);
 
             return View(claimedcustomers);
-
         }
       
 
@@ -147,6 +146,11 @@ namespace data_receiver.Controllers
             _db.SaveChanges();
 
             return Ok();
+        }
+
+        public ActionResult notifications()
+        {
+            return View();
         }
     }
 }

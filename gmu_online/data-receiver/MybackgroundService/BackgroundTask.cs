@@ -9,6 +9,8 @@ using Nest;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
+using data_receiver.google_ads;
+
 
 namespace data_receiver.MybackgroundService
 {
@@ -36,8 +38,10 @@ namespace data_receiver.MybackgroundService
             var   client = new ElasticSearchClient().EsClient();
             var _db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var sendmail = scope.ServiceProvider.GetRequiredService<IFluentEmail>();
-            var httpcontext = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
-            var  userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            //var httpcontext = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
+            //var  userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var GoogleAds = new GoogleAds();
+
 
 
             //count of the month
@@ -59,36 +63,32 @@ namespace data_receiver.MybackgroundService
 
             //day of today
             var day = DateTime.Now.Day;
-            //this is going away
-            var mail = new List<UserCustomerActionByDay>();
 
+
+            //hier loopt ie over een lijst met dagen dat zijn ingevuld door de gebruiker
             foreach (var UserCustomerAction in UserCustomerActionByDay)
             {
 
-                if (day == UserCustomerAction.day)
+                var usercustomer = _db.UserCustomer.Find(UserCustomerAction.usercustomerId);
+                var allcustomer = new CustomerList(_db);
+                var customers = allcustomer.getallcustomers();
+
+                var singlecustomer = customers.Where(s => s.customer.CustomerType == usercustomer.customerType && s.customer.Debiteurnr == usercustomer.DebiteurnrId).First();
+                var user = _db.Users.Find(usercustomer.userid);
+
+                //lijst met klanten namen en de customer id van google ads
+                var çustomerlist = GoogleAds.customerList();
+
+                //kijken of de current klanten naam in die lijst voorkomt
+                //marketing moet alleen de naam nog veranderen
+                //zodat ik contains naar is gelijk aan kan veranderen 
+                var singelist = çustomerlist.Where(s => s.accountName.Contains(singlecustomer.customer.Klant)).FirstOrDefault();
+
+                if(singelist != null)
                 {
-                    var usercustomer = _db.UserCustomer.Find(UserCustomerAction.usercustomerId);
-                    var allcustomer = new CustomerList(_db);
-                    var customers = allcustomer.getallcustomers();
-
-                    var singlecustomer = customers.Where(s => s.customer.CustomerType == usercustomer.customerType && s.customer.Debiteurnr == usercustomer.DebiteurnrId).First();
-                    var user = _db.Users.Find(usercustomer.userid);
-                   
-
-                    //var singleUs =  _db.UserCustomer.Find(usercustomer.usercustomerId);
-                    //var user = _db.Users.Find(singleUs.userid);
-                    //var client = await _client.SearchAsync<Customer>(s => s.Query(s => s.Match(f => f.Field(f => f.Debiteurnr).Query(singleUs.DebiteurnrId))));
-                    //var customer = client.Documents.FirstOrDefault();
-
-
-                    //bij die puntjes moeten nu nog berekening komen
-                    //  var Adminemail = Sendmail
-                    // .To(user.Email)
-                    // .Subject("customer budget")
-                    // .UsingTemplate("hi @Model.customer dit is je  @Model.Budget dit is wat je besteed heb heb ...... dus nu heb je .... besteed deze maand.", new { Email = user.Email, Customer = customer.Klant, Budget = customer.Max_budget });
-                    //await Adminemail.SendAsync();
-
+                    var cost = GoogleAds.getcustomerWithCost(singelist.accountId.ToString()).Sum();
                 }
+
             }
         }
 
@@ -99,8 +99,8 @@ namespace data_receiver.MybackgroundService
             var client = new ElasticSearchClient().EsClient();
             var _db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var sendmail = scope.ServiceProvider.GetRequiredService<IFluentEmail>();
-            var httpcontext = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            //var httpcontext = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
+            //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             IEnumerable<UserCustomerAction> userCustomerActions = _db.UserCustomerAction;
 
@@ -168,8 +168,8 @@ namespace data_receiver.MybackgroundService
             var client = new ElasticSearchClient().EsClient();
             var _db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var sendmail = scope.ServiceProvider.GetRequiredService<IFluentEmail>();
-            var httpcontext = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            //var httpcontext = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
+            //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             IEnumerable<UserCustomerAction> userCustomerActions = _db.UserCustomerAction;
 
@@ -218,10 +218,10 @@ namespace data_receiver.MybackgroundService
             //zo lang de app niet sluit
                 while(!stoppingToken.IsCancellationRequested)
                 {
-                //LastVideoCall();
-                //currentBudget();
+                
+                currentBudget();
                 //LastContact();
-
+                //LastVideoCall();
                 await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
                 }
         }

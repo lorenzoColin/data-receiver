@@ -25,7 +25,18 @@ namespace data_receiver.Models
 
         public string? Servicefee_afspraak { get; set; } = "n.v.t";
         public string? CustomerType { get; set; } = "n.v.t";
+        //seo and sma
         public string? status { get; set; } = "n.v.t";
+
+        //seo klanten
+        public string? URL_klant { get; set; }
+        public string? Service_fee { get; set; }
+        public string? Overeenkomst { get; set; }
+
+        
+
+
+
 
 
 
