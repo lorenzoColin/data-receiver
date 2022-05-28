@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Nest;
-using System.Linq;
 
 namespace data_receiver.Controllers
 {
@@ -120,7 +119,7 @@ namespace data_receiver.Controllers
             }
             //actionId == 2 Latest_videocall 
             if (UserCustomerAction.actionId == 2 && duplicate == false)
-            {       
+            {   
                 _db.UserCustomerAction.Add(UserCustomerAction);
                 _db.SaveChanges();
             }
@@ -134,13 +133,11 @@ namespace data_receiver.Controllers
         }
 
         // POST: UserCustomerController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult removecustomer(string DebiteurnrId)
+        public ActionResult removecustomer(string id, string CustomerType)
         {    
+
             var loggedInId = _usermanager.GetUserId(HttpContext.User);
-            var UserCustomer = new UserCustomer { userid = loggedInId, DebiteurnrId = DebiteurnrId };
-            var customer = _db.UserCustomer.Where(x => x.userid == loggedInId && x.DebiteurnrId == UserCustomer.DebiteurnrId).First();
+            var customer = _db.UserCustomer.Where(x => x.userid == loggedInId && x.DebiteurnrId == id && x.customerType == CustomerType).First();
 
             _db.UserCustomer.Remove(customer);
             _db.SaveChanges();

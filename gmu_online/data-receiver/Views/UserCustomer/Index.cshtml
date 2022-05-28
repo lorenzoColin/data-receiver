@@ -4,38 +4,6 @@
 
 
 
-@*<div class="card bg-card text-white" style="min-height: 391px;">
-    <div class="p-3">
-          <div class="row d-flex mb-4">
-            <div class="col-md-8">
-                    <h3 class="text-white ">my customers</h3>
-            </div>
-            <div class="col-md-4 d-flex justify-content-end">
-                 <a asp-controller="customer" asp-action="create" class="btn btn-primary btn-background"  >go to all customers</a>
-            </div>
-        </div>
-        <div class ="row d-flex no-margin  align-items-center " >
-           @foreach(var customers in @Model)
-            {
-                    <div class="col-md-2 p-3 ">
-                        <div class="card card-color"   >
-                            <i class="fa-solid fa-user-group text-center mt-3 h2 "></i>
-                            <div class="card-body text-center">
-                            <h6 class="card-title">@customers.customer.Klant</h6>
-                               <div class="flex-column d-flex">
-                                <form asp-action="removecustomer">
-                                    <input hidden type="text" name="DebiteurnrId" value="@customers.customer.Debiteurnr" >
-                                    <button class=" btn-danger" type="submit">unclaim</button>
-                                </form>
-                                <a class=" btn-danger" asp-action ="edit" asp-route-DebiteurnrId="@customers.customer.Debiteurnr" asp-route-customerType="@customers.customer.CustomerType" >edit</a>
-                                </div>
-                            </div>
-                        </div>      
-                    </div>
-            }
-        </div>
-    </div>
-</div>*@
 
 
 <div class="content">
@@ -90,7 +58,38 @@
                         @customers.customer.Latest_videocall
                     </td>
                     <td class="text-center">
-                        <a class="btn btn-primary p-1" asp-action ="edit" asp-route-DebiteurnrId="@customers.customer.Debiteurnr" asp-route-customerType="@customers.customer.CustomerType" >edit</a>  
+                        <a  asp-action ="edit" asp-route-DebiteurnrId="@customers.customer.Debiteurnr" asp-route-customerType="@customers.customer.CustomerType" >edit</a>
+                        <span>/</span>
+                        <a type="button" class="" data-toggle="modal" data-target="#exampleModal">
+                          trigger
+                        </a>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-12 text-black">
+                                        <h1>asas</h1>
+                                    </div>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+
                     </td>
                   </tr>
             }
