@@ -38,8 +38,6 @@ namespace data_receiver.MybackgroundService
             var   client = new ElasticSearchClient().EsClient();
             var _db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var sendmail = scope.ServiceProvider.GetRequiredService<IFluentEmail>();
-            //var httpcontext = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
-            //var  userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var GoogleAds = new GoogleAds();
 
 
@@ -49,14 +47,15 @@ namespace data_receiver.MybackgroundService
             //result 40 is the value of the user input
             IEnumerable<UserCustomerAction> userCustomerActions = _db.UserCustomerAction;
               
-            var UserCustomerActionByDay = new List<UserCustomerActionByDay>();
+            var UserCustomerActionByDays = new List<UserCustomerActionByDay>();
             foreach (var action in userCustomerActions)
             {
                 if(action.actionId == 1)
                 {
                     var result = (countDaysMonth / 100.0 * action.value);
                     //add de dag en de usercustomerId
-                    UserCustomerActionByDay.Add(new UserCustomerActionByDay { day = Math.Round(result, MidpointRounding.AwayFromZero), usercustomerId = action.usercustomerId });
+                    UserCustomerActionByDays.Add(new UserCustomerActionByDay { day = Math.Round(result, MidpointRounding.AwayFromZero), usercustomerId = action.usercustomerId });
+                
                 }
                
             }
@@ -64,34 +63,72 @@ namespace data_receiver.MybackgroundService
             //day of today
             var day = DateTime.Now.Day;
 
-
             //hier loopt ie over een lijst met dagen dat zijn ingevuld door de gebruiker
-            foreach (var UserCustomerAction in UserCustomerActionByDay)
+            foreach (var UserCustomerActionByDay in UserCustomerActionByDays)
             {
 
-                var usercustomer = _db.UserCustomer.Find(UserCustomerAction.usercustomerId);
+               
+
+                //find the customer 
+                var usercustomer = _db.UserCustomer.Find(UserCustomerActionByDay.usercustomerId);
                 var allcustomer = new CustomerList(_db);
                 var customers = allcustomer.getallcustomers();
+                var singlecustomer = customers.Where(s => s.customer.CustomerType == usercustomer.customerType && s.customer.Debiteurnr == usercustomer.DebiteurnrId).FirstOrDefault();
+                var AdsAccountName = singlecustomer.customer.Ads.Trim();
+                
+                //list with customer and the customer id
+                var customerlist = GoogleAds.customerList();
+                
 
-                var singlecustomer = customers.Where(s => s.customer.CustomerType == usercustomer.customerType && s.customer.Debiteurnr == usercustomer.DebiteurnrId).First();
-                var user = _db.Users.Find(usercustomer.userid);
-
-                //lijst met klanten namen en de customer id van google ads
-                var çustomerlist = GoogleAds.customerList();
-
-                //kijken of de current klanten naam in die lijst voorkomt
-                //marketing moet alleen de naam nog veranderen
-                //zodat ik contains naar is gelijk aan kan veranderen 
-                var singelist = çustomerlist.Where(s => s.accountName.Contains(singlecustomer.customer.Klant)).FirstOrDefault();
-
+                //krijg de klanten naam met customer id            
+                var singelist = customerlist.Where(s => s.accountName == AdsAccountName).FirstOrDefault();
                 if(singelist != null)
                 {
-                    var cost = GoogleAds.getcustomerWithCost(singelist.accountId.ToString()).Sum();
+                   var cost = Math.Round( GoogleAds.getcustomerWithCost(singelist.accountId.ToString()).Sum(),2);
+
+                   var count = UserCustomerActionByDay.day / countDaysMonth  * 100 ;
+                   var value = Math.Round(count, MidpointRounding.AwayFromZero);
+
+
+                /* 
+                1.search in the usercustomeraction for the specific user with the value
+                 */
+                   var SingleUserCustomerAction = _db.UserCustomerAction.Where(s => s.usercustomerId == UserCustomerActionByDay.usercustomerId && s.value == value && s.action.id == 1  ).FirstOrDefault();
+
+                    //sla koste op in database
+                    if (SingleUserCustomerAction != null)
+                    {
+                        //if the user hase not cost yet add the cost
+                        if (SingleUserCustomerAction.cost == null)
+                        {
+                            SingleUserCustomerAction.cost = cost;
+                            _db.SaveChanges();
+                        }
+                        //if the user already has a cost update em with the cost of the next day
+                        if (SingleUserCustomerAction.cost != null)
+                        {
+                            SingleUserCustomerAction.cost = cost + SingleUserCustomerAction.cost;
+                            _db.SaveChanges();
+                        }
+                        //if the date of today is equal to when a user wants to receive a mail
+                        //send a mail with the cost of the month
+                        if(UserCustomerActionByDay.day == day)
+                        {
+                            //send a mail with cost and max budget
+                            Console.WriteLine(String.Format( "jij heb deze maand {0} euro verspild", SingleUserCustomerAction.cost) );
+
+
+                            //when the mail is send the total cost is going to be zero again
+                            SingleUserCustomerAction.cost = null;
+                            _db.SaveChanges();
+
+                        }
+                    }
+
                 }
 
             }
         }
-
         //LastVideoCall is action id 2
         public  async Task LastVideoCall()
         {
@@ -99,8 +136,7 @@ namespace data_receiver.MybackgroundService
             var client = new ElasticSearchClient().EsClient();
             var _db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var sendmail = scope.ServiceProvider.GetRequiredService<IFluentEmail>();
-            //var httpcontext = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
-            //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
 
             IEnumerable<UserCustomerAction> userCustomerActions = _db.UserCustomerAction;
 
@@ -124,22 +160,25 @@ namespace data_receiver.MybackgroundService
                     //als customer niet null is en customer heeft een latest_video call propperty dan kom je in de if statement
                     if (customer != null && customer.customer.Latest_videocall != "Geen behoefte aan bij de klant.")
                     {
-                        //date of today
                         var Datenow = DateTime.Now.ToString("d/M/yyyy");
-                        //date of now with datime type;
                         var DateOftoday =   DateTime.Parse(Datenow);
 
-                        //dit is de laatste keer dat ze hebben gebeld
                         var Latest_videocall = customer.customer.Latest_videocall;
                         var Latest_videocallDate = DateTime.Parse(Latest_videocall);
 
+
+
+                        //if the latest call is in the future for example 11-06-2022 last video call
+                        if(Latest_videocallDate > DateOftoday)
+                        {
+                            Latest_videocallDate = Latest_videocallDate.AddYears(-1);
+                        }
+
                         //this function gonne look at the latest_videcaldate and adds the value of the month to it
-                        //het probleem met dit is als je laatste video call 2021 maart is en je vult 3 manden in krijg je em nooit binnen
-                        //oplossing voor vinden...
                         var reminderMailDay = Latest_videocallDate.AddMonths(usercustomerAction.value).ToString("d/M/yyyy");
                         var remindermailtype = DateTime.Parse(reminderMailDay);
 
-                        Console.WriteLine(reminderMailDay);
+
                         //if de date of now is equal to the remindermailDate
                         if (Datenow == reminderMailDay)
                         {
@@ -148,13 +187,9 @@ namespace data_receiver.MybackgroundService
               
                             //send mail to the customer
                             Console.WriteLine(String.Format("reminder {0} from {1} your last video call is a long time ago  ", customer.customer.Klant, customer.customer.Contact));
-                        }
-
-                         
+                        } 
 
                     }
-
-                
                 }
             }
             await Task.CompletedTask;
@@ -194,18 +229,22 @@ namespace data_receiver.MybackgroundService
                     //grab the date from now and add the months when you want to receive an email
                     var reminderMailDay = Latest_contactDate.AddMonths(usercustomerAction.value).ToString("d/M/yyyy");
 
-                    //date of today
+                    
                     var DateOftoday = DateTime.Now.ToString("d/M/yyyy");
                     var day = DateTime.Now;
-                  
+
+
+                    if (Latest_contactDate > day)
+                    {
+                        Latest_contactDate = Latest_contactDate.AddYears(-1);
+                    }
+
                     //if de date of now is equal to the remindermailDate
                     if (DateOftoday == reminderMailDay)
                     {
-                        //send mail to the user 
-                        Console.WriteLine(string.Format("reminder {0} plan your next video call in with the company {1} contact is {2} ", user.Email, customer.customer.Klant, customer.customer.Contact));
-
-                        //send mail to the customer
-                        Console.WriteLine(String.Format("reminder {0} from {1} your last video call is a long time ago  ", customer.customer.Klant, customer.customer.Contact));
+                        Console.WriteLine("sasa");
+                        //send mail to user that he has not speak to his contact for a long time 
+                        //and how long ago
                     }
                 }
 
@@ -225,7 +264,6 @@ namespace data_receiver.MybackgroundService
                 await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
                 }
         }
-
 
         //cancellationToken is de token die je krijgt als je app opstart
         //als deze true is betekent dat je app uit staat

@@ -1,54 +1,36 @@
 ﻿@model IEnumerable<ApplicationUser>
 
-<style>
-    table tr{
-        color:white!important;
-    }
-    .no_decoration{
-        text-decoration:none;
-    }
-    .custum-width{
-            width: 13.666667%!important;
-    }
-    .linear-text{
-        background: linear-gradient(90deg, #5ED4D4 0%, #DC582C 100%);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
-text-fill-color: transparent;
+
+<div class="content">
+
+    <div class = "d-flex ">
+        <h1 class="linear-text">all employees</h1>
+    </div>
+
+    <a asp-controller ="admin" asp-action="Create"  class="no_decoration " >create new user</a>
 
 
-    }
-</style>
+      <div class="row">
 
-<div class = "d-flex ">
-    <h1 class="linear-text">all employees</h1>
-</div>
-
-<a asp-controller ="admin" asp-action="Create"  class="no_decoration " >create new user</a>
-
-
-  <div class="row">
-
-      @foreach(var Users in @Model)
-{
+          @foreach(var Users in @Model)
+    {
   
-  <div class="col-sm-2 custum-width ">
-    <div class="card">
-        <i class="fa-solid fa-user-group text-center mt-3 h2 "></i>
-      <div class="card-body text-center">
+      <div class="col-sm-2 custum-width ">
+        <div class="card">
+            <i class="fa-solid fa-user-group text-center mt-3 h2 "></i>
+          <div class="card-body text-center">
         
-        <h6 class="card-title">@Users.FirstName</h6>
-        <a asp-action="Edit" asp-route-id=@Users.Id class="text-muted">edit user </a>
+            <h6 class="card-title">@Users.FirstName</h6>
+            <a asp-action="Edit" asp-route-id=@Users.Id class="text-muted">edit user </a>
       
         
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
        
-}
+    }
+    </div>
 </div>
-
   
 
  @*<td><a class="no_decoration" asp-controller= "admin" asp-action="edit" asp-route-id = "@Users.Id">edit</a></td>

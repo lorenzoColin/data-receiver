@@ -92,6 +92,7 @@
                                 <input name="value" type="number" min=1 max=100 class="form-control"   placeholder="example 50%" >
                                 <input hidden name="actionId" value="@action.id" >
                                 <input hidden name="usercustomerId" value="@Model.usercustomerId"   >
+                                <input hidden name="CustomerType" value="@Model.customer.CustomerType"   >
                                 <input type="submit" class="mt-2" >
                             </form>
                         </div>
@@ -113,12 +114,13 @@
 
 
                 }
-                <h3>current page per month</h3>
+                <h3>send mail on</h3>
                 <div class="d-flex row">
                     @foreach(var myactions in @Model.UserCustomerAction)
                     {
                             if(myactions.action.id == 1)
                             {
+
                                 <p class="col-md-2" >@myactions.value %</p>
                             }
                     }

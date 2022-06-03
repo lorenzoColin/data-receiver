@@ -1,49 +1,6 @@
 ﻿@using data_receiver.Models.ViewModels
 @model  List<CustomerViewModel> ;
 
-    
-
-
-
-
-
-@*<div class="card bg-card text-white" style="min-height: 391px;">
-    <div class="p-3">
-          <div class="row d-flex mb-4">
-            <div class="col-md-12">
-                    <h3 class="text-white ">all customers</h3>
-            </div>
-           @* <div class="col-md-4 d-flex justify-content-end">
-                 <a asp-controller="customer" asp-action="create" class="btn btn-primary btn-background"  >create customer</a>
-            </div>*@
-        @*</div>*@
-
-        
-
-@*
-        <h3>all klanten</h3>
-        <div class ="row d-flex no-margin  align-items-center " >
-           @foreach(var customers in @Model )
-            {
-                    <div class="col-md-2 p-3 ">
-                        <div class="card card-color"   >
-                            <i class="fa-solid fa-user-group text-center mt-3 h2 "></i>
-                            <div class="card-body text-center">
-                            <h6 class="card-title">@customers.customer.Klant</h6>
-                               <div class="flex-column d-flex">
-                                <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType" class="text-muted text-decoration-none">claim</a>  
-                                </div>
-                            </div>
-                        </div>      
-                    </div>
-            }
-        </div>
-
-      
-    </div>*@
-@*</div>*@
-
-
 <div class="content">
     <div class="row">
     <div class="col-md-12">
@@ -78,7 +35,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach(var customers in @Model.Where(s => s.customer.CustomerType == "sea_klanten") )
+                    @foreach(var customers in @Model.Where(s => s.customer.CustomerType == "sea_klanten" && s.customer.Debiteurnr != "n.v.t") )
             {
                  <tr>
                     <td>
@@ -97,7 +54,7 @@
                         @customers.customer.Latest_videocall
                     </td>
                     <td class="text-center">
-                        <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType" class="btn btn-primary p-1" >claim</a>  
+                        <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType"   >claim</a>  
                     </td>
                   </tr>
             }
@@ -140,7 +97,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                            @foreach(var customers in @Model.Where(s => s.customer.CustomerType == "sma_klanten") )
+                            @foreach(var customers in @Model.Where(s => s.customer.CustomerType == "sma_klanten" && s.customer.Debiteurnr != "n.v.t") )
                             {
                                 <tr>
                                     <td>
@@ -159,7 +116,7 @@
                                         @customers.customer.Doelstelling
                                     </td>
                                         <td class="text-center">
-                                        <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType" class="btn btn-primary p-1" >claim</a>  
+                                        <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType" >claim</a>  
                                     </td>
                                 </tr>
 
@@ -203,7 +160,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                        @foreach(var customers in @Model.Where(s => s.customer.CustomerType == "seo_klanten") )
+                        @foreach(var customers in @Model.Where(s => s.customer.CustomerType == "seo_klanten" && s.customer.Debiteurnr != "n.v.t") )
             {
                         <tr>
                         <td>
@@ -222,7 +179,7 @@
                             @customers.customer.Datum_live
                         </td>
                         <td class="text-center">
-                            <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType" class="btn btn-primary p-1" >claim</a>  
+                            <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType"  >claim</a>  
                         </td>
 
                         </tr>

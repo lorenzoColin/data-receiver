@@ -5,6 +5,8 @@ using data_receiver.ElasticConnection;
 using Microsoft.AspNetCore.Mvc;
 using data_receiver.Data;
 
+
+
 public class CustomerList
 {
     private readonly ElasticClient _client;
@@ -20,8 +22,9 @@ public class CustomerList
     //list of the logged in user and associated customers
     public List<CustomerViewModel> unclaimedCustomerlist(string loggedinuser)
     {
+        
         //sma klanten
-        var search = _client.Search<Sma_klanten>(s => s.Index("sma_klanten"));
+        var search = _client.Search<Sma_klanten>(s => s.Index("sma_klanten").Size(1000));
         var sma_klanten = search.Documents;
         var CustomerViewModel = new List<CustomerViewModel>();
 
@@ -44,7 +47,7 @@ public class CustomerList
             });
         }
 
-        var search1 = _client.Search<Customer>(s => s.Index("sea_klanten"));
+        var search1 = _client.Search<Customer>(s => s.Index("sea_klanten").Size(1000));
         var sea_klanten = search1.Documents;
 
         foreach (var sea in sea_klanten)
@@ -55,7 +58,7 @@ public class CustomerList
             });
             sea.CustomerType = "sea_klanten";
         }
-        var search2 = _client.Search<Seo_klanten>(s => s.Index("seo_klanten"));
+        var search2 = _client.Search<Seo_klanten>(s => s.Index("seo_klanten").Size(1000));
         var seo_klanten = search2.Documents;
 
         foreach (var seo in seo_klanten)
@@ -117,7 +120,6 @@ public class CustomerList
 
         return result;
     }
-
 
     public List<CustomerViewModel> claimedcustomerlist(string loggedInUser)
     {

@@ -105,9 +105,8 @@
                                     @list.customer.Max_budget
                                 </td>
                                  <td class="text-center">
-                                    <a class="p-1" asp-controller= "UserCustomer" asp-action="edit" asp-route-id = "@list.customer.Debiteurnr" asp-route-customerType = "@list.customer.CustomerType">edit!</a>
-                                    <a class="p-1" asp-controller= "UserCustomer" asp-action="removecustomer" asp-route-id = "@list.customer.Debiteurnr" asp-route-customerType = "@list.customer.CustomerType">remove!</a>
-                                   
+                                    <a class="p-1" href="Usercustomer/edit/@list.customer.Debiteurnr/customerType/@list.customer.CustomerType"   >edit!</a>
+                                    <a class="p-1" asp-controller= "home" asp-action="removecustomer" asp-route-id = "@list.customer.Debiteurnr" asp-route-customerType = "@list.customer.CustomerType">remove!</a>
                                  </td>
                             </tr>
                         }
@@ -154,7 +153,7 @@
                           @list.customer.Max_budget
                         </td>
                         <td class="text-center">
-                          <a class="btn btn-primary p-1" asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@list.customer.Debiteurnr" asp-route-customerType = "@list.customer.CustomerType">claim</a>
+                          <a class="" asp-controller= "home" asp-action="claimCustomer" asp-route-id = "@list.customer.Debiteurnr" asp-route-customerType = "@list.customer.CustomerType">claim</a>
                         </td>
                       </tr>
                                     

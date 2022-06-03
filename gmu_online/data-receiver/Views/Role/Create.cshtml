@@ -4,9 +4,10 @@
 *@
 @model Role
 
-
-<form method ="post" asp-action="create">
-                 <div asp-validation-summary="All" class="text-danger"></div>
-    <input type="text" asp-for="RoleName" />
-    <input type="submit" name="submit" />
-</form>
+<div class="content">
+    <form method ="post" asp-action="create">
+                     <div asp-validation-summary="All" class="text-danger"></div>
+        <input type="text" asp-for="RoleName" />
+        <input type="submit" name="submit" />
+    </form>
+</div>

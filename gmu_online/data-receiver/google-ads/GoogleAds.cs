@@ -28,7 +28,6 @@ namespace data_receiver.google_ads
             };
 
             client = new GoogleAdsClient(config);
-
         }
 
 
@@ -118,7 +117,7 @@ namespace data_receiver.google_ads
 
 
         //get the campaign cost of the customer with the customerId
-        public List<long> getcustomerWithCost(string customerId)
+        public List<double> getcustomerWithCost(string customerId)
         {
           var datum =  DateTime.Now.ToString("yyyy-MM-dd");
 
@@ -128,14 +127,14 @@ namespace data_receiver.google_ads
 
 
             var googleAdsService = client.GetService(Services.V10.GoogleAdsService);
-            var costlist = new List<long>();
+            var costlist = new List<double>();
 
             googleAdsService.SearchStream(customerId, querycost,
                 delegate (SearchGoogleAdsStreamResponse resp)
                 {
                     foreach (var googleAdsRow in resp.Results)
                     {
-                        costlist.Add(googleAdsRow.Metrics.CostMicros / 1000000);
+                        costlist.Add((double)googleAdsRow.Metrics.CostMicros / 1000000);
                     }
                 }
             );

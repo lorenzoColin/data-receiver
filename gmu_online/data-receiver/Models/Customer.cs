@@ -20,6 +20,7 @@ namespace data_receiver.Models
         public string? Latest_contact { get; set; } = "n.v.t";
         public string? Remarks { get; set; } = "n.v.t";
         public string? CMS { get; set; } = "n.v.t";
+        public string? Ads { get; set; } = "this custoner does not have a ads yet";
 
         //propperty from sma_klanten
 

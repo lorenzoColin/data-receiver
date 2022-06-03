@@ -1,7 +1,8 @@
 ﻿@using data_receiver.Models.ViewModels
 @model EditRoleViewModel
 
-
+<div class="content">
+    
 <h4>customer</h4>
 <hr />
 <div class="row">
@@ -41,6 +42,7 @@
     <br>
 <a asp-controller="role" asp-action="editUserInRole" asp-route-id = "@Model.RoleId" class="btn btn-outline-primary" >add some users</a>
 <a asp-action="Index" class="btn btn-outline-primary">Back to List</a>
+</div>
 
 
 @section Scripts {

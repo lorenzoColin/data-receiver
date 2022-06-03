@@ -8,20 +8,7 @@ using Nest;
 using data_receiver.Data;
 using Microsoft.AspNetCore.Identity;
 using data_receiver.google_ads;
-
-
-
-//"_id": "13249fa0-ad1f-4d17-8d36-7289503bb652",
-//"Debiteurnr": "12759",
-//"Klant": "Veiligheids-sloten",
-//"Beheerder": "Annerieke ",
-//"Status": "Live",
-//"datum_live": "01-03-2021",
-//"budget_afspr": "€ 5.000,00",
-//"Doelstelling": "ROAS 1200%",
-//"Servicefee_afspraak": "min. €450 >€500 staffel"
-//},
-
+using Facebook.ApiClient.ApiEngine;
 
 namespace data_receiver.Controllers
 {
@@ -50,10 +37,45 @@ namespace data_receiver.Controllers
         {
 
 
+           //var userid = _userManager.GetUserId(HttpContext.User);
+
+
+           ////google ads
+           //var google = new GoogleAds();
+           //var customerListt =  google.customerList();
 
 
 
-            //loggedIn user
+
+
+           // //elastic data
+           //var customer = new CustomerList(_db);
+           //var list = customer.getallcustomers();
+
+
+           // //uit deze lijst moet ik de naam uit alle klanten 
+           //var customerwithAds = list.Where(s => s.customer.Ads != "this custoner does not have a ads yet");
+
+           // foreach (var customerwithAd in customerwithAds)
+           // {
+           //     //get the customer account with id
+           //     //trim omdat er spaties in de namen zitten
+           //     string value = customerwithAd.customer.Ads.Trim();
+
+           //     var customerlist = customerListt.Where(s => s.accountName == value).FirstOrDefault();
+
+           //     if(customerlist != null)
+           //     {
+           //         //get the cost of this specific customer
+           //         var cost = google.getcustomerWithCost(customerlist.accountId.ToString()).Sum();
+
+           //         var roundCost = Math.Round(cost,2);
+           //     }
+           // }
+            //seh.Where(s => s.accountName == );            
+
+            //var cost = google.getcustomerWithCost("");
+
             var user = _userManager.GetUserId(HttpContext.User);
             var loggedInUser = _db.Users.Find(user);
 
@@ -63,11 +85,37 @@ namespace data_receiver.Controllers
 
             ViewBag.claimedusers = customerList.claimedcustomerlist(user).Take(5).ToList();
 
-
-
             return View(unclaimedCustomerlist);
         }
-        
+
+        public async Task<ActionResult> claimCustomer(string id, string customerType)
+        {
+            //my user id 
+            var userid = _userManager.GetUserId(HttpContext.User);
+            //ingelogde user
+            var loggedInUser = await _db.Users.FindAsync(userid);
+
+            var userCustomer = new UserCustomer { DebiteurnrId = id, userid = userid, customerType = customerType };
+
+            _db.UserCustomer.Add(userCustomer);
+            _db.SaveChanges();
+
+            return RedirectToAction("index");
+        }
+
+
+        public ActionResult removecustomer(string id, string CustomerType)
+        {
+
+            var loggedInId = _userManager.GetUserId(HttpContext.User);
+            var customer = _db.UserCustomer.Where(x => x.userid == loggedInId && x.DebiteurnrId == id && x.customerType == CustomerType).First();
+
+            _db.UserCustomer.Remove(customer);
+            _db.SaveChanges();
+
+            return RedirectToAction("index");
+        }
+
         //[Authorize(Roles ="admin")]
         public async Task<IActionResult> Privacy([FromServices] IFluentEmail singleEmail)
         { 

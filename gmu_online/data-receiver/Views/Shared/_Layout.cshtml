@@ -121,7 +121,7 @@
                   </p>
                 </a>
                 <ul class="dropdown-menu dropdown-navbar">
-                  <li class="nav-link"><a href="javascript:void(0)" class="nav-item dropdown-item">Profile</a></li>
+                  <li class="nav-link"><a asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" class="nav-item dropdown-item">Profile</a></li>
                   <li class="dropdown-divider"></li>
                   <li class="nav-link">
                       <form   asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

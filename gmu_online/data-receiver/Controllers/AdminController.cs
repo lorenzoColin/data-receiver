@@ -45,6 +45,7 @@ namespace data_receiver.Controllers
          var actionresult =    _db.action.Where(s => s.description == ActionName).ToList();
 
          var action = new Action() { description = ActionName };
+            
 
          _db.action.Add(action);
          _db.SaveChanges();
@@ -88,6 +89,7 @@ namespace data_receiver.Controllers
         [ValidateAntiForgeryToken]
         public async Task< ActionResult> Edit(ApplicationUser Users)
         {
+
             try
             {
               var User =  await _db.Users.FindAsync(Users.Id);

@@ -11,6 +11,7 @@ namespace data_receiver.Models
         public int actionId { get; set; }
         public action? action { get; set; }
         public int value { get; set; }
+        public double? cost { get; set; }
 
 
     }

@@ -74,15 +74,6 @@ namespace data_receiver.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeletePost(int id)
         {
-            //var customer = _db.Customer.Find(id);
-
-            //if (customer == null)
-            //{
-            //    return NotFound();
-            //}
-
-           
-            //_db.Customer.Remove(customer);
             _db.SaveChanges();
             return RedirectToAction("index");
         }
