@@ -125,7 +125,7 @@ public class CustomerList
     {
 
         //sma klanten
-        var search = _client.Search<Sma_klanten>(s => s.Index("sma_klanten"));
+        var search = _client.Search<Sma_klanten>(s => s.Index("sma_klanten").Size(1000));
         var sma_klanten = search.Documents;
         var CustomerViewModel = new List<CustomerViewModel>();
 
@@ -149,7 +149,7 @@ public class CustomerList
             });
         }
 
-        var search2 = _client.Search<Seo_klanten>(s => s.Index("seo_klanten"));
+        var search2 = _client.Search<Seo_klanten>(s => s.Index("seo_klanten").Size(1000));
         var seo_klanten = search2.Documents;
 
         foreach (var seo in seo_klanten)
@@ -176,7 +176,7 @@ public class CustomerList
         }
 
 
-        var search1 = _client.Search<Customer>(s => s.Index("sea_klanten"));
+        var search1 = _client.Search<Customer>(s => s.Index("sea_klanten").Size(1000));
         var sea_klanten = search1.Documents;
         foreach (var sea in sea_klanten)
         {
@@ -222,7 +222,7 @@ public class CustomerList
 
 
         //sma klanten
-        var search = _client.Search<Sma_klanten>(s => s.Index("sma_klanten"));
+        var search = _client.Search<Sma_klanten>(s => s.Index("sma_klanten").Size(1000));
         var sma_klanten = search.Documents;
         var CustomerViewModel = new List<CustomerViewModel>();
 
@@ -248,7 +248,7 @@ public class CustomerList
 
 
         //seo klanten
-        var search2 = _client.Search<Seo_klanten>(s => s.Index("seo_klanten"));
+        var search2 = _client.Search<Seo_klanten>(s => s.Index("seo_klanten").Size(1000));
         var seo_klanten = search2.Documents;
 
         foreach (var seo in seo_klanten)
@@ -276,7 +276,7 @@ public class CustomerList
 
 
         //sea klanten
-        var search1 = _client.Search<Customer>(s => s.Index("sea_klanten"));
+        var search1 = _client.Search<Customer>(s => s.Index("sea_klanten").Size(1000));
         var sea_klanten = search1.Documents;
         foreach (var sea in sea_klanten)
         {
@@ -286,8 +286,6 @@ public class CustomerList
             });
             sea.CustomerType = "sea_klanten";
         }
-
-        
 
         return CustomerViewModel;
 

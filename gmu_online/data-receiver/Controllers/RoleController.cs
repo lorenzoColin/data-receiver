@@ -151,32 +151,32 @@ namespace data_receiver.Controllers
             var model = new List<UserRoleViewModel>();
 
             //loop over alle users
-            foreach (var user in _userManager.Users)
-            {
-                //maak een object en vull deze met de users 
-                var userRoleViewModel = new UserRoleViewModel()
-                {
-                    UserId = user.Id,
-                    RoleId = role.Id,
-                    UserName = user.UserName,
-                };
+            //foreach (var user in _userManager.Users)
+            //{
+            //    //maak een object en vull deze met de users 
+            //    //var userRoleViewModel = new UserRoleViewModel()
+            //    //{
+            //    //    UserId = user.Id,
+            //    //    RoleId = role.Id,
+            //    //    UserName = user.UserName,
+            //    //};
 
-                //als de user waar we over heen loopen in de roll
-                //zit voegen we deze toe aan de list hier boven
-                //en zet de zet de propperty van inrole naar true
-                if (await _userManager.IsInRoleAsync(user, role.Name))
-                {
-                    //dan check ik in mijn view op objecten met true en objecten met false
-                    model.Add(userRoleViewModel);
-                    userRoleViewModel.InRole = true;
-                }
+            //    //als de user waar we over heen loopen in de roll
+            //    //zit voegen we deze toe aan de list hier boven
+            //    //en zet de zet de propperty van inrole naar true
+            //    if (await _userManager.IsInRoleAsync(user, role.Name))
+            //    {
+            //        //dan check ik in mijn view op objecten met true en objecten met false
+            //        model.Add(userRoleViewModel);
+            //        userRoleViewModel.InRole = true;
+            //    }
 
-                if (!await _userManager.IsInRoleAsync(user, role.Name))
-                {
-                    model.Add(userRoleViewModel);
-                    userRoleViewModel.InRole = false;
-                }
-            }
+            //    if (!await _userManager.IsInRoleAsync(user, role.Name))
+            //    {
+            //        model.Add(userRoleViewModel);
+            //        userRoleViewModel.InRole = false;
+            //    }
+            //}
             //dan sturen we deze lijst naar view
             return View(model);
 
@@ -185,10 +185,10 @@ namespace data_receiver.Controllers
         [HttpPost]
         public async Task<ActionResult> editUserInRole(UserRoleViewModel userRole)
         {
-            var user = await _userManager.FindByIdAsync(userRole.UserId);
-            var role = await _userroles.FindByIdAsync(userRole.RoleId);
+            //var user = await _userManager.FindByIdAsync(userRole.UserId);
+            //var role = await _userroles.FindByIdAsync(userRole.RoleId);
 
-            await _userManager.AddToRoleAsync(user, role.Name) ;
+            //await _userManager.AddToRoleAsync(user, role.Name) ;
             return RedirectToAction("editUserInRole");
 
         }

@@ -29,7 +29,7 @@ namespace data_receiver.Controllers
 
         public async Task<ActionResult> Index() 
         {
-            //loggedIn user
+
             var user = _userManager.GetUserId(HttpContext.User);
             var loggedInUser = _db.Users.Find(user);
 
@@ -79,11 +79,10 @@ namespace data_receiver.Controllers
         }
         public async Task<ActionResult> claimCustomer(string id, string customerType )
         {
-            //my user id 
             var userid = _userManager.GetUserId(HttpContext.User);
-            //ingelogde user
             var loggedInUser = await _db.Users.FindAsync(userid);
 
+            //make a new usercustomer object and save this in the database
             var userCustomer = new UserCustomer { DebiteurnrId = id, userid = userid, customerType = customerType };
 
             _db.UserCustomer.Add(userCustomer);

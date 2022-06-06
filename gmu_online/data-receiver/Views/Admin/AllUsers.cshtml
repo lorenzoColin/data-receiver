@@ -1,7 +1,8 @@
-﻿@model IEnumerable<ApplicationUser>
+﻿@using data_receiver.Models.ViewModels
+@model List<UserRoleViewModel>
 
 
-<div class="content">
+@*<div class="content">
 
     <div class = "d-flex ">
         <h1 class="linear-text">all employees</h1>
@@ -30,8 +31,62 @@
        
     }
     </div>
-</div>
+</div>*@
   
+<div class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>all users</h1>
+            <div class="card ">
+                <div class="card-header">
+                <h4 class="card-title"> all users</h4>
+                </div>
+                <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table tablesorter " id="">
+                    <thead class=" text-primary">
+                        <tr>
+                         <th>
+                            firstname
+                        </th>
+                        <th>
+                            username
+                        </th>
+                        <th>
+                            role
+                        </th>
+                        <th class="text-center">
+                            edit user
+                        </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var user in @Model )
+                {
+                     <tr>
+                        <td>
+                            @user.User.FirstName
+                        </td>
+                        <td>
+                            @user.User.UserName
+                        </td>
+                        <td>
+                            @user.RoleName
+                        </td>
 
- @*<td><a class="no_decoration" asp-controller= "admin" asp-action="edit" asp-route-id = "@Users.Id">edit</a></td>
-      <td><a class="no_decoration"  asp-controller= "admin" asp-action="delete" asp-route-id = "@Users.Id">delete</a></td>*@
+                        <td class="text-center">
+                          <a asp-action="Edit" asp-route-id=@user.User.Id class="text-muted">edit user </a>
+                        </td>
+                      </tr>
+                }
+
+                    </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+

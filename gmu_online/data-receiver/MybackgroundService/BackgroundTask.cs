@@ -35,44 +35,46 @@ namespace data_receiver.MybackgroundService
         public async Task currentBudget()
         {
             using var scope = _service.CreateScope();
-            var   client = new ElasticSearchClient().EsClient();
+            var client = new ElasticSearchClient().EsClient();
             var _db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var sendmail = scope.ServiceProvider.GetRequiredService<IFluentEmail>();
             var GoogleAds = new GoogleAds();
 
 
 
+
             //count of the month
             int countDaysMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+
             //result 40 is the value of the user input
             IEnumerable<UserCustomerAction> userCustomerActions = _db.UserCustomerAction;
-              
+
+            
             var UserCustomerActionByDays = new List<UserCustomerActionByDay>();
+
             foreach (var action in userCustomerActions)
             {
                 if(action.actionId == 1)
                 {
                     var result = (countDaysMonth / 100.0 * action.value);
                     //add de dag en de usercustomerId
-                    UserCustomerActionByDays.Add(new UserCustomerActionByDay { day = Math.Round(result, MidpointRounding.AwayFromZero), usercustomerId = action.usercustomerId });
-                
+                    UserCustomerActionByDays.Add(new UserCustomerActionByDay { day = Math.Round(result, MidpointRounding.AwayFromZero), usercustomerId = action.usercustomerId });   
                 }
-               
             }
-
             //day of today
             var day = DateTime.Now.Day;
 
             //hier loopt ie over een lijst met dagen dat zijn ingevuld door de gebruiker
             foreach (var UserCustomerActionByDay in UserCustomerActionByDays)
             {
-
-               
-
                 //find the customer 
                 var usercustomer = _db.UserCustomer.Find(UserCustomerActionByDay.usercustomerId);
+                var UserId = usercustomer.userid;
+                var User = _db.Users.Find(UserId);
+
                 var allcustomer = new CustomerList(_db);
                 var customers = allcustomer.getallcustomers();
+
                 var singlecustomer = customers.Where(s => s.customer.CustomerType == usercustomer.customerType && s.customer.Debiteurnr == usercustomer.DebiteurnrId).FirstOrDefault();
                 var AdsAccountName = singlecustomer.customer.Ads.Trim();
                 
@@ -90,9 +92,7 @@ namespace data_receiver.MybackgroundService
                    var value = Math.Round(count, MidpointRounding.AwayFromZero);
 
 
-                /* 
-                1.search in the usercustomeraction for the specific user with the value
-                 */
+                /* 1.search in the usercustomeraction for the specific user with the value */
                    var SingleUserCustomerAction = _db.UserCustomerAction.Where(s => s.usercustomerId == UserCustomerActionByDay.usercustomerId && s.value == value && s.action.id == 1  ).FirstOrDefault();
 
                     //sla koste op in database
@@ -107,15 +107,26 @@ namespace data_receiver.MybackgroundService
                         //if the user already has a cost update em with the cost of the next day
                         if (SingleUserCustomerAction.cost != null)
                         {
-                            SingleUserCustomerAction.cost = cost + SingleUserCustomerAction.cost;
+                            var totalCost  = cost + SingleUserCustomerAction.cost;
+                            var round = Math.Round((double)totalCost, 2, MidpointRounding.AwayFromZero);
+
+                            SingleUserCustomerAction.cost = round;
                             _db.SaveChanges();
                         }
                         //if the date of today is equal to when a user wants to receive a mail
                         //send a mail with the cost of the month
-                        if(UserCustomerActionByDay.day == day)
+                        if(day == UserCustomerActionByDay.day)
                         {
+                            var totalCost = cost + SingleUserCustomerAction.cost;
+                            var round = Math.Round((double)totalCost, 2, MidpointRounding.AwayFromZero);
+                            var email = sendmail
+                           .To(User.Email)
+                           .Subject("current budget")
+                           .UsingTemplate("hi @Model.Name max budget of @Model.customer is @Model.budget this month you lost @Model.cost  ",
+                           new { Name = User.FirstName,customer = singlecustomer.customer.Klant, budget = singlecustomer.customer.Max_budget, cost = round  });
+                            await email.SendAsync();
+
                             //send a mail with cost and max budget
-                            Console.WriteLine(String.Format( "jij heb deze maand {0} euro verspild", SingleUserCustomerAction.cost) );
 
 
                             //when the mail is send the total cost is going to be zero again
@@ -124,9 +135,7 @@ namespace data_receiver.MybackgroundService
 
                         }
                     }
-
                 }
-
             }
         }
         //LastVideoCall is action id 2
@@ -143,8 +152,8 @@ namespace data_receiver.MybackgroundService
 
             foreach (var usercustomerAction in userCustomerActions)
             {
-                //if actionId 2 laaste video call gesprek
-                //naam moet actionName worden
+              
+                //actionId 2 is last video call
                 if(usercustomerAction.actionId == 2)
                 {
                     var usercustomer = _db.UserCustomer.Find(usercustomerAction.usercustomerId);
@@ -153,11 +162,11 @@ namespace data_receiver.MybackgroundService
 
 
 
+
                     var customer = getallcustomers.Where(s => s.customer.CustomerType == usercustomer.customerType && s.customer.Debiteurnr == usercustomer.DebiteurnrId).First();
                     var user = _db.Users.Find(usercustomer.userid);
 
 
-                    //als customer niet null is en customer heeft een latest_video call propperty dan kom je in de if statement
                     if (customer != null && customer.customer.Latest_videocall != "Geen behoefte aan bij de klant.")
                     {
                         var Datenow = DateTime.Now.ToString("d/M/yyyy");
@@ -182,11 +191,15 @@ namespace data_receiver.MybackgroundService
                         //if de date of now is equal to the remindermailDate
                         if (Datenow == reminderMailDay)
                         {
-                            //send mail to the user 
-                            Console.WriteLine(string.Format("reminder {0} plan your next video call in with the company {1} contact is {2} ", user.Email, customer.customer.Klant, customer.customer.Contact));
-              
-                            //send mail to the customer
-                            Console.WriteLine(String.Format("reminder {0} from {1} your last video call is a long time ago  ", customer.customer.Klant, customer.customer.Contact));
+
+                            var email = sendmail
+                           .To(user.Email)
+                           .Subject("reminder last video call")
+                           .UsingTemplate("hi @Model.Name your last video call with @Model.contact from @Model.customer was @Model.monthsAgo  ",
+                           new { Name = user.FirstName, contact = customer.customer.Contact,customer = customer.customer.Klant,monthsAgo = usercustomerAction.value });
+                           await email.SendAsync();
+                                        
+
                         } 
 
                     }
@@ -195,7 +208,6 @@ namespace data_receiver.MybackgroundService
             await Task.CompletedTask;
         }
 
-        //deze moet gemaakt worden
         //LastContact is action Id 3
         public async Task LastContact()
         {
@@ -207,7 +219,6 @@ namespace data_receiver.MybackgroundService
             //var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             IEnumerable<UserCustomerAction> userCustomerActions = _db.UserCustomerAction;
-
 
             foreach (var usercustomerAction in userCustomerActions)
             {
@@ -234,6 +245,7 @@ namespace data_receiver.MybackgroundService
                     var day = DateTime.Now;
 
 
+                    //if the date of the latest contsact is bigger than today remove a year from the date
                     if (Latest_contactDate > day)
                     {
                         Latest_contactDate = Latest_contactDate.AddYears(-1);
@@ -242,9 +254,14 @@ namespace data_receiver.MybackgroundService
                     //if de date of now is equal to the remindermailDate
                     if (DateOftoday == reminderMailDay)
                     {
-                        Console.WriteLine("sasa");
-                        //send mail to user that he has not speak to his contact for a long time 
-                        //and how long ago
+
+                        var email = sendmail
+                       .To(user.Email)
+                       .Subject("reminder last contact")
+                       .UsingTemplate("hi @Model.Name your last contact with @Model.contact from @Model.customer was @Model.monthsAgo  ",
+                       new { Name = user.FirstName, contact = customer.customer.Contact, customer = customer.customer.Klant, monthsAgo = usercustomerAction.value });
+                        await email.SendAsync();
+
                     }
                 }
 
@@ -259,8 +276,8 @@ namespace data_receiver.MybackgroundService
                 {
                 
                 currentBudget();
-                //LastContact();
-                //LastVideoCall();
+                LastContact();
+                LastVideoCall();
                 await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
                 }
         }

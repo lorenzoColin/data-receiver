@@ -3,7 +3,7 @@ using data_receiver.Models;
 using data_receiver.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Action = data_receiver.Models.action;
 
 namespace data_receiver.Controllers
@@ -25,9 +25,37 @@ namespace data_receiver.Controllers
         // GET: AdminController
         public async Task<ActionResult> AllUsers()
         {
-            var id = await _db.Users.FindAsync("e34a3af1-4105-4cb3-b84c-5d7f4dd5527a");
+            var UserRoleViewModels = new List<UserRoleViewModel>();  
+
+            
+
             var users = _db.Users.ToList();
-            return View(users);
+            var roles = _db.Roles.ToList();
+            var UserRoles = _db.UserRoles.ToList();
+            var USerCustomers = _db.UserCustomer.ToList();
+
+
+
+            foreach(var UserRoleViewModel in UserRoleViewModels)
+            {
+                foreach(var role in roles)
+                {
+                    if(await _usermanager.IsInRoleAsync(UserRoleViewModel.User, role.Name))
+                        {
+                            UserRoleViewModel.RoleId = role.Id;
+                            UserRoleViewModel.RoleName = role.Name; 
+                        }
+
+                }
+            }
+
+            foreach (var user in users)
+            {
+                
+            }
+
+
+            return View(UserRoleViewModels);
         }
 
         [HttpGet]
@@ -77,11 +105,48 @@ namespace data_receiver.Controllers
         // GET: AdminController/Edit/5
         public async Task<ActionResult> Edit(string id)
         {
+            
+
+
             if (id == null)
             {
                 return RedirectToAction("allUsers");
             }
             var user = await _usermanager.FindByIdAsync(id);
+            var UserRoles = _db.UserRoles.ToList();
+            var roles = _db.Roles.ToList();
+            var MyRoles = new List<string>();
+            var unclaimedRoles = new List<string>();
+            var selectlistItems = new List<SelectListItem>();
+        
+
+        foreach(var role in roles)
+        {
+                //als de user niet in een bepaalde role zit voeg ze toe aan deze lijst
+                if ( !await _usermanager.IsInRoleAsync(user, role.Name))
+                {
+                    selectlistItems.Add(new SelectListItem {Text = role.Name,Value = role.Id,Disabled = false });
+               
+                }
+
+                //my roles
+                if (await _usermanager.IsInRoleAsync(user, role.Name))
+                {
+                    MyRoles.Add(role.Name);
+                }
+
+            }
+
+       
+
+
+        ViewBag.listItems = selectlistItems;
+        ViewBag.MyRole = MyRoles;
+
+          
+
+
+
             return View(user);
         }
         // POST: AdminController/Edit/5
@@ -107,6 +172,28 @@ namespace data_receiver.Controllers
             {
                 return NotFound(ex.Message);
             }
+
+        }
+
+        public async Task< ActionResult> setRole(string RoleId,string userId)
+        {
+
+
+            var user = _db.Users.Find(userId);
+            var role = _db.Roles.Find(RoleId);
+
+            if(role == null || user == null)
+            {
+                return NotFound();
+            }
+           
+            await _usermanager.AddToRoleAsync(user, role.Name);
+            
+          
+
+
+
+            return RedirectToAction("Edit",user.Id);
 
         }
         // GET: AdminController/Delete/5

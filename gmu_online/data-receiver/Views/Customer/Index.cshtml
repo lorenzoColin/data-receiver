@@ -4,10 +4,9 @@
 <div class="content">
     <div class="row">
     <div class="col-md-12">
-        <h1>sea klanten</h1>
+        <h1>sea customers</h1>
         <div class="card ">
             <div class="card-header">
-            <h4 class="card-title"> Simple Table</h4>
             </div>
             <div class="card-body">
             <div class="table-responsive">
@@ -66,10 +65,9 @@
         </div>
     </div>
     <div class="col-md-12">
-        <h1>sma klanten</h1>
+        <h1>sma customers</h1>
         <div class="card ">
             <div class="card-header">
-            <h4 class="card-title"> Simple Table</h4>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -129,7 +127,7 @@
     </div>
 
     <div class="col-md-12">
-        <h1>seo klanten</h1>
+        <h1>seo customers</h1>
         <div class="card ">
             <div class="card-header">
             <h4 class="card-title"> Simple Table</h4>
@@ -180,6 +178,69 @@
                         </td>
                         <td class="text-center">
                             <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType"  >claim</a>  
+                        </td>
+
+                        </tr>
+            }
+                    
+                </tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+        </div>            
+    </div>
+        <div class="col-md-12">
+        <h1>customers with no debteurnumber</h1>
+        <div class="card ">
+            <div class="card-header">
+            </div>
+            <div class="card-body">
+            <div class="table-responsive">
+                <table class="table tablesorter " id="">
+                <thead class=" text-primary">
+                    <tr>
+                        <th>
+                            klant
+                        </th>
+                        <th>
+                            consultant
+                        </th>
+                        <th>
+                            max budget
+                        </th>
+                            <th>
+                            contact
+                        </th>
+                        <th>
+                            datum live
+                        </th>
+                        <th class="text-center">
+                            claime user
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                        @foreach(var customers in @Model.Where(s => s.customer.Debiteurnr == "n.v.t") )
+            {
+                        <tr>
+                        <td>
+                            @customers.customer.Klant
+                        </td>
+                        <td>
+                            @customers.customer.Consultant
+                        </td>
+                        <td>
+                            @customers.customer.Max_budget
+                        </td>
+                        <td>
+                            @customers.customer.Contact
+                        </td>
+                            <td >
+                            @customers.customer.Datum_live
+                        </td>
+                        <td class="text-center">
+                            <a  style="pointer-events: none"  >claim</a>  
                         </td>
 
                         </tr>

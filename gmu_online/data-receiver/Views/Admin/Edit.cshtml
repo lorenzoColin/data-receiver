@@ -39,12 +39,39 @@
                     <input type="submit" value="Save" class="btn btn-primary" />
                 </div>
             </form>
+            <form>
+                <div class="form-group mt-2">
+                </div>
+            </form>
+        </div>
+        <div class="col-md-8">
+            <h3>roles</h3>
+            <form method="post" asp-action="setRole" >
+                <select name="roleId" asp-items="@ViewBag.listItems" ></select><br>
+                <input type="text" hidden name="userId" value="@Model.Id" />
+                <button type="submit">set role</button>
+            </form>
+
+            <ul>
+                @foreach(var role in ViewBag.MyRole)
+                {
+                    <li>@role</li>
+                }
+            </ul>
+          
         </div>
     </div>
+  
 
+   
     <div>
         <a class="text-decoration-none" asp-action="Index">Back to List</a>
     </div>
+
+
+
+
+    
 </div>
 
 @section Scripts {

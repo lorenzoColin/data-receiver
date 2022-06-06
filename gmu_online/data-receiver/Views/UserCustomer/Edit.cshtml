@@ -1,12 +1,9 @@
 ﻿@using data_receiver.Models.ViewModels
 @model UserCustomerActionViewModel
 
-
 @{
-    var customerHasVideoCall = true;
-    var latestVideoCall = true;
+    int countDaysMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
 }
-
 <div class="content">
 
     <div class="row">
@@ -15,10 +12,7 @@
     </div>
 
 
-        @if(@Model.customer.Latest_videocall == "Geen behoefte aan bij de klant." || @Model.customer.Latest_videocall == null)
-        {
-            customerHasVideoCall = false;
-        }
+
     <div class="row text-white ">
         <div class="col-md-6 d-flex ">
 
@@ -83,13 +77,13 @@
                 @foreach(var action in @Model.action)
                 {
 
-                        if(action.id == 1)
+                        if(action.id == 1 )
                         {
                             <div class="border p-3">
                             <p>@action.description</p>
                             <form method="post" asp-action="EditPost" asp-controller="UserCustomer">
-                        
-                                <input name="value" type="number" min=1 max=100 class="form-control"   placeholder="example 50%" >
+                                
+                                <input name="value" type="number" min=2 max=100 class="form-control"   placeholder="example 50%" >
                                 <input hidden name="actionId" value="@action.id" >
                                 <input hidden name="usercustomerId" value="@Model.usercustomerId"   >
                                 <input hidden name="CustomerType" value="@Model.customer.CustomerType"   >
@@ -97,13 +91,25 @@
                             </form>
                         </div>
                         }
-                        if(action.id == 2 && customerHasVideoCall != false)
+                        if(action.id == 2  && @Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_videocall != "n.v.t.")
                         {
                             <div class="border p-3">
                             <p>@action.description</p>
                             <form method="post" asp-action="EditPost" asp-controller="UserCustomer">
-                        
                                 <input name="value" type="number" min=1 max=12 class="form-control"   placeholder="3 months" >
+                                <input hidden name="actionId" value="@action.id" >
+                                <input hidden name="customerType" value="@Model.customer.CustomerType" >
+                                <input hidden name="usercustomerId" value="@Model.usercustomerId"   >
+                                <input type="submit" class="mt-2" >
+                            </form>
+                            </div>
+                        }
+                         if(action.id == 3 && @Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_contact != "n.v.t.")
+                        {
+                            <div class="border p-3">
+                            <p>@action.description</p>
+                            <form method="post" asp-action="EditPost" asp-controller="UserCustomer">
+                                <input name="value" type="number" min=1 max=12 class="form-control"   placeholder="3 months afther latest contact" >
                                 <input hidden name="actionId" value="@action.id" >
                                 <input hidden name="customerType" value="@Model.customer.CustomerType" >
                                 <input hidden name="usercustomerId" value="@Model.usercustomerId"   >
@@ -114,35 +120,48 @@
 
 
                 }
+
+
+           
                 <h3>send mail on</h3>
                 <div class="d-flex row">
                     @foreach(var myactions in @Model.UserCustomerAction)
                     {
-                            if(myactions.action.id == 1)
-                            {
-
-                                <p class="col-md-2" >@myactions.value %</p>
-                            }
+                        
                     }
                 </div>
 
-                    @if (customerHasVideoCall == false)
-                    {
+                  
 
-                    }
-                    else
-                    {
-                        <h3>last video call</h3>
-                        <div class=" d-flex row">
-                            @foreach(var myactions in @Model.UserCustomerAction)
+                @if( @Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_videocall != "n.v.t.")
+                {
+                    <h3>last video call</h3>
+                    <div class=" d-flex row">
+                        @foreach (var myactions in @Model.UserCustomerAction )
+                        {
+                            if (myactions.action.id == 2 )
                             {
-                                if(myactions.action.id == 2 )
-                                {
-                                    <p class="col-md-2" >mail after @myactions.value months </p>
-                                }
+                                <p class="col-md-2" >mail after @myactions.value months </p>
                             }
-                        </div>   
-                    }
+                        }
+                    </div>
+                }
+               
+
+
+                @if(@Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_contact != "n.v.t.")
+                {
+                    <h3>last contact</h3>
+                    <div class=" d-flex row">
+                        @foreach (var myactions in @Model.UserCustomerAction)
+                        {
+                            if (myactions.action.id == 3)
+                            {
+                                <p class="col-md-2" >mail after @myactions.value months </p>
+                            }
+                        }
+                    </div>
+                }
             </div> 
         </div>
     </div>

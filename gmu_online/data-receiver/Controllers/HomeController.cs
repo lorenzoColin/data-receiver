@@ -35,17 +35,11 @@ namespace data_receiver.Controllers
 
         public async Task< IActionResult> Index([FromServices] IFluentEmail singleEmai)
         {
-
-
            //var userid = _userManager.GetUserId(HttpContext.User);
-
 
            ////google ads
            //var google = new GoogleAds();
            //var customerListt =  google.customerList();
-
-
-
 
 
            // //elastic data
