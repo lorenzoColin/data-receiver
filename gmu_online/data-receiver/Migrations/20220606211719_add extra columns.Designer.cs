@@ -12,15 +12,15 @@ using data_receiver.Data;
 namespace data_receiver.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220518060206_add")]
-    partial class add
+    [Migration("20220606211719_add extra columns")]
+    partial class addextracolumns
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("Identity")
-                .HasAnnotation("ProductVersion", "6.0.2")
+                .HasAnnotation("ProductVersion", "6.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -131,6 +131,10 @@ namespace data_receiver.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Klant")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("customerType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -154,6 +158,9 @@ namespace data_receiver.Migrations
 
                     b.Property<int>("actionId")
                         .HasColumnType("int");
+
+                    b.Property<double?>("cost")
+                        .HasColumnType("float");
 
                     b.Property<int>("usercustomerId")
                         .HasColumnType("int");

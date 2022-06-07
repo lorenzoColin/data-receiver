@@ -98,26 +98,26 @@ public class CustomerList
             {
                 foreach (var test in AllCustomers)
                 {
-                    if (mycustomer.DebiteurnrId == test.customer.Debiteurnr && mycustomer.customerType == test.customer.CustomerType)
+                    if (mycustomer.DebiteurnrId == test.customer.Debiteurnr && mycustomer.customerType == test.customer.CustomerType && mycustomer.Klant == test.customer.Klant )
                     {
                         mycustomers.Add(new CustomerViewModel { customer = test.customer, customerType = test.customerType });
                     }
                 }
             }
         }
+
         var customersToRemove = new List<CustomerViewModel>();
         foreach (var customer in AllCustomers)
         {
             foreach (var myCustomer in mycustomers)
             {
-                if (myCustomer.customer.CustomerType == customer.customer.CustomerType && myCustomer.customer.Debiteurnr == customer.customer.Debiteurnr)
+                if (myCustomer.customer.CustomerType == customer.customer.CustomerType && myCustomer.customer.Debiteurnr == customer.customer.Debiteurnr && myCustomer.customer.Klant == customer.customer.Klant)
                 {
                     customersToRemove.Add(customer);
                 }
             }
         }
         var result = AllCustomers.Except(customersToRemove).ToList();
-
         return result;
     }
 
@@ -201,7 +201,7 @@ public class CustomerList
             {
                 foreach (var test in AllCustomers)
                 {
-                    if (mycustomer.DebiteurnrId == test.customer.Debiteurnr && mycustomer.customerType == test.customer.CustomerType)
+                    if (mycustomer.DebiteurnrId == test.customer.Debiteurnr && mycustomer.customerType == test.customer.CustomerType && mycustomer.Klant == test.customer.Klant)
                     {
                         mycustomers.Add(new CustomerViewModel { customer = test.customer, customerType = test.customerType });
                     }

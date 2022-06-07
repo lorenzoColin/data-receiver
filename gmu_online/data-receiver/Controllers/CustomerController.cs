@@ -9,9 +9,9 @@ using Nest;
 using data_receiver.ElasticConnection;
 using System.Collections.Generic;
 
+
 namespace data_receiver.Controllers
 {
-    
     public class CustomerController : Controller
     {
 
@@ -77,13 +77,13 @@ namespace data_receiver.Controllers
             _db.SaveChanges();
             return RedirectToAction("index");
         }
-        public async Task<ActionResult> claimCustomer(string id, string customerType )
+        public async Task<ActionResult> claimCustomer(string id, string customerType,string klant )
         {
             var userid = _userManager.GetUserId(HttpContext.User);
             var loggedInUser = await _db.Users.FindAsync(userid);
 
             //make a new usercustomer object and save this in the database
-            var userCustomer = new UserCustomer { DebiteurnrId = id, userid = userid, customerType = customerType };
+            var userCustomer = new UserCustomer { DebiteurnrId = id, userid = userid, customerType = customerType,Klant = klant };
 
             _db.UserCustomer.Add(userCustomer);
             _db.SaveChanges();

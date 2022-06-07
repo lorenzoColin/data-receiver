@@ -14,6 +14,9 @@
                 <thead class=" text-primary">
                     <tr>
                     <th>
+                        id
+                    </th>
+                    <th>
                         klant
                     </th>
                     <th>
@@ -34,9 +37,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach(var customers in @Model.Where(s => s.customer.CustomerType == "sea_klanten" && s.customer.Debiteurnr != "n.v.t") )
+                    @foreach(var customers in @Model.Where(s => s.customer.CustomerType == "sea_klanten" && s.customer.Debiteurnr != "n.v.t" ) )
             {
                  <tr>
+                    <td>
+                        @customers.customer.Debiteurnr
+                    </td>
                     <td>
                         @customers.customer.Klant
                     </td>
@@ -53,7 +59,7 @@
                         @customers.customer.Latest_videocall
                     </td>
                     <td class="text-center">
-                        <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType"   >claim</a>  
+                        <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType" asp-route-klant="@customers.customer.Klant" >claim</a>  
                     </td>
                   </tr>
             }
@@ -114,7 +120,7 @@
                                         @customers.customer.Doelstelling
                                     </td>
                                         <td class="text-center">
-                                        <a asp-controller= "customer" asp-action="claimCustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType" >claim</a>  
+                                        <a asp-controller= "customer"  asp-route-klant = "@customers.customer.Klant" >claimen</a>  
                                     </td>
                                 </tr>
 

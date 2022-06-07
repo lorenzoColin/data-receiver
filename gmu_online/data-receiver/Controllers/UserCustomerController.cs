@@ -9,7 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Nest;
-
+using System.Text.Encodings;
+using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Net;
 
 namespace data_receiver.Controllers
 {
@@ -49,11 +52,13 @@ namespace data_receiver.Controllers
         }
 
 
-        [Route("usercustomer/edit/{DebiteurnrId}/customerType/{customerType}")]
-        public async Task<ActionResult> Edit(string DebiteurnrId, string customerType)
+        [Route("usercustomer/edit/{DebiteurnrId}/customerType/{customerType}/klant/{klant}")]
+        public async Task<ActionResult> Edit(string DebiteurnrId, string customerType, string klant)
         {
-            var userId = _usermanager.GetUserId(HttpContext.User);
 
+
+
+            var userId = _usermanager.GetUserId(HttpContext.User);
             TempData["error"] = error;
 
             if (TempData["error"] != null && errorCount > 1)
@@ -62,31 +67,42 @@ namespace data_receiver.Controllers
                 errorCount = 0;
             }
 
-
             //ingelogde user
             var loggedInUser = await _db.Users.FindAsync(userId);
             var customerlist = new CustomerList(_db);
             var mycustomers = customerlist.claimedcustomerlist(userId);
 
 
-            var Customer = mycustomers.Where(s => s.customer.CustomerType == customerType && s.customer.Debiteurnr == DebiteurnrId).FirstOrDefault();
-            int UserCustomerId = _db.UserCustomer.Where(s => s.userid == userId && s.DebiteurnrId == DebiteurnrId && s.customerType == customerType).First().Id;
 
-            IEnumerable<UserCustomerAction> usercustomeraction = _db.UserCustomerAction.Where(s => s.usercustomerId == UserCustomerId);
+
+            var decodeuriklant = WebUtility.UrlDecode(klant).Trim();
+
+
+            //containts have to become ==
+            var Customer = mycustomers.Where(s => s.customer.CustomerType == customerType && s.customer.Debiteurnr == DebiteurnrId && s.customer.Klant.Contains(decodeuriklant)).FirstOrDefault();
+            var UserCustomer = _db.UserCustomer.Where(s => s.userid == userId && s.DebiteurnrId == Customer.customer.Debiteurnr && s.customerType == Customer.customer.CustomerType && s.Klant == Customer.customer.Klant).FirstOrDefault();
+
+            var usercustomerId = UserCustomer.Id;
+
+
+
+
+            IEnumerable<UserCustomerAction> usercustomeraction = _db.UserCustomerAction.Where(s => s.usercustomerId == usercustomerId);
 
             var Action = _db.action;
-            var UserCustomerActionViewModel = new UserCustomerActionViewModel { customer = Customer.customer, action = Action, usercustomerId = UserCustomerId, UserCustomerAction = usercustomeraction };
+            var UserCustomerActionViewModel = new UserCustomerActionViewModel { customer = Customer.customer, action = Action, usercustomerId = usercustomerId, UserCustomerAction = usercustomeraction };
 
 
             return View(UserCustomerActionViewModel);
         }
 
-        public ActionResult SetTriggerPopupModel(UserCustomerAction UserCustomerAction, string customerType ,string DebiteurnrId)
+        public async Task< ActionResult> SetTriggerPopupModel(UserCustomerAction UserCustomerAction, string customerType ,string DebiteurnrId,string klant)
         {
             var userId = _usermanager.GetUserId(HttpContext.User);
+            var customerlist = new CustomerList(_db);
+            var claimedcustomerlist = customerlist.claimedcustomerlist(userId);
+            var usercustomer = _db.UserCustomer.Where(s => s.userid == userId && s.customerType == customerType && s.Klant == klant && s.DebiteurnrId == DebiteurnrId && s.Klant == klant).FirstOrDefault();
 
-            var usercustomer = _db.UserCustomer.Where(s => s.customerType == customerType && s.userid == userId && s.DebiteurnrId == DebiteurnrId).FirstOrDefault();
-            usercustomer.Id = usercustomer.Id;
 
 
             var userCustomerActions = _db.UserCustomerAction.Where<UserCustomerAction>(s => s.usercustomerId == usercustomer.Id);
@@ -106,13 +122,13 @@ namespace data_receiver.Controllers
                             var sejjjjj = _db.UserCustomerAction.Find(userCustomerAction.id);
                             duplicateUsercustomerAction.Add(sejjjjj);
                             duplicate = true;
-                            break;
                         }
                         if (duplicate == true)
                         {
                             duplicateUsercustomerAction[0].value = UserCustomerAction.value;
                             _db.SaveChanges();
-                            ModelState.AddModelError("duplicate", "duplicate value");
+                            error = "duplicate value";
+                            errorCount++;
                         }
                         break;
                     //last video call actionId 2
@@ -164,9 +180,9 @@ namespace data_receiver.Controllers
         // POST: UserCustomerController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditPost(UserCustomerAction UserCustomerAction,string customerType)
+        public ActionResult EditPost(UserCustomerAction UserCustomerAction,string customerType, string klant)
         {
-            var userCustomerActions = _db.UserCustomerAction.Where<UserCustomerAction>(s => s.usercustomerId == UserCustomerAction.usercustomerId && s.actionId == UserCustomerAction.actionId);
+            var userCustomerActions = _db.UserCustomerAction.Where<UserCustomerAction>(s => s.usercustomerId == UserCustomerAction.usercustomerId && s.actionId == UserCustomerAction.actionId );
             var duplicateUsercustomerAction = new List<UserCustomerAction>();
             bool duplicate = false;
             //loop over alle usercustomeraction die jij heb
@@ -182,7 +198,6 @@ namespace data_receiver.Controllers
                             var sejjjjj = _db.UserCustomerAction.Find(userCustomerAction.id);
                             duplicateUsercustomerAction.Add(sejjjjj);
                             duplicate = true;
-                            break;
                         }
                         if (duplicate == true)
                         {
@@ -201,7 +216,6 @@ namespace data_receiver.Controllers
                             var sejjjjj = _db.UserCustomerAction.Find(userCustomerAction.id);
                             duplicateUsercustomerAction.Add(sejjjjj);
                             duplicate = true;
-                            break;
                         }
                         if (duplicate == true)
                         {
@@ -212,13 +226,29 @@ namespace data_receiver.Controllers
                             errorCount++;
                         }
                       break;
-            }
+                    case 3:
+                        //if the value already existed
+                        if (userCustomerAction.value == UserCustomerAction.value)
+                        {
+                            var sejjjjj = _db.UserCustomerAction.Find(userCustomerAction.id);
+                            duplicateUsercustomerAction.Add(sejjjjj);
+                            duplicate = true;
+                        }
+                        if (duplicate == true)
+                        {
+                            duplicateUsercustomerAction[0].value = UserCustomerAction.value;
+                            _db.SaveChanges();
+
+                            error = "duplicate value";
+                            errorCount++;
+                        }
+                        break;
+                }
         }
             //if there is a duplicate overwrite the same value instead
             //actionId 1 == Currentbudget
             if (UserCustomerAction.actionId == 1 && duplicate == false)
             {
-
                 _db.UserCustomerAction.Add(UserCustomerAction);
                 _db.SaveChanges();
             }
@@ -229,11 +259,20 @@ namespace data_receiver.Controllers
                 _db.SaveChanges();
             }
 
+            //actionId == 2 Latest_videocall 
+            if (UserCustomerAction.actionId == 3 && duplicate == false)
+            {
+                _db.UserCustomerAction.Add(UserCustomerAction);
+                _db.SaveChanges();
+            }
 
-        //redirect with the customer id to the same page
-        var usercustomer = _db.UserCustomer.Find(UserCustomerAction.usercustomerId);
+            //redirect with the customer id to the same page
+            var usercustomer = _db.UserCustomer.Find(UserCustomerAction.usercustomerId);
             var DebiteurnrId = usercustomer.DebiteurnrId;
-            var redirect = string.Format("edit/{0}/customerType/{1}", DebiteurnrId, customerType);
+
+            var redirect = string.Format("edit/{0}/customerType/{1}/klant/{2}", DebiteurnrId, customerType,klant);
+
+            
 
 
 

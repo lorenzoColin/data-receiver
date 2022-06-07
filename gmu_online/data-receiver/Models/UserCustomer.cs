@@ -7,8 +7,8 @@ namespace data_receiver.Models
         [Key]
         public int Id { get; set; }
         public string userid { get; set; }
+        public string Klant { get; set; }
         public string DebiteurnrId { get; set; }
-
         public string customerType { get; set; }
 
         public virtual List<UserCustomerAction> UserCustomerAction { get; set; }

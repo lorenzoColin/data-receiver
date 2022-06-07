@@ -86,19 +86,6 @@ namespace data_receiver.google_ads
                          }
                      }
                  );
-
-
-
-
-                //coste van alle klanten 
-
-
-                //hier plaats ik de lijst en doe ik where statement
-                //dan pakt ie 1 klant uit de lijst wiens naam gelijk is aan de gebruiker die ik wil hebben
-                //en dan zet ik de customer id in de searchstream
-                //en dan krijg ik allec campagines en de koste daar van
-                //dit tel ik bij elkaar op en dan heb ik de koste van 1 klant
-
                 
                 return accountslist;
                 

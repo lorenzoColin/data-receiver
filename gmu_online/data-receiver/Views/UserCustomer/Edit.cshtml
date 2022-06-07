@@ -1,8 +1,9 @@
-﻿@using data_receiver.Models.ViewModels
+﻿@using System.Globalization
+@using data_receiver.Models.ViewModels
 @model UserCustomerActionViewModel
 
 @{
-    int countDaysMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+    var month =  DateTime.Now.ToString("MMMM",new CultureInfo("en-GB"));
 }
 <div class="content">
 
@@ -17,7 +18,11 @@
         <div class="col-md-6 d-flex ">
 
                 <div class="form-group">
-                
+
+                     <div class="form-group">
+                        <label  class="control-label">klant</label>
+                        <input disabled value="@Model.customer.Klant" class="form-control"  />
+                    </div>
                  <div class="form-group">
                         <label  class="control-label">debiteurnr</label>
                         <input disabled value="@Model.customer.Debiteurnr" class="form-control"  />
@@ -77,21 +82,21 @@
                 @foreach(var action in @Model.action)
                 {
 
-                        if(action.id == 1 )
+                        if(action.id == 1 && @Model.customer.Max_budget != "n.v.t" )
                         {
                             <div class="border p-3">
-                            <p>@action.description</p>
+                            <p>For example: email will be send on 4th of @month</p>
                             <form method="post" asp-action="EditPost" asp-controller="UserCustomer">
-                                
-                                <input name="value" type="number" min=2 max=100 class="form-control"   placeholder="example 50%" >
+                                <input name="value" type="number" min=1  max=31 class="form-control"   placeholder="4" >
                                 <input hidden name="actionId" value="@action.id" >
+                                <input hidden name="klant" value="@Model.customer.Klant" >
                                 <input hidden name="usercustomerId" value="@Model.usercustomerId"   >
                                 <input hidden name="CustomerType" value="@Model.customer.CustomerType"   >
                                 <input type="submit" class="mt-2" >
                             </form>
                         </div>
                         }
-                        if(action.id == 2  && @Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_videocall != "n.v.t.")
+                        if(action.id == 2  && @Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_videocall != "n.v.t" && @Model.customer.Latest_videocall != "n.v.t.")
                         {
                             <div class="border p-3">
                             <p>@action.description</p>
@@ -100,17 +105,19 @@
                                 <input hidden name="actionId" value="@action.id" >
                                 <input hidden name="customerType" value="@Model.customer.CustomerType" >
                                 <input hidden name="usercustomerId" value="@Model.usercustomerId"   >
+                                <input hidden name="klant" value="@Model.customer.Klant" >
                                 <input type="submit" class="mt-2" >
                             </form>
                             </div>
                         }
-                         if(action.id == 3 && @Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_contact != "n.v.t.")
+                         if(action.id == 3 && @Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_contact != "n.v.t" && @Model.customer.Latest_contact != "on hold")
                         {
                             <div class="border p-3">
                             <p>@action.description</p>
                             <form method="post" asp-action="EditPost" asp-controller="UserCustomer">
-                                <input name="value" type="number" min=1 max=12 class="form-control"   placeholder="3 months afther latest contact" >
+                                <input name="value" type="number" min=1 max=12 class="form-control"   placeholder="3 months after last contact" >
                                 <input hidden name="actionId" value="@action.id" >
+                                <input hidden name="klant" value="@Model.customer.Klant" >
                                 <input hidden name="customerType" value="@Model.customer.CustomerType" >
                                 <input hidden name="usercustomerId" value="@Model.usercustomerId"   >
                                 <input type="submit" class="mt-2" >
@@ -123,25 +130,33 @@
 
 
            
-                <h3>send mail on</h3>
-                <div class="d-flex row">
-                    @foreach(var myactions in @Model.UserCustomerAction)
-                    {
-                        
-                    }
-                </div>
+                @if (@Model.customer.CustomerType == "sea_klanten" && @Model.customer.Max_budget != "n.v.t")
+                {
+                    <h3>Current budget mail</h3>
+                    <div class="d-flex row ">
 
-                  
+                        @foreach (var myactions in @Model.UserCustomerAction)
+                        {
+                            if (myactions.action.id == 1)
+                            {
+                                <p class="col-md-12" >Mail will be send on @month @myactions.value </p>
+                            }
+                        }
+                    </div>
+                }
 
-                @if( @Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_videocall != "n.v.t.")
+
+                @if( @Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_videocall != "n.v.t" && @Model.customer.Latest_videocall != "n.v.t.")
                 {
                     <h3>last video call</h3>
-                    <div class=" d-flex row">
+                    <div class=" d-flex row ">
                         @foreach (var myactions in @Model.UserCustomerAction )
                         {
                             if (myactions.action.id == 2 )
                             {
-                                <p class="col-md-2" >mail after @myactions.value months </p>
+                                <p class="col-md-12 no-margin" >
+                                Email will be send @myactions.value month(s) after last video call
+                                </p>
                             }
                         }
                     </div>
@@ -149,15 +164,16 @@
                
 
 
-                @if(@Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_contact != "n.v.t.")
+                @if(@Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_contact != "n.v.t" && @Model.customer.Latest_contact != "on hold")
                 {
-                    <h3>last contact</h3>
-                    <div class=" d-flex row">
+                      <h3>last contact</h3>
+                    <div class=" d-flex row ">
+                          
                         @foreach (var myactions in @Model.UserCustomerAction)
                         {
                             if (myactions.action.id == 3)
                             {
-                                <p class="col-md-2" >mail after @myactions.value months </p>
+                                <p class="col-md-12" >Email will be send @myactions.value month(s) after last video call </p>
                             }
                         }
                     </div>

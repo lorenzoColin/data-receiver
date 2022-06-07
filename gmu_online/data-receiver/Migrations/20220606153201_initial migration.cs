@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace data_receiver.Migrations
 {
-    public partial class add : Migration
+    public partial class initialmigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -212,7 +212,8 @@ namespace data_receiver.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     usercustomerId = table.Column<int>(type: "int", nullable: false),
                     actionId = table.Column<int>(type: "int", nullable: false),
-                    value = table.Column<int>(type: "int", nullable: false)
+                    value = table.Column<int>(type: "int", nullable: false),
+                    cost = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {

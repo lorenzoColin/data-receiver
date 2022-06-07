@@ -4,24 +4,25 @@
 
 namespace data_receiver.Migrations
 {
-    public partial class costcolumn : Migration
+    public partial class addextracolumns : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<double>(
-                name: "cost",
+            migrationBuilder.AddColumn<string>(
+                name: "Klant",
                 schema: "Identity",
-                table: "UserCustomerAction",
-                type: "float",
-                nullable: true);
+                table: "UserCustomer",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "cost",
+                name: "Klant",
                 schema: "Identity",
-                table: "UserCustomerAction");
+                table: "UserCustomer");
         }
     }
 }

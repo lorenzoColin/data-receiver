@@ -10,7 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
 using data_receiver.google_ads;
-
+using System.Transactions;
+using Microsoft.EntityFrameworkCore;
 
 namespace data_receiver.MybackgroundService
 {
@@ -21,15 +22,11 @@ namespace data_receiver.MybackgroundService
         private readonly IServiceProvider _service;
         private readonly ElasticClient _client;
        
-
-
-
         public BackgroundTask( ILogger<BackgroundTask> logger, IServiceProvider services)
         {
             _client = new ElasticSearchClient().EsClient();
             _service = services;
             _logger = logger;
-
         }
         //currentBudget is action id 1
         public async Task currentBudget()
@@ -41,98 +38,82 @@ namespace data_receiver.MybackgroundService
             var GoogleAds = new GoogleAds();
 
 
-
-
             //count of the month
             int countDaysMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+            int day = DateTime.Now.Month;
+
 
             //result 40 is the value of the user input
-            IEnumerable<UserCustomerAction> userCustomerActions = _db.UserCustomerAction;
+            var userCustomerActions = _db.UserCustomerAction.ToList();
 
-            
-            var UserCustomerActionByDays = new List<UserCustomerActionByDay>();
-
-            foreach (var action in userCustomerActions)
-            {
-                if(action.actionId == 1)
-                {
-                    var result = (countDaysMonth / 100.0 * action.value);
-                    //add de dag en de usercustomerId
-                    UserCustomerActionByDays.Add(new UserCustomerActionByDay { day = Math.Round(result, MidpointRounding.AwayFromZero), usercustomerId = action.usercustomerId });   
-                }
-            }
-            //day of today
-            var day = DateTime.Now.Day;
+           
 
             //hier loopt ie over een lijst met dagen dat zijn ingevuld door de gebruiker
-            foreach (var UserCustomerActionByDay in UserCustomerActionByDays)
+            foreach (var UserCustomerActionByDay in userCustomerActions)
             {
-                //find the customer 
-                var usercustomer = _db.UserCustomer.Find(UserCustomerActionByDay.usercustomerId);
-                var UserId = usercustomer.userid;
-                var User = _db.Users.Find(UserId);
-
-                var allcustomer = new CustomerList(_db);
-                var customers = allcustomer.getallcustomers();
-
-                var singlecustomer = customers.Where(s => s.customer.CustomerType == usercustomer.customerType && s.customer.Debiteurnr == usercustomer.DebiteurnrId).FirstOrDefault();
-                var AdsAccountName = singlecustomer.customer.Ads.Trim();
-                
-                //list with customer and the customer id
-                var customerlist = GoogleAds.customerList();
-                
-
-                //krijg de klanten naam met customer id            
-                var singelist = customerlist.Where(s => s.accountName == AdsAccountName).FirstOrDefault();
-                if(singelist != null)
+                if (UserCustomerActionByDay.actionId == 1)
                 {
-                   var cost = Math.Round( GoogleAds.getcustomerWithCost(singelist.accountId.ToString()).Sum(),2);
+                    var usercustomer = _db.UserCustomer.Find(UserCustomerActionByDay.usercustomerId);
+                    var UserId = usercustomer.userid;
+                    var User = _db.Users.Find(UserId);
+                    var allcustomer = new CustomerList(_db);
+                    var customers = allcustomer.getallcustomers();
 
-                   var count = UserCustomerActionByDay.day / countDaysMonth  * 100 ;
-                   var value = Math.Round(count, MidpointRounding.AwayFromZero);
+                    
+               
+                    var singlecustomer = customers.Where(s => s.customer.CustomerType == usercustomer.customerType && s.customer.Debiteurnr == usercustomer.DebiteurnrId).FirstOrDefault();
+                    var AdsAccountName = singlecustomer.customer.Ads.Trim();
+
+                    var customerlist = GoogleAds.customerList();
 
 
-                /* 1.search in the usercustomeraction for the specific user with the value */
-                   var SingleUserCustomerAction = _db.UserCustomerAction.Where(s => s.usercustomerId == UserCustomerActionByDay.usercustomerId && s.value == value && s.action.id == 1  ).FirstOrDefault();
-
-                    //sla koste op in database
-                    if (SingleUserCustomerAction != null)
+                    //krijg de klanten naam met customer id            
+                    var singelist = customerlist.Where(s => s.accountName == AdsAccountName).FirstOrDefault();
+                    if (singelist != null)
                     {
-                        //if the user hase not cost yet add the cost
-                        if (SingleUserCustomerAction.cost == null)
+                        var cost = Math.Round(GoogleAds.getcustomerWithCost(singelist.accountId.ToString()).Sum(), 2);
+
+                        /* 1.search in the usercustomeraction for the specific user with the value */
+                        var SingleUserCustomerAction = _db.UserCustomerAction.Where(s => s.usercustomerId == UserCustomerActionByDay.usercustomerId && s.value == UserCustomerActionByDay.value && s.action.id == 1).FirstOrDefault();
+
+                        //sla koste op in database
+                        if (SingleUserCustomerAction != null)
                         {
-                            SingleUserCustomerAction.cost = cost;
-                            _db.SaveChanges();
-                        }
-                        //if the user already has a cost update em with the cost of the next day
-                        if (SingleUserCustomerAction.cost != null)
-                        {
-                            var totalCost  = cost + SingleUserCustomerAction.cost;
-                            var round = Math.Round((double)totalCost, 2, MidpointRounding.AwayFromZero);
+                            //if the user hase not cost yet add the cost
+                            if (SingleUserCustomerAction.cost == null)
+                            {
 
-                            SingleUserCustomerAction.cost = round;
-                            _db.SaveChanges();
-                        }
-                        //if the date of today is equal to when a user wants to receive a mail
-                        //send a mail with the cost of the month
-                        if(day == UserCustomerActionByDay.day)
-                        {
-                            var totalCost = cost + SingleUserCustomerAction.cost;
-                            var round = Math.Round((double)totalCost, 2, MidpointRounding.AwayFromZero);
-                            var email = sendmail
-                           .To(User.Email)
-                           .Subject("current budget")
-                           .UsingTemplate("hi @Model.Name max budget of @Model.customer is @Model.budget this month you lost @Model.cost  ",
-                           new { Name = User.FirstName,customer = singlecustomer.customer.Klant, budget = singlecustomer.customer.Max_budget, cost = round  });
-                            await email.SendAsync();
+                                UserCustomerActionByDay.cost = cost;
+                                _db.SaveChanges();
+                            }
+                            //if the user already has a cost update em with the cost of the next day
+                            if (SingleUserCustomerAction.cost != null)
+                            {
+                                var totalCost = cost + SingleUserCustomerAction.cost;
+                                var round = Math.Round((double)totalCost, 2, MidpointRounding.AwayFromZero);
 
-                            //send a mail with cost and max budget
+                                SingleUserCustomerAction.cost = round;
+                                _db.SaveChanges();
+                            }
+                            //if the date of today is equal to when a user wants to receive a mail
+                            //send a mail with the cost of the month
+                            if (day == UserCustomerActionByDay.value)
+                            {
+                                var totalCost = cost + SingleUserCustomerAction.cost;
+                                var round = Math.Round((double)totalCost, 2, MidpointRounding.AwayFromZero);
 
+                                var email = sendmail
+                               .To(User.Email)
+                               .Subject("Current budget")
+                               .UsingTemplate("Good day @Model.Name. The max budget of @Model.customer for this month is €@Model.budget of which €@Model.cost is already spend."
+                               , new { Name = User.FirstName, customer = singlecustomer.customer.Klant, budget = singlecustomer.customer.Max_budget, cost = round });
+                                email.Send();
+                                //send a mail with cost and max budget
 
-                            //when the mail is send the total cost is going to be zero again
-                            SingleUserCustomerAction.cost = null;
-                            _db.SaveChanges();
-
+                                //when the mail is send the total cost is going to be zero again
+                                SingleUserCustomerAction.cost = null;
+                                _db.SaveChanges();
+                            }
                         }
                     }
                 }

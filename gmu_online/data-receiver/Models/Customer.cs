@@ -4,7 +4,7 @@ namespace data_receiver.Models
 {
     public class Customer
     {
-        public string _id { get; set; }
+        
 
         //props for sea_klanten
         public string? Debiteurnr { get; set; } = "n.v.t";
@@ -16,14 +16,13 @@ namespace data_receiver.Models
         public string? Datum_live { get; set; } = "n.v.t";
         public string? Contract { get; set; } = "n.v.t";
         public string? Contact { get; set; } = "n.v.t";
-        public string? Latest_videocall { get; set; } 
+        public string? Latest_videocall { get; set; } = "n.v.t";
         public string? Latest_contact { get; set; } = "n.v.t";
         public string? Remarks { get; set; } = "n.v.t";
         public string? CMS { get; set; } = "n.v.t";
         public string? Ads { get; set; } = "this custoner does not have a ads yet";
 
         //propperty from sma_klanten
-
         public string? Servicefee_afspraak { get; set; } = "n.v.t";
         public string? CustomerType { get; set; } = "n.v.t";
         //seo and sma
