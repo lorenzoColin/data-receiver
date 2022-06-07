@@ -11,6 +11,7 @@ namespace data_receiver.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+
         }
         public DbSet<action> action { get; set; }
         //public DbSet<Contact> Contact { get; set; }
@@ -26,12 +27,14 @@ namespace data_receiver.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.UseSerialColumns();
 
 
-     
 
-        //ignore identity tables
-        builder.Ignore<IdentityUser>();
+
+
+            //ignore identity tables
+            builder.Ignore<IdentityUser>();
 
         //usercustomer
         //    builder.Entity<UserCustomer>()
