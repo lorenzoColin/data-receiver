@@ -6,85 +6,191 @@
     var month =  DateTime.Now.ToString("MMMM",new CultureInfo("en-GB"));
 }
 <div class="content">
+        <div class="row">
+          <div class="col-12">
+            <div class="card card-chart">
+              <div class="card-header ">
+                <div class="row">
+                  <div class="col-sm-6 text-left">
+                    <h2 class="card-title">user profile</h2>
+                  </div>
+                  <div class="col-sm-6">
+                   
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="chart-area" style="height: auto!important;">
+                    <div class="container">
 
-    <div class="row">
-    <h4 class="text-white col-md-6">customer</h4>
-    <h4 style="text-align:end;" class="col-md-6 text-white">triggers</h4>
-    </div>
-
-
-
-    <div class="row text-white ">
-        <div class="col-md-6 d-flex ">
-
-                <div class="form-group">
-
-                     <div class="form-group">
-                        <label  class="control-label">klant</label>
-                        <input disabled value="@Model.customer.Klant" class="form-control"  />
-                    </div>
-                 <div class="form-group">
-                        <label  class="control-label">debiteurnr</label>
-                        <input disabled value="@Model.customer.Debiteurnr" class="form-control"  />
-                    </div>
-                    <div class="form-group">
-                        <label  class="control-label">cms</label>
-                        <input disabled value="@Model.customer.CMS" class="form-control" />
-                    </div>
-                     <div class="form-group">
-                        <label class="control-label">sConsultant</label>
-                        <input disabled value="@Model.customer.Consultant" class="form-control" />
-                    </div>
-                     <div class="form-group">
-                        <label  class="control-label">Contact</label>
-                        <input disabled value="@Model.customer.Contact" class="form-control" />
-                    </div>
-                     <div class="form-group">
-                        <label class="control-label">contract</label>
-                        <input disabled  value="@Model.customer.Contract" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">Datum_live</label>
-                        <input disabled value="@Model.customer.Datum_live" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">latest videocall</label>
-                        <input disabled value="@Model.customer.Latest_videocall" class="form-control" />
-                    </div>
-                     <div class="form-group">
-                        <label  class="control-label">Max budget</label>
-                        <input disabled  value="@Model.customer.Max_budget" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label  class="control-label">Resultaat</label>
-                        <input disabled value="@Model.customer.Resultaat" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label  class="control-label">last contact</label>
-                        <input disabled value="@Model.customer.Latest_contact" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label  class="control-label">doelstelling</label>
-                        <input disabled value="@Model.customer.Doelstelling" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label  class="control-label ">remarks</label>
-                        <input disabled value="@Model.customer.Remarks" class="form-control " />
-                    </div>
-                     <div class="form-group">
-                        <label  class="control-label ">status</label>
-                        <input disabled value="@Model.customer.status" class="form-control " />
+                        <div class="row text-white ">
+                            <div class="form-group col-md-6">
+                                <label  class="control-label">klant</label>
+                                <input disabled value="@Model.customer.Klant" class="form-control"  />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label  class="control-label">debiteurnr</label>
+                                <input disabled value="@Model.customer.Debiteurnr" class="form-control"  />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label  class="control-label">cms</label>
+                                <input disabled value="@Model.customer.CMS" class="form-control" />
+                            </div>
+                                <div class="form-group col-md-6">
+                                <label class="control-label">sConsultant</label>
+                                <input disabled value="@Model.customer.Consultant" class="form-control" />
+                            </div>
+                                <div class="form-group col-md-6">
+                                <label  class="control-label">Contact</label>
+                                <input disabled value="@Model.customer.Contact" class="form-control" />
+                            </div>
+                                <div class="form-group col-md-6">
+                                <label class="control-label">contract</label>
+                                <input disabled  value="@Model.customer.Contract" class="form-control" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="control-label">Datum_live</label>
+                                <input disabled value="@Model.customer.Datum_live" class="form-control" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="control-label">latest videocall</label>
+                                <input disabled value="@Model.customer.Latest_videocall" class="form-control" />
+                            </div>
+                                <div class="form-group col-md-6">
+                                <label  class="control-label">Max budget</label>
+                                <input disabled  value="@Model.customer.Max_budget" class="form-control" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label  class="control-label">Resultaat</label>
+                                <input disabled value="@Model.customer.Resultaat" class="form-control" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label  class="control-label">last contact</label>
+                                <input disabled value="@Model.customer.Latest_contact" class="form-control" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label  class="control-label">doelstelling</label>
+                                <input disabled value="@Model.customer.Doelstelling" class="form-control" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label  class="control-label ">remarks</label>
+                                <input disabled value="@Model.customer.Remarks" class="form-control " />
+                            </div>
+                                <div class="form-group col-md-6">
+                                <label  class="control-label ">status</label>
+                                <input disabled value="@Model.customer.status" class="form-control " />
+                            </div>
+                        </div>
                     </div>
                 </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-md-6 d-flex justify-content-end">
-           <div class="border w-100">
-                @foreach(var action in @Model.action)
+        <div class="row">
+          <div class="col-lg-6 col-md-12">
+            <div class="card ">
+              <div class="card-header d-flex ">
+                <h4 class="card-title w-100"> Set triggers</h4>
+                
+                <div class="dropdown  ">
+                  <a class=" dropdown-toggle btn btn-link btn-icon w-100" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-cog drop-down-togle"></i>
+                  </a>
+
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" asp-controller="UserCustomer" asp-action="index">see your customers</a>
+                  </div>
+                </div>
+                @*<div class="card-title justify-content-end w-100 text-right"><a class="btn btn-primary p-1"  asp-controller="UserCustomer" asp-action="index" >edit</a> </div>*@
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                      @if (@Model.customer.CustomerType == "sea_klanten" && @Model.customer.Max_budget != "n.v.t")
+                    {
+                        <h4 class="mb-0">Current budget mail</h4>
+                        <div class="d-flex row ">
+                            @foreach (var myactions in @Model.UserCustomerAction)
+                            {
+                                if (myactions.action.id == 1)
+                                {
+                                  <div class="col-md-6" >
+                                        <p>Mail will be send on @month @myactions.value</p>
+                                    </div>
+                                  <div class="col-md-6 text-center" >
+                                        <a  asp-controller="UserCustomer" asp-action="removeAction" asp-route-id="@myactions.id" asp-route-Debiteurnr="@Model.customer.Debiteurnr" asp-route-customerType="@Model.customer.CustomerType" asp-route-Klant="@Model.customer.Klant" >remove</a>
+                                  </div>
+                                }
+                            }
+                        </div>
+                        <br>
+                    }
+                    @if( @Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_videocall != "n.v.t" && @Model.customer.Latest_videocall != "n.v.t.")
+                    {
+                        <h4 class="mb-0">last video call</h4>
+                        <div class=" d-flex row ">
+                            @foreach (var myactions in @Model.UserCustomerAction )
+                            {
+                                if (myactions.action.id == 2 )
+                                {
+                                    <div class="col-md-6 no-margin" >
+                                        <p>Email will be send @myactions.value month(s) after last video call</p>
+                                    </div>
+                                    <div class="col-md-6 text-center" >
+
+                                        <a  asp-controller="UserCustomer" asp-action="removeAction" asp-route-id="@myactions.id" asp-route-Debiteurnr="@Model.customer.Debiteurnr" asp-route-customerType="@Model.customer.CustomerType" asp-route-Klant="@Model.customer.Klant" >remove</a>
+
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <br>
+
+                    }
+
+                    @if(@Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_contact != "n.v.t" && @Model.customer.Latest_contact != "on hold")
+                    {
+                        <h4 class="mb-0">last contact</h4>
+                        <div class=" d-flex row ">
+                          
+                            @foreach (var myactions in @Model.UserCustomerAction)
+                            {
+                                if (myactions.action.id == 3)
+                                {
+                                    <div class="col-md-6 no-margin" >
+                                        <p >Email will be send @myactions.value month(s) after last video call </p>
+                                    </div>
+                                    <div class="col-md-6 text-center">
+                                        <a  asp-controller="UserCustomer" asp-action="removeAction" asp-route-id="@myactions.id" asp-route-Debiteurnr="@Model.customer.Debiteurnr" asp-route-customerType="@Model.customer.CustomerType" asp-route-Klant="@Model.customer.Klant" >remove</a>
+                                    </div>
+                                }
+                            }
+
+                        </div>
+                        <br />
+                    }
+                
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-12">
+            <div class="card ">
+              <div class="card-header d-flex">
+                <h4 class="card-title w-100">Set up triggers</h4>
+                <div class="w-100 text-right">
+                    <a class="text-right btn btn-link p-0 mt-0 " asp-controller="Customer" asp-action="index" >go to all customer</a> 
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                    @foreach(var action in @Model.action)
                 {
 
-                        if(action.id == 1 && @Model.customer.Max_budget != "n.v.t" )
+                        if(action.id == 1 && @Model.customer.Max_budget != "n.v.t" && @Model.customer.CustomerType == "sea_klanten" )
                         {
-                            <div class="border p-3">
+
+                            <div class=" p-3">
                             <p>For example: email will be send on 4th of @month</p>
                             <form method="post" asp-action="EditPost" asp-controller="UserCustomer">
                                 <input name="value" type="number" min=1  max=31 class="form-control"   placeholder="4" >
@@ -92,13 +198,14 @@
                                 <input hidden name="klant" value="@Model.customer.Klant" >
                                 <input hidden name="usercustomerId" value="@Model.usercustomerId"   >
                                 <input hidden name="CustomerType" value="@Model.customer.CustomerType"   >
-                                <input type="submit" class="mt-2" >
+                                <input type="submit" class="btn-sm btn-primary mt-3" value="save" >
                             </form>
                         </div>
+
                         }
                         if(action.id == 2  && @Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_videocall != "n.v.t" && @Model.customer.Latest_videocall != "n.v.t.")
                         {
-                            <div class="border p-3">
+                            <div class=" p-3">
                             <p>@action.description</p>
                             <form method="post" asp-action="EditPost" asp-controller="UserCustomer">
                                 <input name="value" type="number" min=1 max=12 class="form-control"   placeholder="3 months" >
@@ -106,13 +213,14 @@
                                 <input hidden name="customerType" value="@Model.customer.CustomerType" >
                                 <input hidden name="usercustomerId" value="@Model.usercustomerId"   >
                                 <input hidden name="klant" value="@Model.customer.Klant" >
-                                <input type="submit" class="mt-2" >
+                                <input type="submit" class="btn-sm btn-primary mt-3" value="save" >
                             </form>
                             </div>
                         }
+                        
                          if(action.id == 3 && @Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_contact != "n.v.t" && @Model.customer.Latest_contact != "on hold")
                         {
-                            <div class="border p-3">
+                            <div class=" p-3">
                             <p>@action.description</p>
                             <form method="post" asp-action="EditPost" asp-controller="UserCustomer">
                                 <input name="value" type="number" min=1 max=12 class="form-control"   placeholder="3 months after last contact" >
@@ -120,73 +228,21 @@
                                 <input hidden name="klant" value="@Model.customer.Klant" >
                                 <input hidden name="customerType" value="@Model.customer.CustomerType" >
                                 <input hidden name="usercustomerId" value="@Model.usercustomerId"   >
-                                <input type="submit" class="mt-2" >
+                                <input type="submit" class="btn-sm btn-primary mt-3" value="save" >
                             </form>
                             </div>
+
                         }
 
 
                 }
-
-
-           
-                @if (@Model.customer.CustomerType == "sea_klanten" && @Model.customer.Max_budget != "n.v.t")
-                {
-                    <h3>Current budget mail</h3>
-                    <div class="d-flex row ">
-
-                        @foreach (var myactions in @Model.UserCustomerAction)
-                        {
-                            if (myactions.action.id == 1)
-                            {
-                                <p class="col-md-12" >Mail will be send on @month @myactions.value </p>
-                            }
-                        }
-                    </div>
-                }
-
-
-                @if( @Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_videocall != "n.v.t" && @Model.customer.Latest_videocall != "n.v.t.")
-                {
-                    <h3>last video call</h3>
-                    <div class=" d-flex row ">
-                        @foreach (var myactions in @Model.UserCustomerAction )
-                        {
-                            if (myactions.action.id == 2 )
-                            {
-                                <p class="col-md-12 no-margin" >
-                                Email will be send @myactions.value month(s) after last video call
-                                </p>
-                            }
-                        }
-                    </div>
-                }
-               
-
-
-                @if(@Model.customer.CustomerType == "sea_klanten" && @Model.customer.Latest_contact != "n.v.t" && @Model.customer.Latest_contact != "on hold")
-                {
-                      <h3>last contact</h3>
-                    <div class=" d-flex row ">
-                          
-                        @foreach (var myactions in @Model.UserCustomerAction)
-                        {
-                            if (myactions.action.id == 3)
-                            {
-                                <p class="col-md-12" >Email will be send @myactions.value month(s) after last video call </p>
-                            }
-                        }
-                    </div>
-                }
-            </div> 
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
-
-
-    <div>
-        <a asp-action="Index">Back to List</a>
-    </div>
 </div>
+
 
 
 @section Scripts {

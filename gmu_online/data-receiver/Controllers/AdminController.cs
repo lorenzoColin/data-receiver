@@ -1,6 +1,7 @@
 ﻿using data_receiver.Data;
 using data_receiver.Models;
 using data_receiver.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,6 +9,7 @@ using Action = data_receiver.Models.action;
 
 namespace data_receiver.Controllers
 {
+    //[Authorize(Roles =  "admin")]
     public class AdminController : Controller
     {
 
@@ -18,67 +20,68 @@ namespace data_receiver.Controllers
             _usermanager = usermanager;
             _db = db;
         }
-        public async void test(ApplicationUser user)
-        {
-             var role = await _usermanager.GetRolesAsync(user);
-        }
         // GET: AdminController
         public async Task<ActionResult> AllUsers()
         {
-            var UserRoleViewModels = new List<UserRoleViewModel>();  
-
-            
-
+            var UserRoleViewModels = new List<UserRoleViewModel>();
             var users = _db.Users.ToList();
             var roles = _db.Roles.ToList();
             var UserRoles = _db.UserRoles.ToList();
             var USerCustomers = _db.UserCustomer.ToList();
 
-
-
-            foreach(var UserRoleViewModel in UserRoleViewModels)
+            foreach (var role in roles)
             {
-                foreach(var role in roles)
+                foreach (var user in users)
                 {
-                    if(await _usermanager.IsInRoleAsync(UserRoleViewModel.User, role.Name))
-                        {
-                            UserRoleViewModel.RoleId = role.Id;
-                            UserRoleViewModel.RoleName = role.Name; 
-                        }
 
+                    if (await _usermanager.IsInRoleAsync(user, role.Name))
+                    {
+                        UserRoleViewModels.Add(new UserRoleViewModel { User = user,RoleName = role.Name });
+                    }
+
+                    if (!await _usermanager.IsInRoleAsync(user, role.Name))
+                    {
+                        UserRoleViewModels.Add(new UserRoleViewModel { User = user });
+                    }
                 }
+
             }
-
-            foreach (var user in users)
-            {
-                
-            }
-
-
+               
+        
             return View(UserRoleViewModels);
         }
 
-        [HttpGet]
-        public ActionResult CreateAction()
+
+
+
+
+        public ActionResult usercustomer()
         {
+            var list = new CustomerList(_db);
+            var usercustomers = _db.UserCustomer.ToList();
+            var users = _db.Users.ToList();
 
-            return View();
+            var AdminUserCustomerViewModel = new List<AdminUserCustomerViewModel>();
+
+            //var usercustomerlist = list.claimedcustomerlist(usercustomer.userid);
+
+            foreach (var usercustomer in usercustomers)
+            {
+                foreach(var user in users)
+                {
+                    if(user.Id == usercustomer.userid)
+                    {
+                       var mycustomers = list.claimedcustomerlist(usercustomer.userid);
+                    }
+                }
+
+            }
+
+            return View(AdminUserCustomerViewModel);
+
         }
+      
 
-        //dit is voor mij als developer dit gaat er uit binnekort
-        [HttpPost]
-        public ActionResult CreateAction(string ActionName)
-        {
-
-         var actionresult =    _db.action.Where(s => s.description == ActionName).ToList();
-
-         var action = new Action() { description = ActionName };
-            
-
-         _db.action.Add(action);
-         _db.SaveChanges();
-         return View();
-        }
         // GET: AdminController/Create
         public ActionResult Create()
         {
@@ -100,54 +103,36 @@ namespace data_receiver.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-            return View();
+            return RedirectToAction("allusers");
         }
         // GET: AdminController/Edit/5
         public async Task<ActionResult> Edit(string id)
-        {
-            
-
-
-            if (id == null)
-            {
-                return RedirectToAction("allUsers");
-            }
-            var user = await _usermanager.FindByIdAsync(id);
-            var UserRoles = _db.UserRoles.ToList();
-            var roles = _db.Roles.ToList();
-            var MyRoles = new List<string>();
-            var unclaimedRoles = new List<string>();
+        {  
             var selectlistItems = new List<SelectListItem>();
-        
+            var UserRoleViewModels = new List<UserRoleViewModel>();
+            var users = _db.Users.ToList();
+            var roles = _db.Roles.ToList();
 
-        foreach(var role in roles)
-        {
-                //als de user niet in een bepaalde role zit voeg ze toe aan deze lijst
-                if ( !await _usermanager.IsInRoleAsync(user, role.Name))
+            foreach (var role in roles)
+            {
+                foreach (var user in users)
                 {
-                    selectlistItems.Add(new SelectListItem {Text = role.Name,Value = role.Id,Disabled = false });
-               
-                }
+                    if (user.Id == id)
+                    {
+                        if (await _usermanager.IsInRoleAsync(user, role.Name))
+                        {
+                            UserRoleViewModels.Add(new UserRoleViewModel { User = user, RoleName = role.Name, InRole = true, RoleId = role.Id });
+                        }
+                        if (!await _usermanager.IsInRoleAsync(user, role.Name))
+                        {
+                            selectlistItems.Add(new SelectListItem { Text = role.Name.ToString(), Value = role.Id, Disabled = false });
 
-                //my roles
-                if (await _usermanager.IsInRoleAsync(user, role.Name))
-                {
-                    MyRoles.Add(role.Name);
+                            UserRoleViewModels.Add(new UserRoleViewModel { User = user,InRole = false,list = selectlistItems  });
+                        }
+                    }
                 }
-
             }
-
-       
-
-
-        ViewBag.listItems = selectlistItems;
-        ViewBag.MyRole = MyRoles;
-
-          
-
-
-
-            return View(user);
+            return View(UserRoleViewModels);
         }
         // POST: AdminController/Edit/5
         [HttpPost]
@@ -177,8 +162,6 @@ namespace data_receiver.Controllers
 
         public async Task< ActionResult> setRole(string RoleId,string userId)
         {
-
-
             var user = _db.Users.Find(userId);
             var role = _db.Roles.Find(RoleId);
 
@@ -186,16 +169,19 @@ namespace data_receiver.Controllers
             {
                 return NotFound();
             }
-           
             await _usermanager.AddToRoleAsync(user, role.Name);
-            
-          
-
-
-
-            return RedirectToAction("Edit",user.Id);
-
+            return RedirectToAction("Edit", "admin",new {id = userId});
         }
+        public ActionResult DeleteRole(string UserId,string RoleId)
+        {
+            var UserRole =  _db.UserRoles.Where(s => s.UserId == UserId && s.RoleId == RoleId).FirstOrDefault();
+
+            _db.UserRoles.Remove(UserRole);
+            _db.SaveChanges();
+
+            return RedirectToAction("Edit", "admin", new { id = UserId });
+        }
+
         // GET: AdminController/Delete/5
         [HttpGet]
         public ActionResult Delete(string? id)
@@ -223,22 +209,6 @@ namespace data_receiver.Controllers
             _db.SaveChanges();
             return RedirectToAction("allUsers");
         }
-       // [HttpGet]
-       //public ActionResult CreateContact()
-       // {
-       //     return View();
-       // }
-       // [HttpPost]
-       // [ValidateAntiForgeryToken]
-       // public ActionResult CreateContact(Contact contact)
-       // {
-       //     if (ModelState.IsValid)
-       //     { 
-       //         _db.Contact.Add(contact);
-       //         _db.SaveChanges();
-       //         return Ok();
-       //     }
-       //     return NotFound();
-       // }
+  
     }
 }

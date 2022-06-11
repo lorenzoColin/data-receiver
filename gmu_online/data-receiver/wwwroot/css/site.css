@@ -108,6 +108,7 @@ hr {
     box-sizing: content-box;
     height: 0;
     overflow: visible;
+    background:white!;
 }
 
 h1,

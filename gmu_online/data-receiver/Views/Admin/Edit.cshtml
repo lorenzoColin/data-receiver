@@ -1,66 +1,83 @@
-﻿@model ApplicationUser
+﻿@using data_receiver.Models.ViewModels
+@model  List<UserRoleViewModel> 
 
 <div class="content">
 
-    <h4 class="text-white">customer</h4>
+    <h4 class="text-white">User</h4>
     <hr />
-    <div class="row text-white">
-        <div class="col-md-4">
-            <form method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
-                <div class="form-group">
-                    <label asp-for="FirstName" class="control-label"></label>
-                    <input asp-for="FirstName" class="form-control" />
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
+ 
+@foreach(var UserRole in @Model)
+    {
+        
+    
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-chart">
+            <div class="card-header ">
+            <div class="row">
+                <div class="col-sm-6 text-left">
+                <h2 class="card-title">user profile</h2>
                 </div>
-                <div class="form-group">
-                    <label asp-for="LastName" class="control-label"></label>
-                    <input asp-for="LastName" class="form-control" />
-                    <span asp-validation-for="LastName" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="PhoneNumber" class="control-label"></label>
-                    <input asp-for="PhoneNumber" class="form-control" />
-                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Email" class="control-label"></label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-          
-                <div class="form-group">
-                    <label asp-for="UserName" class="control-label"></label>
-                    <input asp-for="UserName"  class="form-control" />
-                    <span asp-validation-for="UserName" class="text-danger"></span>
-                </div>
-                <div class="form-group mt-2">
-                    <input type="submit" value="Save" class="btn btn-primary" />
-                </div>
-            </form>
-            <form>
-                <div class="form-group mt-2">
-                </div>
-            </form>
-        </div>
-        <div class="col-md-8">
-            <h3>roles</h3>
-            <form method="post" asp-action="setRole" >
-                <select name="roleId" asp-items="@ViewBag.listItems" ></select><br>
-                <input type="text" hidden name="userId" value="@Model.Id" />
-                <button type="submit">set role</button>
-            </form>
+                <div class="col-sm-6 text-right">
+                   @if (UserRole.InRole == false )
+                    {
+                        <form method="post" asp-action="setRole"  >
+                         <span>add role:</span>
+                        <select name="roleId" asp-items="@UserRole.list" ></select><br>
+                        <input type="text" hidden name="userId" value="@UserRole.User.Id"  />
+                        <button type="submit"  class="btn p-1">save</button>
+                        </form>                    
+                    }
+                    @if (UserRole.InRole == true)
+                    {
+                        <a asp-action="DeleteRole" asp-controller="Admin"  asp-route-UserId="@UserRole.User.Id" asp-route-RoleId="@UserRole.RoleId"  class="btn p-1">remove role</a>
+                    }
 
-            <ul>
-                @foreach(var role in ViewBag.MyRole)
-                {
-                    <li>@role</li>
-                }
-            </ul>
-          
+                </div>
+            </div>
+            </div>
+            <div class="card-body">
+            <div class="chart-area" style="height: auto!important;">
+                <div class="container">
+
+                        <form method="post" class="row">
+                            <div class="form-group col-md-6">
+                               <label  class="control-label">FirstName</label>
+                                <input type="text" name="firstname" value="@UserRole.User.FirstName" class="form-control" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                 <label  class="control-label">LastName</label>
+                                <input type="text" name="lastname" value="@UserRole.User.LastName" class="form-control" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label  class="control-label">PhoneNumber</label>
+                                <input type="text" name="PhoneNumber" value="@UserRole.User.PhoneNumber" class="form-control" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                 <label  class="control-label">Email</label>
+                                 <input name="Email" value="@UserRole.User.Email" class="form-control" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label  class="control-label">UserName</label>
+                                <input  name="UserName" value="@UserRole.User.UserName"  class="form-control" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                 <label  class="control-label">role</label>
+                                <input type="text"   class="form-control" disabled value="@UserRole.RoleName" name="role" />
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="submit" value="Save" class="btn btn-primary" />
+                            </div>
+                        </form>
+                        
+                </div>
+            </div>
+            </div>
         </div>
-    </div>
+     </div>
+</div>
+   }
+
   
 
    

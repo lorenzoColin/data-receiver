@@ -31,9 +31,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<UserManager<ApplicationUser>>();
 
 
-//adds
-//builder.Services.AddSingleton<AdWordsAppConfig>(scope => new AdWordsAppConfig(builder.Configuration.GetSection("AdWordsApi")));
-//builder.Services.AddScoped<GoogleAdWordsService>();
 
 
 
@@ -41,7 +38,7 @@ builder.Services.AddTransient<UserManager<ApplicationUser>>();
 builder.Services
         .AddFluentEmail("lorenzo8399test@gmail.com")
         .AddRazorRenderer(Directory.GetCurrentDirectory())
-        .AddSmtpSender(new System.Net.Mail.SmtpClient { Host = "smtp.gmail.com",Port = 587,EnableSsl =true,Credentials = new NetworkCredential("lorenzo8399test@gmail.com","Gufm2775") } )
+        .AddSmtpSender(new System.Net.Mail.SmtpClient {  Host = "smtp.gmail.com",Port = 587,EnableSsl =true,Credentials = new NetworkCredential("lorenzo8399test@gmail.com", "wnwotefllrkdciak") } )
         .AddRazorRenderer(typeof(Program));
 
 builder.Services.AddSingleton<AdWordsAppConfig>(scope => new AdWordsAppConfig(builder.Configuration.GetSection("AdWordsApi")));

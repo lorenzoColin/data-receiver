@@ -84,14 +84,10 @@ namespace data_receiver.Controllers
 
             var usercustomerId = UserCustomer.Id;
 
-
-
-
             IEnumerable<UserCustomerAction> usercustomeraction = _db.UserCustomerAction.Where(s => s.usercustomerId == usercustomerId);
 
-            var Action = _db.action;
+            var Action = _db.action.ToList();
             var UserCustomerActionViewModel = new UserCustomerActionViewModel { customer = Customer.customer, action = Action, usercustomerId = usercustomerId, UserCustomerAction = usercustomeraction };
-
 
             return View(UserCustomerActionViewModel);
         }
@@ -105,21 +101,21 @@ namespace data_receiver.Controllers
 
 
 
-            var userCustomerActions = _db.UserCustomerAction.Where<UserCustomerAction>(s => s.usercustomerId == usercustomer.Id);
+            var myuserCustomerActions = _db.UserCustomerAction.Where<UserCustomerAction>(s => s.usercustomerId == usercustomer.Id);
            
             var duplicateUsercustomerAction = new List<UserCustomerAction>();
             bool duplicate = false;
             //loop over alle usercustomeraction die jij heb
-            foreach (var userCustomerAction in userCustomerActions)
+            foreach (var myuserCustomerAction in myuserCustomerActions)
             {
-                switch (userCustomerAction.actionId)
+                switch (UserCustomerAction.actionId)
                 {
                     //if actie id 1
                     case 1:
                         //if the value already existed
-                        if (userCustomerAction.value == UserCustomerAction.value)
+                        if (myuserCustomerAction.value == UserCustomerAction.value)
                         {
-                            var sejjjjj = _db.UserCustomerAction.Find(userCustomerAction.id);
+                            var sejjjjj = _db.UserCustomerAction.Find(myuserCustomerAction.id);
                             duplicateUsercustomerAction.Add(sejjjjj);
                             duplicate = true;
                         }
@@ -133,12 +129,26 @@ namespace data_receiver.Controllers
                         break;
                     //last video call actionId 2
                     case 2:
-                        if (userCustomerAction.value == UserCustomerAction.value)
+                        if (myuserCustomerAction.value == UserCustomerAction.value)
                         {
-                            var sejjjjj = _db.UserCustomerAction.Find(userCustomerAction.id);
+                            var sejjjjj = _db.UserCustomerAction.Find(myuserCustomerAction.id);
                             duplicateUsercustomerAction.Add(sejjjjj);
                             duplicate = true;
-                            break;
+                        }
+                        if (duplicate == true)
+                        {
+                            duplicateUsercustomerAction[0].value = UserCustomerAction.value;
+                            _db.SaveChanges();
+                            ModelState.AddModelError("duplicate", "duplicate value");
+                        }
+                        break;
+                    //last contact call actionId 3
+                    case 3:
+                        if (myuserCustomerAction.value == UserCustomerAction.value)
+                        {
+                            var sejjjjj = _db.UserCustomerAction.Find(myuserCustomerAction.id);
+                            duplicateUsercustomerAction.Add(sejjjjj);
+                            duplicate = true;
                         }
                         if (duplicate == true)
                         {
@@ -160,12 +170,20 @@ namespace data_receiver.Controllers
             //actionId == 2 Latest_videocall 
             if (UserCustomerAction.actionId == 2 && duplicate == false)
             {
+                UserCustomerAction.usercustomerId = usercustomer.Id;
+                _db.UserCustomerAction.Add(UserCustomerAction);
+                _db.SaveChanges();
+            }
+            //actionId == 3 lastContact 
+            if (UserCustomerAction.actionId == 3 && duplicate == false)
+            {
+                UserCustomerAction.usercustomerId = usercustomer.Id;
                 _db.UserCustomerAction.Add(UserCustomerAction);
                 _db.SaveChanges();
             }
 
 
-            if(usercustomer != null)
+            if (usercustomer != null)
             {
                 
                 return RedirectToAction("index");
@@ -182,20 +200,20 @@ namespace data_receiver.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditPost(UserCustomerAction UserCustomerAction,string customerType, string klant)
         {
-            var userCustomerActions = _db.UserCustomerAction.Where<UserCustomerAction>(s => s.usercustomerId == UserCustomerAction.usercustomerId && s.actionId == UserCustomerAction.actionId );
+            var myuserCustomerActions = _db.UserCustomerAction.Where<UserCustomerAction>(s => s.usercustomerId == UserCustomerAction.usercustomerId && s.actionId == UserCustomerAction.actionId );
             var duplicateUsercustomerAction = new List<UserCustomerAction>();
             bool duplicate = false;
             //loop over alle usercustomeraction die jij heb
-            foreach (var userCustomerAction in userCustomerActions)
+            foreach (var myuserCustomerAction in myuserCustomerActions)
             {
-                switch (userCustomerAction.actionId)
+                switch (UserCustomerAction.actionId)
                 {
                     //if actie id 1() max budget
                     case 1:
                         //if the value already existed
-                        if (userCustomerAction.value == UserCustomerAction.value)
+                        if (myuserCustomerAction.value == UserCustomerAction.value)
                         {
-                            var sejjjjj = _db.UserCustomerAction.Find(userCustomerAction.id);
+                            var sejjjjj = _db.UserCustomerAction.Find(myuserCustomerAction.id);
                             duplicateUsercustomerAction.Add(sejjjjj);
                             duplicate = true;
                         }
@@ -211,9 +229,9 @@ namespace data_receiver.Controllers
                         //last video call actionId 2
                     case 2:
                         //if the value already existed
-                        if (userCustomerAction.value == UserCustomerAction.value)
+                        if (myuserCustomerAction.value == UserCustomerAction.value)
                         {
-                            var sejjjjj = _db.UserCustomerAction.Find(userCustomerAction.id);
+                            var sejjjjj = _db.UserCustomerAction.Find(myuserCustomerAction.id);
                             duplicateUsercustomerAction.Add(sejjjjj);
                             duplicate = true;
                         }
@@ -228,9 +246,9 @@ namespace data_receiver.Controllers
                       break;
                     case 3:
                         //if the value already existed
-                        if (userCustomerAction.value == UserCustomerAction.value)
+                        if (myuserCustomerAction.value == UserCustomerAction.value)
                         {
-                            var sejjjjj = _db.UserCustomerAction.Find(userCustomerAction.id);
+                            var sejjjjj = _db.UserCustomerAction.Find(myuserCustomerAction.id);
                             duplicateUsercustomerAction.Add(sejjjjj);
                             duplicate = true;
                         }
@@ -282,16 +300,31 @@ namespace data_receiver.Controllers
         }
 
         // POST: UserCustomerController/Delete/5
-        public ActionResult removecustomer(string id, string CustomerType)
-        {    
+        public ActionResult removeAction(int id, string customerType, string Klant, string Debiteurnr)
+        {
+            var usercustomeraction =  _db.UserCustomerAction.Find(id);
+
+            _db.UserCustomerAction.Remove(usercustomeraction);
+            _db.SaveChanges();
+
+
+         
+            return RedirectToAction("index");
+        }
+
+
+
+        // POST: UserCustomerController/Delete/5
+        public ActionResult removecustomer(string customerType, string Klant, string id)
+        {
 
             var loggedInId = _usermanager.GetUserId(HttpContext.User);
-            var customer = _db.UserCustomer.Where(x => x.userid == loggedInId && x.DebiteurnrId == id && x.customerType == CustomerType).First();
+            var customer = _db.UserCustomer.Where(x => x.userid == loggedInId && x.DebiteurnrId == id && x.Klant == Klant && x.customerType == customerType).First();
 
             _db.UserCustomer.Remove(customer);
             _db.SaveChanges();
 
-            return Ok();
+            return RedirectToAction("index");
         }
 
         public ActionResult notifications()

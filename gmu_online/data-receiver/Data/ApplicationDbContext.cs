@@ -33,21 +33,21 @@ namespace data_receiver.Data
 
 
 
+          
+
+
             //ignore identity tables
             builder.Ignore<IdentityUser>();
 
-        //usercustomer
-        //    builder.Entity<UserCustomer>()
-        //.HasKey(bc => new { bc.UserId });
-            //builder.Entity<UserCustomer>()
-            //    .HasOne(bc => bc.us)
-            //    .WithMany(b => b.UserCustomer)
-            //    .HasForeignKey(bc => bc.UserId);
+            builder.Entity<action>().HasData(
+            new {  id =1 , actionName = "Currentbudget", description = "example: At 50% of the month you want to email an update with the status of the budget." },
+            new {  id =2 , actionName = "Latest_videocall", description = "example: after 3 months I want to receive an email after the last video call" },
+            new {  id =3 , actionName = "Latest_contact", description = "example: after 3 months I want to receive an email after the last contact call" }
 
+            );
+            builder.Entity<IdentityRole>().HasData(
+                new { Id = "2c5e174e-3b0e-446f-86af-483d56fd7210", RoleName = "admin", NormalizedName = "ADMIN" }); 
 
-            //customercontact
-       //    builder.Entity<UserCustomerAction>()
-       //.HasKey(bc => new { bc.actionId,bc.usercustomerId });
             builder.Entity<UserCustomerAction>()
                 .HasOne(bc => bc.UserCustomer)
                 .WithMany(b => b.UserCustomerAction)

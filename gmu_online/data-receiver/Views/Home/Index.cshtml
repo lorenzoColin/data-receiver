@@ -101,12 +101,12 @@
                                 <td>
                                     @list.customer.Klant
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center  ">
                                     @list.customer.Max_budget
                                 </td>
                                  <td class="text-center">
-                                    <a class="p-1" href="Usercustomer/edit/@list.customer.Debiteurnr/customerType/@list.customer.CustomerType"   >edit!</a>
-                                    <a class="p-1" asp-controller= "home" asp-action="removecustomer" asp-route-id = "@list.customer.Debiteurnr" asp-route-customerType = "@list.customer.CustomerType">remove!</a>
+                                    <a class="p-1" href="Usercustomer/edit/@list.customer.Debiteurnr/customerType/@list.customer.CustomerType/klant/@list.customer.Klant">edit!</a>
+                                    <a class="p-1" asp-controller= "home" asp-action="removecustomer" asp-route-id = "@list.customer.Debiteurnr" asp-route-customerType = "@list.customer.CustomerType" asp-route-klant = "@list.customer.Klant" >remove!</a>
                                  </td>
                             </tr>
                         }
@@ -132,9 +132,7 @@
                         <th>
                           customers
                         </th>
-                    
-                      
-                        <th class="text-center">
+                        <th class="text-left">
                           total budget
                         </th>
                          <th class="text-center">
@@ -153,7 +151,7 @@
                           @list.customer.Max_budget
                         </td>
                         <td class="text-center">
-                          <a class="" asp-controller= "home" asp-action="claimCustomer" asp-route-id = "@list.customer.Debiteurnr" asp-route-customerType = "@list.customer.CustomerType">claim</a>
+                          <a class="" asp-controller= "home" asp-action="claimCustomer" asp-route-id = "@list.customer.Debiteurnr" asp-route-customerType = "@list.customer.CustomerType" asp-route-klant=@list.customer.Klant >claim</a>
                         </td>
                       </tr>
                                     

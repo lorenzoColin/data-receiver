@@ -40,13 +40,11 @@ namespace data_receiver.MybackgroundService
 
             //count of the month
             int countDaysMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
-            int day = DateTime.Now.Month;
+            int day = DateTime.Now.Day;
 
 
             //result 40 is the value of the user input
             var userCustomerActions = _db.UserCustomerAction.ToList();
-
-           
 
             //hier loopt ie over een lijst met dagen dat zijn ingevuld door de gebruiker
             foreach (var UserCustomerActionByDay in userCustomerActions)
@@ -59,8 +57,6 @@ namespace data_receiver.MybackgroundService
                     var allcustomer = new CustomerList(_db);
                     var customers = allcustomer.getallcustomers();
 
-                    
-               
                     var singlecustomer = customers.Where(s => s.customer.CustomerType == usercustomer.customerType && s.customer.Debiteurnr == usercustomer.DebiteurnrId).FirstOrDefault();
                     var AdsAccountName = singlecustomer.customer.Ads.Trim();
 
@@ -108,8 +104,6 @@ namespace data_receiver.MybackgroundService
                                .UsingTemplate("Good day @Model.Name. The max budget of @Model.customer for this month is €@Model.budget of which €@Model.cost is already spend."
                                , new { Name = User.FirstName, customer = singlecustomer.customer.Klant, budget = singlecustomer.customer.Max_budget, cost = round });
                                 email.Send();
-                                //send a mail with cost and max budget
-
                                 //when the mail is send the total cost is going to be zero again
                                 SingleUserCustomerAction.cost = null;
                                 _db.SaveChanges();
@@ -259,7 +253,7 @@ namespace data_receiver.MybackgroundService
                 currentBudget();
                 LastContact();
                 LastVideoCall();
-                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(60), stoppingToken);
                 }
         }
 
@@ -274,4 +268,3 @@ namespace data_receiver.MybackgroundService
 
 
 }
-

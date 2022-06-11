@@ -10,10 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Facebook-Ads-SDK" Version="2.11.0" />
     <PackageReference Include="Facebook.ApiClient" Version="2.0.2" />
     <PackageReference Include="FluentEmail.Mailgun" Version="3.0.0" />
     <PackageReference Include="FluentEmail.Razor" Version="3.0.0" />
     <PackageReference Include="FluentEmail.Smtp" Version="3.0.0" />
+    <PackageReference Include="Gobln.Pager" Version="1.1.1" />
     <PackageReference Include="Google.Ads.GoogleAds" Version="12.0.0" />
     <PackageReference Include="Google.AdWords" Version="24.18.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.5" />
@@ -28,6 +30,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.5" />
     <PackageReference Include="Mvc.RazorTools.FontAwesome" Version="5.0.5" />
     <PackageReference Include="NEST" Version="7.17.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.4" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />

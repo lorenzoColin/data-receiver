@@ -24,7 +24,7 @@
                         consultant
                     </th>
                     <th>
-                        max budget
+                        budget
                     </th>
                      <th>
                         contact
@@ -34,6 +34,9 @@
                     </th>
                        <th>
                         latest contact
+                    </th>
+                    <th>
+                        unclaime
                     </th>
                     <th class="text-center">
                         triggers
@@ -65,6 +68,10 @@
                       <td >
                         @customers.customer.Latest_contact
                     </td>
+                    <td>
+                        <a class="p-1" asp-controller= "UserCustomer" asp-action="removecustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType" asp-route-klant = "@customers.customer.Klant" >remove!</a>
+                    </td>
+
                     <td class="text-center">
                         <a   asp-action ="edit" asp-route-DebiteurnrId="@customers.customer.Debiteurnr" asp-route-customerType="@customers.customer.CustomerType"  asp-route-klant=" @customers.customer.Klant ">Expand</a>
                         <span>/</span>
@@ -206,7 +213,7 @@
                                                 }
                                         </div>
                                     </div>
-                              </div>
+                              </div>    
                             </div>
                           </div>
                         </div>
@@ -247,10 +254,13 @@
                     <th>
                         doelstelling
                     </th>
-                   
+                     <th>
+                        unclaime
+                    </th>
                     <th class="text-center">
                         triggers
                     </th>
+
                     </tr>
                     </thead>
                     <tbody>
@@ -272,9 +282,13 @@
                                     <td>
                                         @customers.customer.Doelstelling
                                     </td>
+                                      <td>
+
+                                        <a class="p-1" asp-controller= "UserCustomer" asp-action="removecustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType" asp-route-Klant = "@customers.customer.Klant" >remove!</a>
+                                    </td>
                                    
                                     <td class="text-center">
-                                        <a  asp-action ="edit" asp-route-DebiteurnrId="@customers.customer.Debiteurnr" asp-route-customerType="@customers.customer.CustomerType" >Expand</a>   
+                                    <a   asp-action ="edit" asp-route-DebiteurnrId="@customers.customer.Debiteurnr" asp-route-customerType="@customers.customer.CustomerType"  asp-route-klant=" @customers.customer.Klant ">Expand</a>
                                         <span>/</span>
                                         <a type="button" class="" data-toggle="modal" data-target="#exampleModal-@customers.customer.Debiteurnr-@customers.customer.CustomerType">Quick action</a>
 
@@ -295,113 +309,43 @@
                                                         <div class="accordion" id="accordionExample">
                                                             <div id="accordion">
 
+                                                            @*sma koste still comming *@    
+                                                            @if(@customers.customer.CustomerType == "sea_klanten" && @customers.customer.Max_budget != "n.v.t")
+                                                            {
                                                                 @*card one max budget*@
                                                                 <div class="card">
-                                                                <div class="card-header" id="headingOne">
-                                                                    <h5 class="mb-0">
-                                                                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                                        latest video call
-                                                                    </button>
-                                                                    </h5>
-                                                                </div>
-
-                                                                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                                                                    <div class="card-body">
-                                                  
-                                                                    @*action id == 3 is max budget*@
-                                                                        @foreach(var actions in ViewBag.Actions)
-                                                                        {
-                                                                            if(actions.id == 1)
-                                                                            {
-                                                                                <form method="post"  asp-action="SetTriggerPopupModel" asp-controller="UserCustomer">
-                                                                                    <input type="text" name="actionId" value="@actions.id" hidden>
-                                                                                    <input type="text" name="DebiteurnrId" value="@customers.customer.Debiteurnr" hidden>
-                                                                                    <input type="text" name="customerType" value="@customers.customer.CustomerType" hidden>
-                                                                                    <div class="form-group">
-                                                                                        <input name="value" type="number"  class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="example 50%">
-                                                                                    </div>
-                                                                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                                                                </form>
-                                                                            }
-                                                                        }
-                                                  
-                                                    
-
+                                                                    <div class="card-header" id="headingOne">
+                                                                        <h5 class="mb-0">
+                                                                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                                            current budget
+                                                                        </button>
+                                                                        </h5>
                                                                     </div>
-                                                                </div>
-                                                                </div>
-
-
-                                                                @*card two last video call*@
-                                                                <div class="card">
-                                                                <div class="card-header" id="headingTwo">
-                                                                    <h5 class="mb-0">
-                                                                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                                        Latest video call
-                                                                    </button>
-                                                                    </h5>
-                                                                </div>
-                                                                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                                                                    <div class="card-body">
-
+                                                                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                                                                        <div class="card-body">
                                                   
+                                                                        @*action id == 1 is max budget*@
                                                                             @foreach(var actions in ViewBag.Actions)
-                                                                        {
-                                                                                if(actions.id == 2)
                                                                             {
-                                                                                 <form method="post"  asp-action="SetTriggerPopupModel" asp-controller="UserCustomer">
-                                                                
+                                                                                if(actions.id == 1)
+                                                                                {
+                                                                                    <form method="post"  asp-action="SetTriggerPopupModel" asp-controller="UserCustomer">
                                                                                         <input type="text" name="actionId" value="@actions.id" hidden>
                                                                                         <input type="text" name="DebiteurnrId" value="@customers.customer.Debiteurnr" hidden>
                                                                                         <input type="text" name="customerType" value="@customers.customer.CustomerType" hidden>
-                                                                                    <div class="form-group">
-                                                                                        <input name="value" type="number"  class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="example 50%">
-                                                                                    </div>
-                                                                                <button type="submit" class="btn btn-primary">Submit</button>
-                                                                                </form>
-                                                                               
-                                                             
+                                                                                        <div class="form-group">
+                                                                                            <input name="value" type="number"  class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="example 50%">
+                                                                                        </div>
+                                                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                                                    </form>
+                                                                                }
                                                                             }
-                                                                        }
-                                                
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                                </div>
-
-                                                                @*card tree last contact*@
-                                                                <div class="card">
-                                                                <div class="card-header" id="headingThree">
-                                                                    <h5 class="mb-0">
-                                                                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                                                        latest contact
-                                                                    </button>
-                                                                    </h5>
-                                                                </div>
-                                                                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                                                                    <div class="card-body">
-                                                   
-
-                                                                @*action id 3 ==  latest contact*@
-
-                                                                            @foreach(var actions in ViewBag.Actions)
-                                                                        {
-                                                                                if(actions.id == 3)
-                                                                            {
-                                                                                 <form method="post"  asp-action="SetTriggerPopupModel" asp-controller="UserCustomer">
+                                                            }
                                                                 
-                                                                                        <input type="text" name="actionId" value="@actions.id" hidden>
-                                                                                        <input type="text" name="DebiteurnrId" value="@customers.customer.Debiteurnr" hidden>
-                                                                                        <input type="text" name="customerType" value="@customers.customer.CustomerType" hidden>
-                                                                                    <div class="form-group">
-                                                                                        <input name="value" type="number"  class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="example 50%">
-                                                                                    </div>
-                                                                                <button type="submit" class="btn btn-primary">Submit</button>
-                                                                                </form>
-                                                                            }
-                                                                        }
-                                                                    </div>
-                                                                </div>
-                                                                </div>
+
                                                             </div>
 
                                                         </div>
@@ -446,6 +390,9 @@
                         <th>
                             datum live
                         </th>
+                          <th>
+                            unclaime
+                        </th>
                         <th class="text-center">
                             trigger
                         </th>
@@ -470,8 +417,11 @@
                             <td >
                             @customers.customer.Datum_live
                         </td>
+                          <td>
+                            <a class="p-1" asp-controller= "UserCustomer" asp-action="removecustomer" asp-route-id = "@customers.customer.Debiteurnr" asp-route-customerType = "@customers.customer.CustomerType" asp-route-klant = "@customers.customer.Klant" >remove!</a>
+                        </td>
                         <td class="text-center">
-                            <a  asp-action ="edit" asp-route-DebiteurnrId="@customers.customer.Debiteurnr" asp-route-customerType="@customers.customer.CustomerType" >Expand</a>   
+                        <a   asp-action ="edit" asp-route-DebiteurnrId="@customers.customer.Debiteurnr" asp-route-customerType="@customers.customer.CustomerType"  asp-route-klant=" @customers.customer.Klant ">Expand</a>
 
                             <span>/</span>
                                         <a type="button" class="" data-toggle="modal" data-target="#exampleModal-@customers.customer.Debiteurnr-@customers.customer.CustomerType">Quick action</a>
@@ -493,108 +443,27 @@
                                                         <div class="accordion" id="accordionExample">
                                                             <div id="accordion">
 
-                                                                @*card one max budget*@
-                                                                <div class="card">
-                                                                <div class="card-header" id="headingOne">
-                                                                    <h5 class="mb-0">
-                                                                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                                        latest video call
-                                                                    </button>
-                                                                    </h5>
-                                                                </div>
-
-                                                                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                                                                    <div class="card-body">
-                                                  
-                                                                    @*action id == 3 is max budget*@
-                                                                        @foreach(var actions in ViewBag.Actions)
-                                                                        {
-                                                                            if(actions.id == 1)
-                                                                            {
-                                                                                    <form method="post"  asp-action="SetTriggerPopupModel" asp-controller="UserCustomer">
-                                                                                        <input type="text" name="actionId" value="@actions.id" hidden>
-                                                                                        <input type="text" name="customerType" value="@customers.customer.CustomerType" hidden>
-                                                                                        <input type="text" name="Debiteurnr" value="@customers.customer.Debiteurnr" hidden>
-                                                                                        <div class="form-group">
-                                                                                            <input name="value" type="number"  class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="example 50%">
-                                                                                        </div>
-                                                                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                                                                    </form>
-                                                                            }
-                                                                        }
-                                                  
-                                                    
-
-                                                                    </div>
-                                                                </div>
-                                                                </div>
-
+                                                      
 
                                                                 @*card two last video call*@
                                                                 <div class="card">
                                                                 <div class="card-header" id="headingTwo">
                                                                     <h5 class="mb-0">
                                                                     <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                                        Latest video call
+                                                                        no action yet
                                                                     </button>
                                                                     </h5>
                                                                 </div>
                                                                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                                                                     <div class="card-body">
 
-                                                                           @foreach(var actions in ViewBag.Actions)
-                                                                        {
-                                                                             if(actions.id == 2)
-                                                                            {
-                                                                                <form method="post"  asp-action="SetTriggerPopupModel" asp-controller="UserCustomer">
-                                                                                    <input type="text" name="actionId" value="@actions.id" hidden>
-                                                                                    <input type="text" name="customerType" value="@customers.customer.CustomerType" hidden>
-                                                                                    <input type="text" name="Debiteurnr" value="@customers.customer.Debiteurnr" hidden>
-                                                                                    <div class="form-group">
-                                                                                        <input name="value" type="number"  class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="example 50%">
-                                                                                    </div>
-                                                                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                                                                </form>
-                                                                            }
-                                                                        }
+                                                                          
                                                 
                                                                     </div>
                                                                 </div>
                                                                 </div>
 
-                                                                @*card tree last contact*@
-                                                                <div class="card">
-                                                                <div class="card-header" id="headingThree">
-                                                                    <h5 class="mb-0">
-                                                                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                                                        latest contact
-                                                                    </button>
-                                                                    </h5>
-                                                                </div>
-                                                                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                                                                    <div class="card-body">
-                                                   
-
-                                                                @*action id 3 ==  latest contact*@
-
-                                                                            @foreach(var actions in ViewBag.Actions)
-                                                                            {
-                                                                                if(actions.id == 3)
-                                                                                {
-                                                                                <form method="post"  asp-action="SetTriggerPopupModel" asp-controller="UserCustomer">
-                                                                                    <input type="text" name="actionId" value="@actions.id" hidden>
-                                                                                    <input type="text" name="customerType" value="@customers.customer.CustomerType" hidden>
-                                                                                    <input type="text" name="DebiteurnrId" value="@customers.customer.Debiteurnr" hidden>
-                                                                                    <div class="form-group">
-                                                                                        <input name="value" type="number"  class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="example 50%">
-                                                                                    </div>
-                                                                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                                                                </form>
-                                                                                }
-                                                                            }
-                                                                    </div>
-                                                                </div>
-                                                                </div>
+                                                             
                                                             </div>
 
                                                         </div>
